@@ -46,6 +46,8 @@ class HomeController: UIViewController, UISearchBarDelegate, APIDataDelegate {
         params.setValue(60, forKey: "seconds")
         params.setValue("fasffs", forKey: "sign")
         API.instance.post("/user/activeTime", delegate: self, params: params)
+        
+        self.presentViewController(DictionaryController(), animated: true, completion: nil)
     }
     
     func error(error: Error, api: String) {

@@ -21,6 +21,10 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     var responseCode: Int?
     var delegate: APIDataDelegate?
     var api: String?
+    var attachmentFilename: String?
+    var attachmentSize: Int?
+    var attachmentSavePath: NSString?
+    var attachmentReceivedSize: Int = 0
     
     init(host: String, port: String = "80") {
         self.host = host
@@ -71,38 +75,69 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     func connection(connection: NSURLConnection, didReceiveResponse response: NSHTTPURLResponse) {
 //        println("start response done!")
         self.responseCode = response.statusCode
+        
+//        println(response)
+        self.attachmentReceivedSize = 0
+        if (response.allHeaderFields["Content-Disposition"] != nil) {
+            self.attachmentFilename = NSString(string: response.allHeaderFields["Content-Disposition"] as String).componentsSeparatedByString("=")[1] as? String
+            self.attachmentSize = (response.allHeaderFields["Content-Length"] as String).toInt()
+            self.attachmentSavePath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent(self.attachmentFilename!)
+        } else {
+            self.attachmentFilename = nil
+            self.attachmentSize = 0
+        }
     }
     
     func connection(connection: NSURLConnection, didReceiveData data: NSData) {
 //        println("data coming")
         self.responseData.appendData(data)
+
+        if (self.attachmentFilename != nil && self.attachmentSize > 0) {
+            self.attachmentReceivedSize += data.length
+            switch(self.api!) {
+            case "/dictionary/syncDictionary":
+                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+            default:
+                self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
+            }
+        }
     }
     
     func connectionDidFinishLoading(connection: NSURLConnection) {
-//        println("data load done")
-        var data: AnyObject = NSJSONSerialization.JSONObjectWithData(self.responseData, options: NSJSONReadingOptions.MutableContainers, error:nil)! // TODO: need error handle
-        
-        
         println(self.api! + " Response: \(self.responseCode)")
-        
-        var dataString = NSString(data: self.responseData, encoding: NSUTF8StringEncoding)!
+
+        var data: AnyObject?
+        var dataString: NSString?
+        if (self.attachmentFilename != nil && self.attachmentSize > 0) {
+            self.responseData.writeToFile(self.attachmentSavePath!, atomically: true)
+            println("save file to: " + self.attachmentSavePath!)
+            data = self.attachmentSavePath!
+        } else {
+            data = NSJSONSerialization.JSONObjectWithData(self.responseData, options: NSJSONReadingOptions.MutableContainers, error:nil) // TODO: need error handle
+            dataString = NSString(data: self.responseData, encoding: NSUTF8StringEncoding)!
+        }
+
         println(dataString)
         
         if (self.responseCode == 200) {
             switch(self.api!) {
             case "/user/trial":
-                self.delegate!.userTrial?(data)
+                self.delegate!.userTrial?(data!)
             case "/user/register":
-                self.delegate!.userRegister?(data)
+                self.delegate!.userRegister?(data!)
             case "/user/login":
-                self.delegate!.userLogin?(data)
+                self.delegate!.userLogin?(data!)
             case "/user/activeTime":
-                self.delegate!.activeTime?(data)
+                self.delegate!.activeTime?(data!)
+            case "/dictionary/list":
+                self.delegate!.dictionaryList!(data!)
+            case "/dictionary/syncDictionary":
+                self.delegate!.dictionarySyncDictionary!(data!, progress: 1.0)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }
         } else {
-            self.delegate!.error?(Error(message: dataString, code: self.responseCode!), api: self.api!)
+            self.delegate!.error?(Error(message: dataString!, code: self.responseCode!), api: self.api!)
         }
     }
 }

@@ -9,4 +9,11 @@
     optional func userLogin(AnyObject)
     
     optional func activeTime(AnyObject)
+    
+    
+    
+    // 字典
+    optional func dictionaryList(AnyObject)
+    
+    optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
 }

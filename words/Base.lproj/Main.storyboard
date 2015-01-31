@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <searchBar contentMode="center" fixedFrame="YES" text="" placeholder="输入想查询的单词" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="do2-Wu-QTa">
-                                <rect key="frame" x="0.0" y="28" width="282" height="44"/>
+                                <rect key="frame" x="0" y="28" width="320" height="44"/>
                                 <offsetWrapper key="searchTextPositionAdjustment" horizontal="10" vertical="0.0"/>
                                 <textInputTraits key="textInputTraits" returnKeyType="search" enablesReturnKeyAutomatically="YES"/>
                                 <scopeButtonTitles>
@@ -29,7 +29,7 @@
                                 </connections>
                             </searchBar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyT-po-6Bb">
-                                <rect key="frame" x="32" y="114" width="199" height="21"/>
+                                <rect key="frame" x="77" y="283" width="199" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>

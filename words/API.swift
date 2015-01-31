@@ -32,7 +32,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         self.apiEntry = "http://" + self.host + ":" + self.port
     }
     
-    func request(api: String, method: String = "GET", params: NSMutableDictionary = NSMutableDictionary()) -> Void {
+    func request(api: String, method: String = "GET", params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) -> Void {
         self.api = api
         
         var queryString: String = "?"
@@ -49,7 +49,31 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         request.HTTPMethod = method
         
         if (method == "POST") {
-            request.HTTPBody = NSString(string: queryString).dataUsingEncoding(NSUTF8StringEncoding)
+            if (file == nil) {
+                request.HTTPBody = NSString(string: queryString).dataUsingEncoding(NSUTF8StringEncoding)
+            } else {
+                var boundary = "||"
+                request.addValue("multipart/form-data; boundary=" + boundary, forHTTPHeaderField: "Content-Type")
+                var sendBody = NSMutableData()
+
+                for (key, value) in params {
+                    sendBody.appendData(NSString(string: "--" + boundary + "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                    sendBody.appendData(NSString(string: "Content-Disposition: form-data; name=\"\(key)\"\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                    sendBody.appendData(NSString(string: "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                    sendBody.appendData(NSString(string: "\(value)\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                }
+
+                sendBody.appendData(NSString(string: "--" + boundary + "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                sendBody.appendData(NSString(string: "Content-Disposition: form-data; name=\"file\"; filename=\"file.db\"\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+//                sendBody.appendData(NSString(string: "Content-Type: application/octet-stream\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                sendBody.appendData(NSString(string: "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                sendBody.appendData(file!)
+                sendBody.appendData(NSString(string: "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+
+                sendBody.appendData(NSString(string: "--" + boundary + "--\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                sendBody.appendData(NSString(string: "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
+                request.HTTPBody = sendBody
+            }
         }
         
         self.connection = NSURLConnection(request: request, delegate: self, startImmediately: true)!
@@ -63,8 +87,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         self.delegate = delegate
     }
     
-    func post(api: String, delegate: APIDataDelegate, params: NSMutableDictionary = NSMutableDictionary()) {
-        self.request(api, method: "POST", params: params)
+    func post(api: String, delegate: APIDataDelegate, params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) {
+        self.request(api, method: "POST", params: params, file: file)
         self.delegate = delegate
     }
     

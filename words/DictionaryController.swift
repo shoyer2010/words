@@ -1,18 +1,20 @@
 import UIKit
 
 class DictionaryController: UIViewController, APIDataDelegate {
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        println("dsfasdfsafsafsafsafsafasdfasdfasfd")
         API.instance.get("/dictionary/list", delegate: self)
     }
     
     func dictionaryList(data: AnyObject) {
         var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(2, forKey: "sync")
-
-        API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params)
+//        params.setValue(1, forKey: "sync")
+//
+//        var path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent("54cc5af6c5e20c9b492b39ae.db")
+//        var data: NSData? = NSData(contentsOfFile: path)
+//        API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: data?)
     }
     
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {

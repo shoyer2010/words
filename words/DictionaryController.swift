@@ -52,6 +52,10 @@ class DictionaryController: BaseUIController {
         println(progress)
     }
     
+    @IBAction func onValueChanged(sender: UISwitch) {
+        println(sender.on)
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

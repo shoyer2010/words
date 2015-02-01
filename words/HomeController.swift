@@ -17,6 +17,14 @@ class HomeController: BaseUIController, UISearchBarDelegate{
     
     let udid: String = UIDevice.currentDevice().identifierForVendor.UUIDString
     
+    var scrollView: UIScrollView!
+    
+    var viewArticleForChinese: UIView!
+    var viewArticleForEnglish: UIView!
+    var viewHome: UIView!
+    var viewLearnWord: UIView!
+    var viewWordDetail: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

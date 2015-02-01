@@ -150,8 +150,8 @@
 				81D27A6A1A7DEB5200FD6B75 /* Common */,
 				A4A8B6091A7A563300C59E63 /* AppDelegate.swift */,
 				A4A8B60D1A7A563300C59E63 /* Main.storyboard */,
-				A4A8B6101A7A563300C59E63 /* Images.xcassets */,
 				A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */,
+				A4A8B6101A7A563300C59E63 /* Images.xcassets */,
 				A4A8B6071A7A563300C59E63 /* Supporting Files */,
 			);
 			path = words;

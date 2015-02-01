@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
 		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -64,6 +66,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A42703601A7E668A005159AC /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A42703631A7E7A42005159AC /* Color.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +95,7 @@
 		A4A8B6061A7A563300C59E63 /* words */ = {
 			isa = PBXGroup;
 			children = (
+				A42703601A7E668A005159AC /* Settings */,
 				A4A8B6091A7A563300C59E63 /* AppDelegate.swift */,
 				A4A8B6311A7B663A00C59E63 /* Error.swift */,
 				A4A8B62D1A7A633C00C59E63 /* API.swift */,
@@ -228,6 +239,7 @@
 				A4A8B6361A7BB56200C59E63 /* DictionaryController.swift in Sources */,
 				A4A8B62E1A7A633C00C59E63 /* API.swift in Sources */,
 				A4A8B62C1A7A59CB00C59E63 /* RankController.swift in Sources */,
+				A42703641A7E7A42005159AC /* Color.swift in Sources */,
 				A4A8B6321A7B663A00C59E63 /* Error.swift in Sources */,
 				A4A8B6301A7AA1A100C59E63 /* APIDataDelegate.swift in Sources */,
 			);

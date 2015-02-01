@@ -8,7 +8,6 @@
 
 import UIKit
 
-// 首页
 class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegate, APIDataDelegate {
     
     let udid: String = UIDevice.currentDevice().identifierForVendor.UUIDString
@@ -79,6 +78,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
 //        API.instance.post("/user/trial", delegate: self, params: params)
     }
     
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        self.view.endEditing(true)
+    }
+    
+    
+    
     
     func initViewArticleForChinese() {
     }
@@ -87,8 +92,13 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         
     }
     
+    
+    /*******************************
+     *  首页界面初始化
+     *******************************
+     */
     func initViewHome() {
-        var tabHeight = CGFloat(50)
+        var tabHeight = CGFloat(49) // NOTE: do not change this value, it is the TabBar's default height
         
         var homeScrollView = UIScrollView()
         homeScrollView.frame = self.viewHome.bounds
@@ -100,32 +110,103 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         self.viewHome.bringSubviewToFront(homeScrollView)
         
         var viewHomePage = UIView()
-        viewHomePage.backgroundColor = UIColor.redColor()
+        viewHomePage.backgroundColor = Color.red
         viewHomePage.frame = CGRectMake(0, 0, homeScrollView.bounds.width, homeScrollView.bounds.height)
+        
+        
+        var homeTopBar = UIView(frame: CGRect(x: 0, y: 20, width: homeScrollView.frame.width, height: 32))
+        homeTopBar.backgroundColor = Color.red
+        
+        var leftArticleIcon = UIView(frame: CGRect(x: 0, y: 2, width: 50, height: 32))
+        homeTopBar.addSubview(leftArticleIcon)
+        
+        
+        var searchBar = UISearchBar(frame: CGRect(x: 50, y: 4, width: viewHomePage.frame.width - 50 * 2, height: 24))
+        searchBar.delegate = self
+        searchBar.layer.cornerRadius = 12
+        searchBar.layer.masksToBounds = true
+        searchBar.layer.borderWidth = 1
+        searchBar.layer.borderColor = Color.gray.CGColor
+        searchBar.barTintColor = UIColor.whiteColor()
+        searchBar.placeholder = "单词列队完毕，请您检阅"
+        homeTopBar.addSubview(searchBar)
+        
+        var rightHelpIcon = UIView(frame: CGRect(x: 50 + searchBar.frame.width, y: 2, width: 50, height: 26))
+        rightHelpIcon.backgroundColor = Color.red
+        homeTopBar.addSubview(rightHelpIcon)
+        
+        viewHomePage.addSubview(homeTopBar)
+        
+        var homeBody = UIView(frame: CGRect(x: 0, y: 52, width: viewHomePage.frame.width, height: viewHomePage.frame.height - 52))
+        homeBody.backgroundColor = Color.homeBackground
+        
+        var todayRecommend = UILabel(frame: CGRect(x: 5, y: 30, width: homeBody.frame.width - 5, height: 30))
+        todayRecommend.text = "今日推荐"
+        homeBody.addSubview(todayRecommend)
+        
+        var startLearn = UIView(frame: CGRect(x: 100, y: 260, width: 100, height: 100))
+        startLearn.backgroundColor = UIColor.grayColor()
+        startLearn.layer.cornerRadius = 50
+        startLearn.layer.masksToBounds = true
+        
+        var startLearnLabel = UILabel(frame: CGRect(x: 15, y: 0, width: 100, height: 100))
+        startLearnLabel.text = "开始受虐"
+        startLearn.addSubview(startLearnLabel)
+        homeBody.addSubview(startLearn)
+        
+        viewHomePage.addSubview(homeBody)
+        
         homeScrollView.addSubview(viewHomePage)
         homeScrollView.bringSubviewToFront(viewHomePage)
         
         var viewTab = UITabBar()
+        println(homeScrollView.bounds.height)
         viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
-        var viewTabBarItemForRank = UITabBarItem(title: "排行", image: nil, tag: 1)
-        var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: nil, tag: 2)
-        var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: nil, tag: 3)
-        var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: nil, tag: 4)
-        var viewTabBarItemForHelp  = UITabBarItem(title: "帮助", image: nil, tag: 5)
+        println(viewTab.frame)
+        viewTab.barTintColor = Color.gray
+        viewTab.tintColor = UIColor.whiteColor()
+        viewTab.selectionIndicatorImage = UIImage(named: "red")
+        
+        var viewTabBarItemForRank = UITabBarItem(title: "排行", image: UIImage(named: "tabbar.png"), tag: 1)
+        var viewTabBarItemForStatistics = UITabBarItem(title: "统计", image: UIImage(named: "tabbar.png"), tag: 2)
+        var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: UIImage(named: "tabbar.png"), tag: 3)
+        var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: UIImage(named: "tabbar.png"), tag: 4)
+        
+        var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: UIImage(named: "tabbar.png"), tag: 5)
+//        var viewTabBarItemForHelp  = UITabBarItem(title: "帮助", image: UIImage(named: "tabbar.png"), tag: 6)
         viewTab.setItems([
             viewTabBarItemForRank,
+            viewTabBarItemForStatistics,
             viewTabBarItemForDictionary,
             viewTabBarItemForSettings,
             viewTabBarItemForAccount,
-            viewTabBarItemForHelp
+//            viewTabBarItemForHelp
             ], animated: true)
-
+        
+        viewTab.selectedItem   = viewTabBarItemForDictionary
         
         homeScrollView.addSubview(viewTab)
         homeScrollView.bringSubviewToFront(viewTab)
-        
-        
     }
+    
+    
+    /*******************************
+    *  首页事件处理
+    *******************************
+    */
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+//        println(searchBar.text)
+        searchBar.resignFirstResponder()
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     func initViewLearnWord() {
         var viewLearnWordSentenceHeight = CGFloat(120)
@@ -194,14 +275,6 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        println(searchBar.text)
-    }
-    
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
     }
 }
 

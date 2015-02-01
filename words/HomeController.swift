@@ -104,14 +104,27 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         viewHomePage.frame = CGRectMake(0, 0, homeScrollView.bounds.width, homeScrollView.bounds.height)
         homeScrollView.addSubview(viewHomePage)
         homeScrollView.bringSubviewToFront(viewHomePage)
-        self.viewHome.bringSubviewToFront(viewHomePage)
         
-        var viewTab = UIView()
-        viewTab.backgroundColor = UIColor.purpleColor()
+        var viewTab = UITabBar()
         viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        var viewTabBarItemForRank = UITabBarItem(title: "排行", image: nil, tag: 1)
+        var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: nil, tag: 2)
+        var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: nil, tag: 3)
+        var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: nil, tag: 4)
+        var viewTabBarItemForHelp  = UITabBarItem(title: "帮助", image: nil, tag: 5)
+        viewTab.setItems([
+            viewTabBarItemForRank,
+            viewTabBarItemForDictionary,
+            viewTabBarItemForSettings,
+            viewTabBarItemForAccount,
+            viewTabBarItemForHelp
+            ], animated: true)
+
+        
         homeScrollView.addSubview(viewTab)
         homeScrollView.bringSubviewToFront(viewTab)
-        self.viewHome.bringSubviewToFront(viewTab)
+        
+        
     }
     
     func initViewLearnWord() {
@@ -131,14 +144,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         viewLearnWordSentence.frame = CGRectMake(0, learWordScrollView.bounds.height, learWordScrollView.bounds.width, viewLearnWordSentenceHeight)
         learWordScrollView.addSubview(viewLearnWordSentence)
         learWordScrollView.bringSubviewToFront(viewLearnWordSentence)
-        self.viewLearnWord.bringSubviewToFront(viewLearnWordSentence)
         
         var viewLearnWordPage = UIView()
         viewLearnWordPage.backgroundColor = UIColor(red:0.529, green:0.900, blue:0.647, alpha: 1)
         viewLearnWordPage.frame = CGRectMake(0, viewLearnWordSentenceHeight, learWordScrollView.bounds.width, learWordScrollView.bounds.height)
         learWordScrollView.addSubview(viewLearnWordPage)
         learWordScrollView.bringSubviewToFront(viewLearnWordPage)
-        self.viewLearnWord.bringSubviewToFront(viewLearnWordPage)
         
         learWordScrollView.contentOffset = CGPoint(x: 0, y: viewLearnWordSentenceHeight)
     }

@@ -5,10 +5,12 @@ class DictionaryController: UIViewController, APIDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+
         API.instance.get("/dictionary/list", delegate: self)
     }
     
     func dictionaryList(data: AnyObject) {
+        println(self.view)
         var params: NSMutableDictionary = NSMutableDictionary()
 //        params.setValue(1, forKey: "sync")
 //
@@ -22,6 +24,10 @@ class DictionaryController: UIViewController, APIDataDelegate {
         println(progress)
     }
     
+    @IBAction func onValueChanged(sender: UISwitch) {
+        println(sender.on)
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

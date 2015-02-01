@@ -9,8 +9,8 @@
 import UIKit
 
 
-// 首页
-class HomeController: UIViewController, UISearchBarDelegate, APIDataDelegate {
+// 首页,
+class HomeController: BaseUIController, UISearchBarDelegate{
     
     @IBOutlet weak var wordSearchBar: UISearchBar!
     @IBOutlet weak var label: UILabel!
@@ -19,39 +19,76 @@ class HomeController: UIViewController, UISearchBarDelegate, APIDataDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        var params: NSMutableDictionary = NSMutableDictionary()
         
-        params.setValue(self.udid, forKey: "udid")
-        API.instance.post("/user/trial", delegate: self, params: params)
+        getTrial()
     }
     
-    func userTrial(data: AnyObject) {
+    @IBAction func gotoDicVC(sender: UIButton) {
+        
+        LogUtil.log("gotoDicVC")
+        
+        self.presentViewController(DictionaryController(), animated: true, completion: nil)
+    }
+    
+    func getTrial() {
+        var params: DMNetParam = DMNetParam(httpPath:"/user/trial")
+        params.addParamValuePair("udid", value:self.udid)
+        
+        class TrialDe:APIDataDelegate{
+            weak var parent:HomeController!=nil
+            init(parent:HomeController) {
+                self.parent=parent
+            }
+            
+            func dateReqBack(httpPath:String, data:AnyObject, code:Int, message:String) {
+                parent.loginUser(data)
+            }
+        }
+        controller.getNetData(params, delegate: TrialDe(parent:self))
+    }
+    
+    func loginUser(data: AnyObject) {
+        LogUtil.log("loginUser")
         var username = data["username"] as? String
+        
+        LogUtil.log("username2=\(username)")
+        
         label.text = username
         
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(username, forKey: "username")
-        params.setValue("sfas", forKey: "password")
-        params.setValue(self.udid, forKey: "udid")
-        API.instance.get("/user/login", delegate: self, params: params)
+        var params: DMNetParam = DMNetParam(httpPath:"/user/login")
+        params.addParamValuePair("username", value:username!)
+        params.addParamValuePair("password", value:"sfas")
+        params.addParamValuePair("udid", value:self.udid)
+        
+        class LoginDe:APIDataDelegate{
+            weak var parent:HomeController!=nil
+            init(parent:HomeController) {
+                self.parent=parent
+            }
+            func dateReqBack(httpPath:String, data:AnyObject, code:Int, message:String) {
+                parent.getActiveTime(data)
+            }
+        }
+        controller.getNetData(params, delegate: LoginDe(parent:self))
     }
+    
     
     func userRegister(data: AnyObject) {
         
     }
     
-    func userLogin(data: AnyObject) {
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(60, forKey: "seconds")
-        params.setValue("fasffs", forKey: "sign")
-        API.instance.post("/user/activeTime", delegate: self, params: params)
-        
-        self.presentViewController(DictionaryController(), animated: true, completion: nil)
-    }
+    func getActiveTime(data: AnyObject) {
     
-    func error(error: Error, api: String) {
-        println("\(api) error -->>>>>>>>>>\(error.getMessage())")
+        var params: DMNetParam = DMNetParam(httpPath:"/user/activeTime")
+        params.addParamValuePair("seconds", value:"60")
+        params.addParamValuePair("sign", value:"fasffs")
+        
+        class ActiveTimeDe:APIDataDelegate{
+            func dateReqBack(httpPath:String, data:AnyObject, code:Int, message:String) {
+                
+            }
+        }
+        controller.getNetData(params, delegate: ActiveTimeDe())
     }
 
     override func didReceiveMemoryWarning() {

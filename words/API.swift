@@ -3,14 +3,9 @@ import Foundation
 
 class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
-//    struct Inner {
-//        static let instance: API = API(host: "dev.coolhey.cn", port: "1337")
-//    }
-    
     class var instance: API {
-//        return Inner.instance
-//        return API(host: "dev.coolhey.cn", port: "1337")
-        return API(host: "localhost", port: "1337")
+        
+        return API(host: Config.HOST_URL, port: Config.HOST_PORT)
     }
     
     let host: String
@@ -29,14 +24,14 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     init(host: String, port: String = "80") {
         self.host = host
         self.port = port
-        self.apiEntry = "http://" + self.host + ":" + self.port
+        self.apiEntry = self.host + ":" + self.port
     }
     
-    func request(api: String, method: String = "GET", params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) -> Void {
+    func request(api: String, method: String = "GET", params: DMNetParam, file: NSData? = nil) -> Void {
         self.api = api
         
         var queryString: String = "?"
-        for (key, value) in params {
+        for (key, value) in params.httpParams {
             queryString += "&\(key)=\(value)"
         }
         
@@ -56,7 +51,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 request.addValue("multipart/form-data; boundary=" + boundary, forHTTPHeaderField: "Content-Type")
                 var sendBody = NSMutableData()
 
-                for (key, value) in params {
+                for (key, value) in params.httpParams {
                     sendBody.appendData(NSString(string: "--" + boundary + "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
                     sendBody.appendData(NSString(string: "Content-Disposition: form-data; name=\"\(key)\"\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
                     sendBody.appendData(NSString(string: "\r\n").dataUsingEncoding(NSUTF8StringEncoding)!)
@@ -77,23 +72,23 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         }
         
         self.connection = NSURLConnection(request: request, delegate: self, startImmediately: true)!
-        println(self.api! + " request--------------------------------------")
-        println("API: \(self.connection?.originalRequest.HTTPMethod) \(self.connection?.originalRequest.URL)")
-        println(self.api! + " params: " + queryString)
+        LogUtil.log(self.api! + " request--------------------------------------")
+        LogUtil.log("API: \(self.connection?.originalRequest.HTTPMethod) \(self.connection?.originalRequest.URL)")
+        LogUtil.log(self.api! + " params: " + queryString)
     }
     
-    func get(api: String, delegate: APIDataDelegate, params: NSMutableDictionary = NSMutableDictionary()) {
+    func get(api: String, delegate: APIDataDelegate, params: DMNetParam) {
         self.request(api, method: "GET", params: params)
         self.delegate = delegate
     }
     
-    func post(api: String, delegate: APIDataDelegate, params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) {
+    func post(api: String, delegate: APIDataDelegate, params: DMNetParam, file: NSData? = nil) {
         self.request(api, method: "POST", params: params, file: file)
         self.delegate = delegate
     }
     
     func connection(connection: NSURLConnection, didFailWithError error: NSError) {
-        println("http request failed!!!!!");
+        LogUtil.log("http request failed!!!!!");
     }
     
     func connection(connection: NSURLConnection, didReceiveResponse response: NSHTTPURLResponse) {
@@ -120,16 +115,26 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             self.attachmentReceivedSize += data.length
             switch(self.api!) {
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+                //self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+                
+                var progressData:NSMutableDictionary = NSMutableDictionary()
+                
+                progressData.setValue(Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), forKey: "progress")
+                
+                self.delegate!.dateReqBack("/dictionary/syncDictionary", data: progressData, code: 200, message: "Not matched API")
+                
             default:
-                self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
+                //self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
+            
+                self.delegate!.dateReqBack("", data: "", code: 400, message: "Not matched API")
             }
         }
     }
     
     func connectionDidFinishLoading(connection: NSURLConnection) {
-        println(self.api! + " Response: \(self.responseCode)")
-
+        
+        LogUtil.log(self.api! + " Response: \(self.responseCode)")
+        
         var data: AnyObject?
         var dataString: NSString?
         if (self.attachmentFilename != nil && self.attachmentSize > 0) {
@@ -137,31 +142,19 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             println("save file to: " + self.attachmentSavePath!)
             data = self.attachmentSavePath!
         } else {
-            data = NSJSONSerialization.JSONObjectWithData(self.responseData, options: NSJSONReadingOptions.MutableContainers, error:nil) // TODO: need error handle
+            data = NSJSONSerialization.JSONObjectWithData(self.responseData, options: NSJSONReadingOptions.MutableContainers, error:nil)
+            
             dataString = NSString(data: self.responseData, encoding: NSUTF8StringEncoding)!
         }
-
-        println(dataString)
         
-        if (self.responseCode == 200) {
-            switch(self.api!) {
-            case "/user/trial":
-                self.delegate!.userTrial?(data!)
-            case "/user/register":
-                self.delegate!.userRegister?(data!)
-            case "/user/login":
-                self.delegate!.userLogin?(data!)
-            case "/user/activeTime":
-                self.delegate!.activeTime?(data!)
-            case "/dictionary/list":
-                self.delegate!.dictionaryList!(data!)
-            case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(data!, progress: 1.0)
-            default:
-                self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
-            }
-        } else {
-            self.delegate!.error?(Error(message: dataString!, code: self.responseCode!), api: self.api!)
+        LogUtil.log("data=\(dataString)")
+        
+        //我本来的想法是，向返回的json结构中插入code和message以及字典下载的progress键值对。这样返回的数据就整齐了
+        if self.responseCode==200 {
+            self.delegate!.dateReqBack(self.api!, data: data!, code: self.responseCode!, message: dataString!)
+        }else {
+            self.delegate!.dateReqBack(self.api!, data: dataString!, code: self.responseCode!, message: dataString!)
         }
+
     }
 }

@@ -25,5 +25,9 @@ class Util {
         
         return image
     }
+    
+    class  func  getUDID() -> String{
+        return UIDevice.currentDevice().identifierForVendor.UUIDString
+    }
 }
 

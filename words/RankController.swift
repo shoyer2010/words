@@ -23,7 +23,6 @@ class RankController: UIViewController {
     
     func buttonClick(sender: UIButton) {
         self.dismissViewControllerAnimated(true, completion: nil)
-    
     }
     
     override func didReceiveMemoryWarning() {

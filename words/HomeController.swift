@@ -9,6 +9,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
 
         self.initView()
         
+        
         //        var params: NSMutableDictionary = NSMutableDictionary()
         //        params.setValue(self.udid, forKey: "udid")
         //        API.instance.post("/user/trial", delegate: self, params: params)
@@ -57,17 +58,20 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         var homeBody = UIView(frame: CGRect(x: 0, y: 52, width: viewHomePage.frame.width, height: viewHomePage.frame.height - 52))
         homeBody.backgroundColor = Color.homeBackground
         
-        var todayRecommend = UILabel(frame: CGRect(x: 5, y: 30, width: homeBody.frame.width - 5, height: 30))
+        var todayRecommend = UILabel(frame: CGRect(x: 10, y: 10, width: homeBody.frame.width - 10, height: 30))
+        todayRecommend.backgroundColor = UIColor.redColor()
         todayRecommend.text = "今日推荐"
         homeBody.addSubview(todayRecommend)
         
-        var startLearn = UIView(frame: CGRect(x: 100, y: 260, width: 100, height: 100))
-        startLearn.backgroundColor = UIColor.grayColor()
+        var startLearn = UIView(frame: CGRect(x: homeBody.frame.width / 2 - 50, y: homeBody.frame.height - 150, width: 100, height: 100))
+        startLearn.backgroundColor = Color.gray
         startLearn.layer.cornerRadius = 50
         startLearn.layer.masksToBounds = true
+        startLearn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onStartLearnTapped:"))
         
         var startLearnLabel = UILabel(frame: CGRect(x: 15, y: 0, width: 100, height: 100))
         startLearnLabel.text = "开始受虐"
+        startLearnLabel.textColor = UIColor.greenColor()
         startLearn.addSubview(startLearnLabel)
         homeBody.addSubview(startLearn)
         
@@ -144,8 +148,13 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         scrollViewForTabItems.addSubview(accountController.view)
     }
     
+    func onStartLearnTapped(sender: UIView) {
+        var parentController = self.parentViewController as ApplicationController
+        println(parentController.scrollToPage(page: 3))
+    }
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        println(scrollView)
+//        println(scrollView)
         self.view.endEditing(true)
     }
     

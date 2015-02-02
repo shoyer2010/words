@@ -6,7 +6,7 @@ class DictionaryController: UIViewController, APIDataDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        API.instance.get("/dictionary/list", delegate: self)
+//        API.instance.get("/dictionary/list", delegate: self)
     }
     
     func dictionaryList(data: AnyObject) {

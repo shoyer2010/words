@@ -2,6 +2,8 @@ import UIKit
 
 class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate {
     
+    var scrollViewForTabItems: UIScrollView!
+    var viewTab: UITabBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,20 +83,20 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeScrollView.bringSubviewToFront(viewHomePage)
         
         // create tabbar view
-        var viewTab = UITabBar()
-        viewTab.delegate = self
-        viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
-        viewTab.tintColor = UIColor.whiteColor()
-        viewTab.backgroundImage = Util.createImageWithColor(Color.gray, width: 1.0, height: 1.0)
-        viewTab.shadowImage = Util.createImageWithColor(UIColor.clearColor(), width: 1.0, height: 1.0)
-        viewTab.selectionIndicatorImage = Util.createImageWithColor(Color.red, width: 76.0, height: 49.0)
+        self.viewTab = UITabBar()
+        self.viewTab.delegate = self
+        self.viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        self.viewTab.tintColor = UIColor.whiteColor()
+        self.viewTab.backgroundImage = Util.createImageWithColor(Color.gray, width: 1.0, height: 1.0)
+        self.viewTab.shadowImage = Util.createImageWithColor(UIColor.clearColor(), width: 1.0, height: 1.0)
+        self.viewTab.selectionIndicatorImage = Util.createImageWithColor(Color.red, width: 76.0, height: 49.0)
         var viewTabBarItemForRank = UITabBarItem(title: "排行", image: UIImage(named: "tabbar.png"), tag: 1)
         var viewTabBarItemForStatistics = UITabBarItem(title: "统计", image: UIImage(named: "tabbar.png"), tag: 2)
         var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: UIImage(named: "tabbar.png"), tag: 3)
         var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: UIImage(named: "tabbar.png"), tag: 4)
         
         var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: UIImage(named: "tabbar.png"), tag: 5)
-        viewTab.setItems([
+        self.viewTab.setItems([
             viewTabBarItemForRank,
             viewTabBarItemForStatistics,
             viewTabBarItemForDictionary,
@@ -102,78 +104,81 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             viewTabBarItemForAccount
             ], animated: true)
         
-        viewTab.selectedItem   = viewTabBarItemForDictionary
-        
-        homeScrollView.addSubview(viewTab)
+        homeScrollView.addSubview(self.viewTab)
         
         
         // scroll view for tab items.
         var viewWidth = homeScrollView.frame.width
         var viewHeight = homeScrollView.frame.height - 49 - 20
         
-        var scrollViewForTabItems = UIScrollView()
-        scrollViewForTabItems.frame = CGRectMake(0, homeScrollView.frame.height + 49, viewWidth, viewHeight)
-        scrollViewForTabItems.backgroundColor = UIColor.purpleColor()
-        scrollViewForTabItems.pagingEnabled = true
-        scrollViewForTabItems.showsHorizontalScrollIndicator = false
-        scrollViewForTabItems.bounces = false
-        scrollViewForTabItems.delegate = self
-        scrollViewForTabItems.contentSize = CGSize(width: viewWidth * 5, height: viewHeight)
-        scrollViewForTabItems.contentOffset = CGPoint(x: viewWidth * 2, y: 0)
-        homeScrollView.addSubview(scrollViewForTabItems)
+        self.scrollViewForTabItems = UIScrollView()
+        self.scrollViewForTabItems.frame = CGRectMake(0, homeScrollView.frame.height + 49, viewWidth, viewHeight)
+        self.scrollViewForTabItems.backgroundColor = UIColor.purpleColor()
+        self.scrollViewForTabItems.pagingEnabled = true
+        self.scrollViewForTabItems.showsHorizontalScrollIndicator = false
+        self.scrollViewForTabItems.bounces = false
+        self.scrollViewForTabItems.delegate = self
+        self.scrollViewForTabItems.contentSize = CGSize(width: viewWidth * 5, height: viewHeight)
+        self.scrollViewForTabItems.contentOffset = CGPoint(x: viewWidth * 2, y: 0)
+        homeScrollView.addSubview(self.scrollViewForTabItems)
         
         var rankController = RankController()
         self.addChildViewController(rankController)
         rankController.view.frame = CGRectMake(0, 0, viewWidth, viewHeight)
-        scrollViewForTabItems.addSubview(rankController.view)
+        self.scrollViewForTabItems.addSubview(rankController.view)
         
         var statisticsController = StatisticsController()
         self.addChildViewController(statisticsController)
         statisticsController.view.frame = CGRectMake(viewWidth, 0, viewWidth, viewHeight)
-        scrollViewForTabItems.addSubview(statisticsController.view)
+        self.scrollViewForTabItems.addSubview(statisticsController.view)
         
         var dictionaryController = DictionaryController()
         self.addChildViewController(dictionaryController)
         dictionaryController.view.frame = CGRectMake(viewWidth * 2, 0, viewWidth, viewHeight)
-        scrollViewForTabItems.addSubview(dictionaryController.view)
+        self.scrollViewForTabItems.addSubview(dictionaryController.view)
         
         var settingsController = SettingsController()
         self.addChildViewController(settingsController)
         settingsController.view.frame = CGRectMake(viewWidth * 3, 0, viewWidth, viewHeight)
-        scrollViewForTabItems.addSubview(settingsController.view)
+        self.scrollViewForTabItems.addSubview(settingsController.view)
         
         var accountController = AccountController()
         self.addChildViewController(accountController)
         accountController.view.frame = CGRectMake(viewWidth * 4, 0, viewWidth, viewHeight)
-        scrollViewForTabItems.addSubview(accountController.view)
+        self.scrollViewForTabItems.addSubview(accountController.view)
+        
+        self.scrollToPage(page: 2)
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if (scrollView == self.scrollViewForTabItems) {
+            var page = Int(scrollView.contentOffset.x / self.view.frame.width)
+            self.scrollToPage(page: page)
+        }
+    }
+    
+    func scrollToPage(page: Int = 2) {
+        self.scrollViewForTabItems.setContentOffset(CGPoint(x: self.view.frame.width * CGFloat(page), y: 0), animated: true)
+        
+        var items: Array = self.viewTab.items! as Array
+        self.viewTab.selectedItem = items[page] as? UITabBarItem
     }
     
     func onStartLearnTapped(sender: UIView) {
         var parentController = self.parentViewController as ApplicationController
-        println(parentController.scrollToPage(page: 3))
+        parentController.scrollToPage(page: 3)
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-//        println(scrollView)
         self.view.endEditing(true)
     }
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-//        println(searchBar.text)
         searchBar.resignFirstResponder()
     }
     
     func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem!) {
-        switch (item.tag) {
-//        case 1:
-//            self.presentViewController(RankController(), animated: true, completion: nil)
-//        case 2:
-//        case 3:
-//        case 4:
-//        case 5:
-        default:
-            break
-        }
+        self.scrollToPage(page: item.tag - 1)
     }
     
     

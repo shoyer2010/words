@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegate, APIDataDelegate {
+class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate {
     
     let udid: String = UIDevice.currentDevice().identifierForVendor.UUIDString
     
@@ -76,6 +76,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
 //        var params: NSMutableDictionary = NSMutableDictionary()
 //        params.setValue(self.udid, forKey: "udid")
 //        API.instance.post("/user/trial", delegate: self, params: params)
+        
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -103,9 +104,10 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         var homeScrollView = UIScrollView()
         homeScrollView.frame = self.viewHome.bounds
         homeScrollView.showsVerticalScrollIndicator = false
+        homeScrollView.pagingEnabled = true
         homeScrollView.delegate = self
         homeScrollView.bounces = false
-        homeScrollView.contentSize = CGSize(width: self.viewHome.bounds.width, height: self.viewHome.bounds.height + tabHeight)
+        homeScrollView.contentSize = CGSize(width: self.viewHome.bounds.width, height: self.viewHome.bounds.height * 2 - 20)
         self.viewHome.addSubview(homeScrollView)
         self.viewHome.bringSubviewToFront(homeScrollView)
         
@@ -160,12 +162,13 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         homeScrollView.bringSubviewToFront(viewHomePage)
         
         var viewTab = UITabBar()
-        println(homeScrollView.bounds.height)
+        viewTab.delegate = self
         viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
-        println(viewTab.frame)
-        viewTab.barTintColor = Color.gray
+//        viewTab.barTintColor = Color.gray
         viewTab.tintColor = UIColor.whiteColor()
-        viewTab.selectionIndicatorImage = UIImage(named: "red")
+        viewTab.backgroundImage = Util.createImageWithColor(Color.gray, width: 1.0, height: 1.0)
+        viewTab.shadowImage = Util.createImageWithColor(UIColor.clearColor(), width: 1.0, height: 1.0)
+        viewTab.selectionIndicatorImage = Util.createImageWithColor(Color.red, width: 76.0, height: 49.0) //UIImage(named: "red")
         
         var viewTabBarItemForRank = UITabBarItem(title: "排行", image: UIImage(named: "tabbar.png"), tag: 1)
         var viewTabBarItemForStatistics = UITabBarItem(title: "统计", image: UIImage(named: "tabbar.png"), tag: 2)
@@ -185,6 +188,10 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
         
         viewTab.selectedItem   = viewTabBarItemForDictionary
         
+        var tabBarController = UITabBarController()
+        tabBarController.view = viewTab
+        tabBarController.viewControllers = [RankController()]
+        
         homeScrollView.addSubview(viewTab)
         homeScrollView.bringSubviewToFront(viewTab)
     }
@@ -197,6 +204,19 @@ class HomeController: UIViewController, UISearchBarDelegate, UIScrollViewDelegat
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
 //        println(searchBar.text)
         searchBar.resignFirstResponder()
+    }
+    
+    func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem!) {
+        switch (item.tag) {
+//        case 1:
+//            self.presentViewController(RankController(), animated: true, completion: nil)
+//        case 2:
+//        case 3:
+//        case 4:
+//        case 5:
+        default:
+            break
+        }
     }
     
     

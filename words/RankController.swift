@@ -14,6 +14,16 @@ class RankController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        var button = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 100))
+        button.backgroundColor = UIColor.redColor()
+        self.view.addSubview(button)
+        
+        button.addTarget(self, action: "buttonClick:", forControlEvents: UIControlEvents.TouchUpInside)
+    }
+    
+    func buttonClick(sender: UIButton) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    
     }
     
     override func didReceiveMemoryWarning() {

@@ -17,6 +17,9 @@
 		A42703841A7FB5F2005159AC /* StatisticsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703831A7FB5F2005159AC /* StatisticsController.swift */; };
 		A42703861A7FB729005159AC /* SettingsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703851A7FB729005159AC /* SettingsController.swift */; };
 		A42703881A7FB7BE005159AC /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703871A7FB7BE005159AC /* AccountController.swift */; };
+		A427038A1A8092AF005159AC /* SearchWordResultController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703891A8092AF005159AC /* SearchWordResultController.swift */; };
+		A427038C1A809891005159AC /* HelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427038B1A809891005159AC /* HelpController.swift */; };
+		A427038E1A809D46005159AC /* FavouriteArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427038D1A809D46005159AC /* FavouriteArticleController.swift */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
 		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
@@ -50,6 +53,9 @@
 		A42703831A7FB5F2005159AC /* StatisticsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatisticsController.swift; sourceTree = "<group>"; };
 		A42703851A7FB729005159AC /* SettingsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		A42703871A7FB7BE005159AC /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
+		A42703891A8092AF005159AC /* SearchWordResultController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchWordResultController.swift; sourceTree = "<group>"; };
+		A427038B1A809891005159AC /* HelpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpController.swift; sourceTree = "<group>"; };
+		A427038D1A809D46005159AC /* FavouriteArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteArticleController.swift; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -141,6 +147,9 @@
 				A42703831A7FB5F2005159AC /* StatisticsController.swift */,
 				A42703851A7FB729005159AC /* SettingsController.swift */,
 				A42703871A7FB7BE005159AC /* AccountController.swift */,
+				A42703891A8092AF005159AC /* SearchWordResultController.swift */,
+				A427038B1A809891005159AC /* HelpController.swift */,
+				A427038D1A809D46005159AC /* FavouriteArticleController.swift */,
 			);
 			path = words;
 			sourceTree = "<group>";
@@ -271,9 +280,12 @@
 			files = (
 				A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */,
 				A42703821A7FA4E2005159AC /* WordDetailController.swift in Sources */,
+				A427038A1A8092AF005159AC /* SearchWordResultController.swift in Sources */,
 				A42703671A7F39DD005159AC /* Util.swift in Sources */,
+				A427038E1A809D46005159AC /* FavouriteArticleController.swift in Sources */,
 				A4A8B62A1A7A58E300C59E63 /* HomeController.swift in Sources */,
 				A42703881A7FB7BE005159AC /* AccountController.swift in Sources */,
+				A427038C1A809891005159AC /* HelpController.swift in Sources */,
 				A42703841A7FB5F2005159AC /* StatisticsController.swift in Sources */,
 				A4A8B6361A7BB56200C59E63 /* DictionaryController.swift in Sources */,
 				A4A8B62E1A7A633C00C59E63 /* API.swift in Sources */,
@@ -400,10 +412,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 			};
 			name = Debug;
 		};
@@ -411,10 +425,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 			};
 			name = Release;
 		};

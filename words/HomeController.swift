@@ -37,7 +37,9 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         var homeTopBar = UIView(frame: CGRect(x: 0, y: 20, width: homeScrollView.frame.width, height: 32))
         homeTopBar.backgroundColor = Color.red
         
-        var leftArticleIcon = UIView(frame: CGRect(x: 0, y: 2, width: 50, height: 32))
+        var leftArticleIcon = UIView(frame: CGRect(x: 15, y: 4, width: 24, height: 24)) // TODO: need favorite icon here 24 * 24
+        leftArticleIcon.backgroundColor = UIColor.whiteColor()
+        leftArticleIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapArticleIcon:"))
         homeTopBar.addSubview(leftArticleIcon)
         
         
@@ -45,14 +47,14 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         searchBar.delegate = self
         searchBar.layer.cornerRadius = 12
         searchBar.layer.masksToBounds = true
-        searchBar.layer.borderWidth = 1
         searchBar.layer.borderColor = Color.gray.CGColor
         searchBar.barTintColor = UIColor.whiteColor()
         searchBar.placeholder = "单词列队完毕，请您检阅"
         homeTopBar.addSubview(searchBar)
         
-        var rightHelpIcon = UIView(frame: CGRect(x: 50 + searchBar.frame.width, y: 2, width: 50, height: 26))
-        rightHelpIcon.backgroundColor = Color.red
+        var rightHelpIcon = UIView(frame: CGRect(x: homeTopBar.frame.width - 15 - 24, y: 4, width: 24, height: 24)) // TODO: need help icon here
+        rightHelpIcon.backgroundColor = Color.gray
+        rightHelpIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapHelpIcon:"))
         homeTopBar.addSubview(rightHelpIcon)
         
         viewHomePage.addSubview(homeTopBar)
@@ -60,12 +62,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         var homeBody = UIView(frame: CGRect(x: 0, y: 52, width: viewHomePage.frame.width, height: viewHomePage.frame.height - 52))
         homeBody.backgroundColor = Color.homeBackground
         
-        var todayRecommend = UILabel(frame: CGRect(x: 10, y: 10, width: homeBody.frame.width - 10, height: 30))
+        var todayRecommend = UILabel(frame: CGRect(x: 15, y: 15, width: homeBody.frame.width - 30, height: 30))
         todayRecommend.backgroundColor = UIColor.redColor()
         todayRecommend.text = "今日推荐"
         homeBody.addSubview(todayRecommend)
         
-        var startLearn = UIView(frame: CGRect(x: homeBody.frame.width / 2 - 50, y: homeBody.frame.height - 150, width: 100, height: 100))
+        var startLearn = UIView(frame: CGRect(x: homeBody.frame.width / 2 - 50, y: homeBody.frame.height - 120, width: 100, height: 100))
         startLearn.backgroundColor = Color.gray
         startLearn.layer.cornerRadius = 50
         startLearn.layer.masksToBounds = true
@@ -103,6 +105,9 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             viewTabBarItemForSettings,
             viewTabBarItemForAccount
             ], animated: true)
+        
+        // prevent from sliding to left or right.
+        viewTab.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         
         homeScrollView.addSubview(self.viewTab)
         
@@ -162,6 +167,15 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         var items: Array = self.viewTab.items! as Array
         self.viewTab.selectedItem = items[page] as? UITabBarItem
+    }
+    
+    func onTapArticleIcon(sender: UIView) {
+        self.presentViewController(FavouriteArticleController(), animated: true, completion: nil)
+    }
+    
+    
+    func onTapHelpIcon(sender: UIView) {
+        self.presentViewController(HelpController(), animated: true, completion: nil)
     }
     
     func onStartLearnTapped(sender: UIView) {

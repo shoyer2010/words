@@ -4,6 +4,7 @@ class DictionaryController: UIViewController, APIDataDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
         // Do any additional setup after loading the view, typically from a nib.
 
 //        API.instance.get("/dictionary/list", delegate: self)

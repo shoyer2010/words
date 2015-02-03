@@ -85,9 +85,15 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeScrollView.bringSubviewToFront(viewHomePage)
         
         // create tabbar view
+        // NOTE: prevent from sliding to left or right, but allow up and down, this is a trick.
+        var srollViewForWrapViewTab = UIScrollView(frame: CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        )
+        srollViewForWrapViewTab.bounces = false
+        srollViewForWrapViewTab.contentSize = CGSize(width: srollViewForWrapViewTab.frame.width + 0.001, height: srollViewForWrapViewTab.frame.height)
+
         self.viewTab = UITabBar()
         self.viewTab.delegate = self
-        self.viewTab.frame = CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        self.viewTab.frame = CGRectMake(0, 0, homeScrollView.bounds.width, tabHeight)//CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
         self.viewTab.tintColor = UIColor.whiteColor()
         self.viewTab.backgroundImage = Util.createImageWithColor(Color.gray, width: 1.0, height: 1.0)
         self.viewTab.shadowImage = Util.createImageWithColor(UIColor.clearColor(), width: 1.0, height: 1.0)
@@ -105,11 +111,8 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             viewTabBarItemForSettings,
             viewTabBarItemForAccount
             ], animated: true)
-        
-        // prevent from sliding to left or right.
-        viewTab.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
-        
-        homeScrollView.addSubview(self.viewTab)
+        srollViewForWrapViewTab.addSubview(self.viewTab)
+        homeScrollView.addSubview(srollViewForWrapViewTab)
         
         
         // scroll view for tab items.
@@ -129,30 +132,31 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         var rankController = RankController()
         self.addChildViewController(rankController)
-        rankController.view.frame = CGRectMake(0, 0, viewWidth, viewHeight)
         self.scrollViewForTabItems.addSubview(rankController.view)
         
         var statisticsController = StatisticsController()
         self.addChildViewController(statisticsController)
-        statisticsController.view.frame = CGRectMake(viewWidth, 0, viewWidth, viewHeight)
         self.scrollViewForTabItems.addSubview(statisticsController.view)
         
         var dictionaryController = DictionaryController()
         self.addChildViewController(dictionaryController)
-        dictionaryController.view.frame = CGRectMake(viewWidth * 2, 0, viewWidth, viewHeight)
         self.scrollViewForTabItems.addSubview(dictionaryController.view)
         
         var settingsController = SettingsController()
         self.addChildViewController(settingsController)
-        settingsController.view.frame = CGRectMake(viewWidth * 3, 0, viewWidth, viewHeight)
         self.scrollViewForTabItems.addSubview(settingsController.view)
         
         var accountController = AccountController()
         self.addChildViewController(accountController)
-        accountController.view.frame = CGRectMake(viewWidth * 4, 0, viewWidth, viewHeight)
         self.scrollViewForTabItems.addSubview(accountController.view)
         
         self.scrollToPage(page: 2)
+    }
+    
+    func getFrameOfSubTabItem(page: Int) -> CGRect {
+        var viewWidth = self.view.frame.width
+        var viewHeight = self.view.frame.height - 49 - 20
+        return CGRectMake(viewWidth * CGFloat(page), 0, viewWidth, viewHeight)
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {

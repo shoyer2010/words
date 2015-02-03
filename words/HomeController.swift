@@ -4,6 +4,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     
     var scrollViewForTabItems: UIScrollView!
     var viewTab: UITabBar!
+    var homeScrollView: UIScrollView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -15,26 +16,31 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         //        var params: NSMutableDictionary = NSMutableDictionary()
         //        params.setValue(self.udid, forKey: "udid")
         //        API.instance.post("/user/trial", delegate: self, params: params)
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     func initView() {
         var tabHeight = CGFloat(49) // NOTE: do not change this value, it is the TabBar's default height
         
-        var homeScrollView = UIScrollView()
-        homeScrollView.frame = self.view.frame
-        homeScrollView.delegate = self
-        homeScrollView.showsVerticalScrollIndicator = false
-        homeScrollView.pagingEnabled = true
-        homeScrollView.bounces = false
-        homeScrollView.contentSize = CGSize(width: homeScrollView.frame.width, height:  homeScrollView.frame.height * 2 - 20)
-        self.view.addSubview(homeScrollView)
+        self.homeScrollView = UIScrollView()
+        self.homeScrollView.frame = self.view.frame
+        self.homeScrollView.delegate = self
+        self.homeScrollView.showsVerticalScrollIndicator = false
+        self.homeScrollView.pagingEnabled = true
+        self.homeScrollView.bounces = false
+        self.homeScrollView.contentSize = CGSize(width: self.homeScrollView.frame.width, height:  self.homeScrollView.frame.height * 2 - 20)
+        self.view.addSubview(self.homeScrollView)
         
         var viewHomePage = UIView()
         viewHomePage.backgroundColor = Color.red
-        viewHomePage.frame = CGRectMake(0, 0, homeScrollView.frame.width, homeScrollView.frame.height)
+        viewHomePage.frame = CGRectMake(0, 0, self.homeScrollView.frame.width, self.homeScrollView.frame.height)
         
         
-        var homeTopBar = UIView(frame: CGRect(x: 0, y: 20, width: homeScrollView.frame.width, height: 32))
+        var homeTopBar = UIView(frame: CGRect(x: 0, y: 20, width: self.homeScrollView.frame.width, height: 32))
         homeTopBar.backgroundColor = Color.red
         
         var leftArticleIcon = UIView(frame: CGRect(x: 15, y: 4, width: 24, height: 24)) // TODO: need favorite icon here 24 * 24
@@ -81,29 +87,29 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         viewHomePage.addSubview(homeBody)
         
-        homeScrollView.addSubview(viewHomePage)
-        homeScrollView.bringSubviewToFront(viewHomePage)
+        self.homeScrollView.addSubview(viewHomePage)
+        self.homeScrollView.bringSubviewToFront(viewHomePage)
         
         // create tabbar view
         // NOTE: prevent from sliding to left or right, but allow up and down, this is a trick.
-        var srollViewForWrapViewTab = UIScrollView(frame: CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        var srollViewForWrapViewTab = UIScrollView(frame: CGRectMake(0, self.homeScrollView.bounds.height, self.homeScrollView.bounds.width, tabHeight)
         )
         srollViewForWrapViewTab.bounces = false
         srollViewForWrapViewTab.contentSize = CGSize(width: srollViewForWrapViewTab.frame.width + 0.001, height: srollViewForWrapViewTab.frame.height)
 
         self.viewTab = UITabBar()
         self.viewTab.delegate = self
-        self.viewTab.frame = CGRectMake(0, 0, homeScrollView.bounds.width, tabHeight)//CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
+        self.viewTab.frame = CGRectMake(0, 0, self.homeScrollView.bounds.width, tabHeight)//CGRectMake(0, homeScrollView.bounds.height, homeScrollView.bounds.width, tabHeight)
         self.viewTab.tintColor = UIColor.whiteColor()
         self.viewTab.backgroundImage = Util.createImageWithColor(Color.gray, width: 1.0, height: 1.0)
         self.viewTab.shadowImage = Util.createImageWithColor(UIColor.clearColor(), width: 1.0, height: 1.0)
         self.viewTab.selectionIndicatorImage = Util.createImageWithColor(Color.red, width: 76.0, height: 49.0)
-        var viewTabBarItemForRank = UITabBarItem(title: "排行", image: UIImage(named: "tabbar.png"), tag: 1)
-        var viewTabBarItemForStatistics = UITabBarItem(title: "统计", image: UIImage(named: "tabbar.png"), tag: 2)
-        var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: UIImage(named: "tabbar.png"), tag: 3)
-        var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: UIImage(named: "tabbar.png"), tag: 4)
+        var viewTabBarItemForRank = UITabBarItem(title: "排行", image: UIImage(named: "ranking.png"), tag: 1)
+        var viewTabBarItemForStatistics = UITabBarItem(title: "统计", image: UIImage(named: "statistics.png"), tag: 2)
+        var viewTabBarItemForDictionary = UITabBarItem(title: "词库", image: UIImage(named: "dictionary.png"), tag: 3)
+        var viewTabBarItemForSettings = UITabBarItem(title: "设置", image: UIImage(named: "settings.png"), tag: 4)
         
-        var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: UIImage(named: "tabbar.png"), tag: 5)
+        var viewTabBarItemForAccount = UITabBarItem(title: "账户", image: UIImage(named: "account.png"), tag: 5)
         self.viewTab.setItems([
             viewTabBarItemForRank,
             viewTabBarItemForStatistics,
@@ -112,15 +118,15 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             viewTabBarItemForAccount
             ], animated: true)
         srollViewForWrapViewTab.addSubview(self.viewTab)
-        homeScrollView.addSubview(srollViewForWrapViewTab)
+        self.homeScrollView.addSubview(srollViewForWrapViewTab)
         
         
         // scroll view for tab items.
-        var viewWidth = homeScrollView.frame.width
-        var viewHeight = homeScrollView.frame.height - 49 - 20
+        var viewWidth = self.homeScrollView.frame.width
+        var viewHeight = self.homeScrollView.frame.height - 49 - 20
         
         self.scrollViewForTabItems = UIScrollView()
-        self.scrollViewForTabItems.frame = CGRectMake(0, homeScrollView.frame.height + 49, viewWidth, viewHeight)
+        self.scrollViewForTabItems.frame = CGRectMake(0, self.homeScrollView.frame.height + 49, viewWidth, viewHeight)
         self.scrollViewForTabItems.backgroundColor = UIColor.purpleColor()
         self.scrollViewForTabItems.pagingEnabled = true
         self.scrollViewForTabItems.showsHorizontalScrollIndicator = false
@@ -128,7 +134,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.scrollViewForTabItems.delegate = self
         self.scrollViewForTabItems.contentSize = CGSize(width: viewWidth * 5, height: viewHeight)
         self.scrollViewForTabItems.contentOffset = CGPoint(x: viewWidth * 2, y: 0)
-        homeScrollView.addSubview(self.scrollViewForTabItems)
+        self.homeScrollView.addSubview(self.scrollViewForTabItems)
         
         var rankController = RankController()
         self.addChildViewController(rankController)
@@ -159,10 +165,54 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         return CGRectMake(viewWidth * CGFloat(page), 0, viewWidth, viewHeight)
     }
     
+    func getPageIndex() -> Int {
+        return self.viewTab.selectedItem!.tag - 1
+    }
+    
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        var parentController = self.parentViewController as ApplicationController
+        
         if (scrollView == self.scrollViewForTabItems) {
             var page = Int(scrollView.contentOffset.x / self.view.frame.width)
             self.scrollToPage(page: page)
+            
+            switch(page) {
+            case 0:
+                parentController.setCurrentPage(PageCode.Rank)
+            case 1:
+                parentController.setCurrentPage(PageCode.Statistics)
+            case 2:
+                parentController.setCurrentPage(PageCode.Dictionary)
+            case 3:
+                parentController.setCurrentPage(PageCode.Settings)
+            case 4:
+                parentController.setCurrentPage(PageCode.Account)
+            default:
+                break
+            }
+        }
+        
+        if (scrollView == self.homeScrollView) {
+            var page = Int(round(scrollView.contentOffset.y / self.view.frame.height))
+            var subPage = self.getPageIndex()
+            if (page == 0) {
+                parentController.setCurrentPage(PageCode.Home)
+            } else {
+                switch(subPage) {
+                case 0:
+                    parentController.setCurrentPage(PageCode.Rank)
+                case 1:
+                    parentController.setCurrentPage(PageCode.Statistics)
+                case 2:
+                    parentController.setCurrentPage(PageCode.Dictionary)
+                case 3:
+                    parentController.setCurrentPage(PageCode.Settings)
+                case 4:
+                    parentController.setCurrentPage(PageCode.Account)
+                default:
+                    break
+                }
+            }
         }
     }
     
@@ -171,6 +221,22 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         var items: Array = self.viewTab.items! as Array
         self.viewTab.selectedItem = items[page] as? UITabBarItem
+        
+        var parentController = self.parentViewController as ApplicationController
+        switch(page) {
+        case 0:
+            parentController.setCurrentPage(PageCode.Rank)
+        case 1:
+            parentController.setCurrentPage(PageCode.Statistics)
+        case 2:
+            parentController.setCurrentPage(PageCode.Dictionary)
+        case 3:
+            parentController.setCurrentPage(PageCode.Settings)
+        case 4:
+            parentController.setCurrentPage(PageCode.Account)
+        default:
+            break
+        }
     }
     
     func onTapArticleIcon(sender: UIView) {
@@ -247,4 +313,3 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
 
     
 }
-

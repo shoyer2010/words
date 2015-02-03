@@ -4,6 +4,8 @@ import UIKit
 class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDelegate {
     
     var scrollView: UIScrollView!
+    var statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.LightContent
+    var currentPage: PageCode?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,11 +52,56 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
     
     func scrollToPage(page: Int = 2) {
         self.scrollView.setContentOffset(CGPoint(x: self.view.frame.width * CGFloat(page), y: 0), animated: true)
+        
+        switch (page) {
+        case 0:
+            self.setCurrentPage(PageCode.ArticleForChinese)
+        case 1:
+            self.setCurrentPage(PageCode.ArticleForEnglish)
+        case 2:
+            self.setCurrentPage(PageCode.Home)
+        case 3:
+            self.setCurrentPage(PageCode.LearnWord)
+        case 4:
+            self.setCurrentPage(PageCode.WordDetail)
+        default:
+            break
+        }
+    }
+    
+    func setCurrentPage(page: PageCode) {
+        self.currentPage = page
+        
+        switch(page) {
+        case PageCode.Home:
+            self.setUIStatusBarStyle(UIStatusBarStyle.LightContent)
+        default:
+            self.setUIStatusBarStyle(UIStatusBarStyle.Default)
+        }
+    }
+    
+    func getCurrentPage() -> PageCode {
+        return self.currentPage!
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         self.view.endEditing(true)
     }
     
+    func setUIStatusBarStyle(style: UIStatusBarStyle) {
+        self.statusBarStyle = style
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return self.statusBarStyle
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        if (scrollView == self.scrollView) {
+            var page = Int(scrollView.contentOffset.x / self.view.frame.width)
+            self.scrollToPage(page: page)
+        }
+    }
 }
 

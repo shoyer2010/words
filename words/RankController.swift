@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RankController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class RankController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +55,15 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func onSegmentTapped(sender: UISegmentedControl) {
         println(sender.selectedSegmentIndex)
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        var offset = scrollView.contentOffset.y
+        var homeController = self.parentViewController as HomeController
+        
+        if (offset < -100) {
+            homeController.homeScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        }
     }
 }
 

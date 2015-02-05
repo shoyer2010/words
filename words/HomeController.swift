@@ -74,38 +74,46 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         todayRecommend.text = "今日推荐"
         homeBody.addSubview(todayRecommend)
         
-        var recommendView = UITextView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 60))
+        var recommendView = UIView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 100))
         recommendView.backgroundColor = UIColor(red: 0.98, green: 0.90, blue: 0.90, alpha: 1)
-        recommendView.editable = false
-        recommendView.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun"
-        recommendView.font = UIFont(name: recommendView.font.fontName, size: CGFloat(14))
-        recommendView.scrollEnabled = false
+        recommendView.layer.cornerRadius = 3
+        recommendView.layer.shadowColor = Color.red.CGColor
+        recommendView.layer.shadowRadius = 2.0
+        recommendView.layer.shadowOffset = CGSize(width: 1, height: 2)
+        recommendView.layer.shadowOpacity = 0.4
+        
+        var englishLabel = UILabel(frame: CGRect(x: 10, y: 0, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
+        englishLabel.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun dsafas dfasfasf dfasdfasf dfadsfasfas"
+        englishLabel.numberOfLines = 2
+        englishLabel.font = UIFont(name: englishLabel.font.fontName, size: CGFloat(14))
         var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyle.lineSpacing = 5
         var attributes = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: recommendView.font,
+            NSFontAttributeName: englishLabel.font,
             NSForegroundColorAttributeName: Color.red
             ])
-        recommendView.attributedText = NSAttributedString(string: recommendView.text, attributes: attributes)
-        recommendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onRecommendTapped:"))
-        homeBody.addSubview(recommendView)
+        englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
+        recommendView.addSubview(englishLabel)
         
-        var recommendViewForChinese = UITextView(frame: CGRect(x: 15, y: 87, width: viewHomePage.frame.width - 30, height: 53))
-        recommendViewForChinese.backgroundColor = UIColor(red: 0.98, green: 0.90, blue: 0.90, alpha: 1)
-        recommendViewForChinese.editable = false
-        recommendViewForChinese.text = "总体来说个性化定制UITextView中的内容有两种方法总体来说个性化定制UITextView中的内容有两种方法"
-        recommendViewForChinese.font = UIFont(name: recommendViewForChinese.font.fontName, size: CGFloat(12))
+        var chineseLabel = UILabel(frame: CGRect(x: 10, y: recommendView.frame.height / 2, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
+        chineseLabel.text = "总体来说个性化定制UITextView中的内容有两种方法总体来说个性化定制UITextView中的内容有两种方法"
+        chineseLabel.numberOfLines = 2
+        chineseLabel.font = UIFont(name: chineseLabel.font.fontName, size: CGFloat(12))
         var paragraphStyleForChinese = NSMutableParagraphStyle()
+        paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyleForChinese.lineSpacing = 7
         var attributesForChinese = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForChinese,
-            NSFontAttributeName: recommendViewForChinese.font,
+            NSFontAttributeName: chineseLabel.font,
             NSForegroundColorAttributeName: UIColor(red: 0.41, green: 0.42, blue: 0.42, alpha: 1)
             ])
-        recommendViewForChinese.attributedText = NSAttributedString(string: recommendViewForChinese.text, attributes: attributesForChinese)
-        recommendViewForChinese.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onRecommendTapped:"))
-        homeBody.addSubview(recommendViewForChinese)
+        chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
+        recommendView.addSubview(chineseLabel)
+        
+        recommendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onRecommendTapped:"))
+        homeBody.addSubview(recommendView)
         
         var needToLearnIcon = UIView(frame: CGRect(x: 60, y: 180, width: 24, height: 24))
         needToLearnIcon.backgroundColor = Color.red

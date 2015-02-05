@@ -1,21 +1,18 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "Statistics1.png"
-    },
-    {
       "idiom" : "iphone",
       "scale" : "1x"
     },
     {
       "idiom" : "iphone",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "Statistics.png"
     },
     {
       "idiom" : "iphone",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "statistics-1.png"
     }
   ],
   "info" : {

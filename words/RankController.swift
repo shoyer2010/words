@@ -61,7 +61,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         var offset = scrollView.contentOffset.y
         var homeController = self.parentViewController as HomeController
         
-        if (offset < -100) {
+        if (offset < -70) {
             homeController.homeScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
         }
     }

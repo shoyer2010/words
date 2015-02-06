@@ -24,6 +24,8 @@
 		A42703931A812AB0005159AC /* PageCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703921A812AB0005159AC /* PageCode.swift */; };
 		A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */; };
 		A4541F901A84B01E00EAA761 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F8F1A84B01E00EAA761 /* Layer.swift */; };
+		A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F911A850CF500EAA761 /* ChangePasswordController.swift */; };
+		A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
 		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
@@ -64,6 +66,8 @@
 		A42703921A812AB0005159AC /* PageCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageCode.swift; sourceTree = "<group>"; };
 		A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正楷体简体.ttf"; sourceTree = "<group>"; };
 		A4541F8F1A84B01E00EAA761 /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
+		A4541F911A850CF500EAA761 /* ChangePasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordController.swift; sourceTree = "<group>"; };
+		A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyHolyWaterController.swift; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -169,6 +173,8 @@
 				A42703891A8092AF005159AC /* SearchWordResultController.swift */,
 				A427038B1A809891005159AC /* HelpController.swift */,
 				A427038D1A809D46005159AC /* FavouriteArticleController.swift */,
+				A4541F911A850CF500EAA761 /* ChangePasswordController.swift */,
+				A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */,
 			);
 			path = words;
 			sourceTree = "<group>";
@@ -313,6 +319,7 @@
 				A4A8B6361A7BB56200C59E63 /* DictionaryController.swift in Sources */,
 				A4A8B62E1A7A633C00C59E63 /* API.swift in Sources */,
 				A427037E1A7FA38D005159AC /* ArticleForEnglishController.swift in Sources */,
+				A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */,
 				A42703861A7FB729005159AC /* SettingsController.swift in Sources */,
 				A427037A1A7F7924005159AC /* ApplicationController.swift in Sources */,
 				A42703931A812AB0005159AC /* PageCode.swift in Sources */,
@@ -320,6 +327,7 @@
 				A42703641A7E7A42005159AC /* Color.swift in Sources */,
 				A42703801A7FA462005159AC /* LearnWordController.swift in Sources */,
 				A4A8B6321A7B663A00C59E63 /* Error.swift in Sources */,
+				A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */,
 				A427037C1A7FA272005159AC /* ArticleForChineseController.swift in Sources */,
 				A4A8B6301A7AA1A100C59E63 /* APIDataDelegate.swift in Sources */,
 			);

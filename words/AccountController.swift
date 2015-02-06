@@ -28,6 +28,7 @@ class AccountController: UIViewController {
         getHolyWaterButton.backgroundColor = Color.gray
         getHolyWaterButton.layer.cornerRadius = 13
         getHolyWaterButton.setTitle("获取", forState: UIControlState.Normal)
+        getHolyWaterButton.addTarget(self, action: "goToBuyHolyWaterPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(getHolyWaterButton)
         
         
@@ -39,6 +40,7 @@ class AccountController: UIViewController {
         passwordButton.backgroundColor = Color.gray
         passwordButton.setTitle("修改", forState: UIControlState.Normal)
         passwordButton.layer.cornerRadius = 13
+        passwordButton.addTarget(self, action: "goToChangePasswordPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(passwordButton)
         
         
@@ -54,5 +56,17 @@ class AccountController: UIViewController {
         logoutButton.backgroundColor = Color.red
         logoutButton.setTitle("切换账户", forState: UIControlState.Normal)
         self.view.addSubview(logoutButton)
+    }
+    
+    func goToChangePasswordPage(sender: UIButton) {
+        var changePasswordController = ChangePasswordController()
+        self.addChildViewController(changePasswordController)
+        self.view.addSubview(changePasswordController.view)
+    }
+    
+    func goToBuyHolyWaterPage(sender: UIButton) {
+        var buyHolyWaterController = BuyHolyWaterController()
+        self.addChildViewController(buyHolyWaterController)
+        self.view.addSubview(buyHolyWaterController.view)
     }
 }

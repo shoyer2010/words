@@ -75,12 +75,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(todayRecommend)
         
         var recommendView = UIView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 102))
-        recommendView.backgroundColor = UIColor(red: 0.98, green: 0.90, blue: 0.90, alpha: 1)
-        recommendView.layer.cornerRadius = 3
-        recommendView.layer.shadowColor = Color.red.CGColor
-        recommendView.layer.shadowRadius = 2.0
-        recommendView.layer.shadowOffset = CGSize(width: 1, height: 2)
-        recommendView.layer.shadowOpacity = 0.4
+        recommendView.backgroundColor = Color.blockBackground
+        recommendView.layer.cornerRadius = Layer.cornerRadius
+        recommendView.layer.shadowColor = Layer.shadowColor
+        recommendView.layer.shadowRadius = Layer.shadowRadius
+        recommendView.layer.shadowOffset = Layer.shadowOffset
+        recommendView.layer.shadowOpacity = Layer.shadowOpacity
         
         var englishLabel = UILabel(frame: CGRect(x: 10, y: 3, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
         englishLabel.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun dsafas dfasfasf dfasdfasf dfadsfasfas"
@@ -93,7 +93,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: englishLabel.font,
             NSForegroundColorAttributeName: Color.red,
-            NSStrokeWidthAttributeName: NSNumber(float: -2.0)
+            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
             ])
         englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
         recommendView.addSubview(englishLabel)
@@ -109,7 +109,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
             NSParagraphStyleAttributeName: paragraphStyleForChinese,
             NSFontAttributeName: chineseLabel.font,
             NSForegroundColorAttributeName: UIColor(red: 0.41, green: 0.42, blue: 0.42, alpha: 1),
-            NSStrokeWidthAttributeName: NSNumber(float: -1.3)
+            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
             ])
         chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
         recommendView.addSubview(chineseLabel)
@@ -200,7 +200,6 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         self.scrollViewForTabItems = UIScrollView()
         self.scrollViewForTabItems.frame = CGRectMake(0, self.homeScrollView.frame.height + 49, viewWidth, viewHeight)
-        self.scrollViewForTabItems.backgroundColor = UIColor.purpleColor()
         self.scrollViewForTabItems.pagingEnabled = true
         self.scrollViewForTabItems.showsHorizontalScrollIndicator = false
         self.scrollViewForTabItems.bounces = false

@@ -133,7 +133,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         var homeController = self.parentViewController as HomeController
         
         if (offset < -70) {
-            homeController.homeScrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+            homeController.scrollToPageUpAndDown(page: 0)
         }
     }
 }

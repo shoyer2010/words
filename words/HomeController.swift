@@ -311,6 +311,18 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         }
     }
     
+    func scrollToPageUpAndDown(page: Int = 0) {
+        self.homeScrollView.setContentOffset(CGPoint(x: 0, y: self.view.frame.height * CGFloat(page)), animated: true)
+        
+        var parentController = self.parentViewController as ApplicationController
+        switch(page) {
+        case 0:
+            parentController.setCurrentPage(PageCode.Home)
+        default:
+            break
+        }
+    }
+    
     func onTapArticleIcon(sender: UIView) {
         var favouriteArticleController = FavouriteArticleController()
         self.addChildViewController(favouriteArticleController)

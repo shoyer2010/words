@@ -11,5 +11,5 @@ import UIKit
 struct Color {
     static let red: UIColor = UIColor(red: 0.82, green: 0.22, blue: 0.21, alpha: 1.0)
     static let gray: UIColor = UIColor(red: 0.22, green: 0.20, blue: 0.17, alpha: 1.0)
-    static let homeBackground = UIColor(red: 0.95, green: 0.96, blue: 0.98, alpha: 1.0)
+    static let appBackground = UIColor(red: 0.95, green: 0.96, blue: 0.98, alpha: 1.0)
 }

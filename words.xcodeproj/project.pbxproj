@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
 		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
 		A42703671A7F39DD005159AC /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703661A7F39DD005159AC /* Util.swift */; };
 		A427037A1A7F7924005159AC /* ApplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703791A7F7924005159AC /* ApplicationController.swift */; };
@@ -21,6 +22,7 @@
 		A427038C1A809891005159AC /* HelpController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427038B1A809891005159AC /* HelpController.swift */; };
 		A427038E1A809D46005159AC /* FavouriteArticleController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A427038D1A809D46005159AC /* FavouriteArticleController.swift */; };
 		A42703931A812AB0005159AC /* PageCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703921A812AB0005159AC /* PageCode.swift */; };
+		A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
 		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
@@ -44,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A42703661A7F39DD005159AC /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		A42703791A7F7924005159AC /* ApplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationController.swift; sourceTree = "<group>"; };
@@ -58,6 +61,7 @@
 		A427038B1A809891005159AC /* HelpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpController.swift; sourceTree = "<group>"; };
 		A427038D1A809D46005159AC /* FavouriteArticleController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteArticleController.swift; sourceTree = "<group>"; };
 		A42703921A812AB0005159AC /* PageCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageCode.swift; sourceTree = "<group>"; };
+		A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正楷体简体.ttf"; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +101,7 @@
 			children = (
 				A42703631A7E7A42005159AC /* Color.swift */,
 				A42703921A812AB0005159AC /* PageCode.swift */,
+				A402249E1A83D39B006AF7E4 /* Fonts.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -168,6 +173,7 @@
 		A4A8B6071A7A563300C59E63 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */,
 				A4A8B6081A7A563300C59E63 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -272,6 +278,7 @@
 			files = (
 				A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */,
 				A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */,
+				A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +304,7 @@
 				A4A8B62A1A7A58E300C59E63 /* HomeController.swift in Sources */,
 				A42703881A7FB7BE005159AC /* AccountController.swift in Sources */,
 				A427038C1A809891005159AC /* HelpController.swift in Sources */,
+				A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */,
 				A42703841A7FB5F2005159AC /* StatisticsController.swift in Sources */,
 				A4A8B6361A7BB56200C59E63 /* DictionaryController.swift in Sources */,
 				A4A8B62E1A7A633C00C59E63 /* API.swift in Sources */,

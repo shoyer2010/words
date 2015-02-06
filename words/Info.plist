@@ -32,5 +32,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIAppFonts</key>
+    <array>
+        <string>方正楷体简体.ttf</string>
+    </array>
 </dict>
 </plist>

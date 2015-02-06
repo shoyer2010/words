@@ -67,14 +67,14 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         viewHomePage.addSubview(homeTopBar)
         
         var homeBody = UIView(frame: CGRect(x: 0, y: 55, width: viewHomePage.frame.width, height: viewHomePage.frame.height - 55))
-        homeBody.backgroundColor = Color.homeBackground
+        homeBody.backgroundColor = Color.appBackground
         
         var todayRecommend = UILabel(frame: CGRect(x: 15, y: 10, width: homeBody.frame.width - 30, height: 30))
-        todayRecommend.font = UIFont(name: todayRecommend.font.fontName, size: CGFloat(15))
+        todayRecommend.font = UIFont(name: todayRecommend.font.fontName, size: CGFloat(16))
         todayRecommend.text = "今日推荐"
         homeBody.addSubview(todayRecommend)
         
-        var recommendView = UIView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 100))
+        var recommendView = UIView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 102))
         recommendView.backgroundColor = UIColor(red: 0.98, green: 0.90, blue: 0.90, alpha: 1)
         recommendView.layer.cornerRadius = 3
         recommendView.layer.shadowColor = Color.red.CGColor
@@ -82,32 +82,34 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         recommendView.layer.shadowOffset = CGSize(width: 1, height: 2)
         recommendView.layer.shadowOpacity = 0.4
         
-        var englishLabel = UILabel(frame: CGRect(x: 10, y: 0, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
+        var englishLabel = UILabel(frame: CGRect(x: 10, y: 3, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
         englishLabel.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun dsafas dfasfasf dfasdfasf dfadsfasfas"
         englishLabel.numberOfLines = 2
-        englishLabel.font = UIFont(name: englishLabel.font.fontName, size: CGFloat(14))
+        englishLabel.font = UIFont(name: "Cochin", size: CGFloat(16))
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyle.lineSpacing = 5
         var attributes = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: englishLabel.font,
-            NSForegroundColorAttributeName: Color.red
+            NSForegroundColorAttributeName: Color.red,
+            NSStrokeWidthAttributeName: NSNumber(float: -2.0)
             ])
         englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
         recommendView.addSubview(englishLabel)
         
-        var chineseLabel = UILabel(frame: CGRect(x: 10, y: recommendView.frame.height / 2, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
+        var chineseLabel = UILabel(frame: CGRect(x: 10, y: recommendView.frame.height / 2 + 2, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
         chineseLabel.text = "总体来说个性化定制UITextView中的内容有两种方法总体来说个性化定制UITextView中的内容有两种方法"
         chineseLabel.numberOfLines = 2
-        chineseLabel.font = UIFont(name: chineseLabel.font.fontName, size: CGFloat(12))
+        chineseLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
         var paragraphStyleForChinese = NSMutableParagraphStyle()
         paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyleForChinese.lineSpacing = 7
         var attributesForChinese = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForChinese,
             NSFontAttributeName: chineseLabel.font,
-            NSForegroundColorAttributeName: UIColor(red: 0.41, green: 0.42, blue: 0.42, alpha: 1)
+            NSForegroundColorAttributeName: UIColor(red: 0.41, green: 0.42, blue: 0.42, alpha: 1),
+            NSStrokeWidthAttributeName: NSNumber(float: -1.3)
             ])
         chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
         recommendView.addSubview(chineseLabel)
@@ -116,7 +118,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(recommendView)
         
         var needToLearnIcon = UIView(frame: CGRect(x: 60, y: 180, width: 24, height: 24))
-        needToLearnIcon.backgroundColor = Color.red
+        needToLearnIcon.backgroundColor = UIColor(patternImage: UIImage(named: "needToLearnIcon.png")!)
         homeBody.addSubview(needToLearnIcon)
         
         var needToLearnLabel = UILabel(frame: CGRect(x: 90, y: 180, width: 250, height: 24))
@@ -124,7 +126,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(needToLearnLabel)
         
         var rankIcon = UIView(frame: CGRect(x: 60, y: 220, width: 24, height: 24))
-        rankIcon.backgroundColor = Color.red
+        rankIcon.backgroundColor = UIColor(patternImage: UIImage(named: "rankIcon.png")!)
         homeBody.addSubview(rankIcon)
         
         var rankLabel = UILabel(frame: CGRect(x: 90, y: 220, width: 250, height: 24))
@@ -132,7 +134,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(rankLabel)
         
         var dictionaryIcon = UIView(frame: CGRect(x: 60, y: 260, width: 24, height: 24))
-        dictionaryIcon.backgroundColor = Color.red
+        dictionaryIcon.backgroundColor = UIColor(patternImage: UIImage(named: "dictionaryIcon.png")!)
         homeBody.addSubview(dictionaryIcon)
         
         var dictionaryLabel = UILabel(frame: CGRect(x: 90, y: 260, width: 250, height: 24))
@@ -140,14 +142,19 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(dictionaryLabel)
         
         var startLearn = UIView(frame: CGRect(x: homeBody.frame.width / 2 - 50, y: homeBody.frame.height - 120, width: 100, height: 100))
-        startLearn.backgroundColor = Color.red
+        startLearn.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
         startLearn.layer.cornerRadius = 50
         startLearn.layer.masksToBounds = true
         startLearn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onStartLearnTapped:"))
         
-        var startLearnLabel = UILabel(frame: CGRect(x: 15, y: 0, width: 100, height: 100))
+        var startLearnLabel = UILabel(frame: CGRect(x: 20, y: 2, width: 100, height: 80))
         startLearnLabel.text = "开始受虐"
-        startLearnLabel.textColor = UIColor.whiteColor()
+        startLearnLabel.font = UIFont(name: startLearnLabel.font.fontName, size: CGFloat(15))
+        startLearnLabel.textColor = Color.red
+        startLearnLabel.layer.shadowColor = UIColor.redColor().CGColor
+        startLearnLabel.layer.shadowOpacity = 0.3
+        startLearnLabel.layer.shadowRadius = 2
+        startLearnLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
         startLearn.addSubview(startLearnLabel)
         homeBody.addSubview(startLearn)
         

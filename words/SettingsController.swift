@@ -14,30 +14,57 @@ class SettingsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(3)
+        self.view.backgroundColor = Color.appBackground
         
-        var shouldNotifyLabel = UILabel(frame: CGRect(x: 15, y: 25, width: 200, height: 20))
+        var shouldNotifyLabel = UILabel(frame: CGRect(x: 15, y: 25, width: 200, height: 30))
         shouldNotifyLabel.text = "学习提醒"
         self.view.addSubview(shouldNotifyLabel)
         
-        var shouldNotify = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 20, width: 60, height: 20))
+        var shouldNotify = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 17, width: 100, height: 20))
+        shouldNotify.onTintColor = Color.red
+        shouldNotify.setOn(true, animated: true)
         self.view.addSubview(shouldNotify)
         
-        var shouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 20))
+        var shouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 85, width: 200, height: 20))
         shouldAutoVoiceLabel.text = "自动发音"
         self.view.addSubview(shouldAutoVoiceLabel)
         
-        var shouldAutoVoice = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 70, width: 60, height: 20))
+        var shouldAutoVoice = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 77, width: 100, height: 20))
+        shouldAutoVoice.onTintColor = Color.red
         self.view.addSubview(shouldAutoVoice)
         
-        var cachedLabel = UILabel(frame: CGRect(x: 15, y: 120, width: 150, height: 20))
+        var cachedLabel = UILabel(frame: CGRect(x: 15, y: 140, width: 150, height: 20))
         cachedLabel.text = "缓存占用: 20M"
         self.view.addSubview(cachedLabel)
         
-        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 75, y: 120, width: 60, height: 20))
+        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 133, width: 70, height: 30))
         clearButton.backgroundColor = Color.gray
         clearButton.setTitle("清理", forState: UIControlState.Normal)
+        clearButton.layer.cornerRadius = 15
+        clearButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
+        clearButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
+        clearButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
+        clearButton.addTarget(self, action: "clearCache:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(clearButton)
         
-        self.view.backgroundColor = UIColor(red:1, green:0, blue:1, alpha: 1)
+        var encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
+        encourageUsButton.backgroundColor = Color.gray
+        encourageUsButton.setTitle("求个好评", forState: UIControlState.Normal)
+        encourageUsButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
+        encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
+        encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
+        self.view.addSubview(encourageUsButton)
+    }
+    
+    func onTapDown(sender: UIButton) {
+        sender.backgroundColor = Color.red
+    }
+    
+    func onTapUp(sender: UIButton) {
+        sender.backgroundColor = Color.gray
+    }
+    
+    func clearCache(sender: UIButton) {
+        println("should cleaer cache here")
     }
 }

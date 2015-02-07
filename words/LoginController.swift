@@ -2,10 +2,9 @@
 import Foundation
 import UIKit
 
-class BuyHolyWaterController: UIViewController, APIDataDelegate {
+class LoginController: UIViewController, APIDataDelegate {
     var subView: UIView!
     var subViewHeight: CGFloat = 150
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -24,32 +23,30 @@ class BuyHolyWaterController: UIViewController, APIDataDelegate {
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
         }
-        var item01 = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 110, y: 20, width: 60, height: 60))
-        item01.backgroundColor = Color.red
-        item01.setTitle("10元500滴", forState: UIControlState.Normal)
-        item01.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item01)
         
-        var item02 = UIButton(frame: CGRect(x: item01.frame.origin.x + item01.frame.width + 20, y: 20, width: 60, height: 60))
-        item02.backgroundColor = Color.red
-        item02.setTitle("20元1500滴", forState: UIControlState.Normal)
-        item02.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item02)
+        var usernameLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 20, width: 60, height: 20))
+        usernameLabel.text = "用户名"
+        self.subView.addSubview(usernameLabel)
         
-        var item03 = UIButton(frame: CGRect(x: item02.frame.origin.x + item02.frame.width + 20, y: 20, width: 60, height: 60))
-        item03.backgroundColor = Color.red
-        item03.setTitle("30元3000滴", forState: UIControlState.Normal)
-        item03.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item03)
-
+        var username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 120, height: 20))
+        username.backgroundColor = Color.white
+        self.subView.addSubview(username)
         
+        var passwordLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 55, width: 60, height: 20))
+        passwordLabel.text = "密   码"
+        self.subView.addSubview(passwordLabel)
         
-        var buyButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
-        buyButton.backgroundColor = Color.gray
-        buyButton.setTitle("购买", forState: UIControlState.Normal)
-        self.subView.addSubview(buyButton)
+        var password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 120, height: 20))
+        password.backgroundColor = Color.white
+        password.secureTextEntry = true
+        self.subView.addSubview(password)
         
-        var cancelButton = UIButton(frame: CGRect(x: buyButton.frame.origin.x + buyButton.frame.width + 20, y: 100, width: 60, height: 23))
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
+        submitButton.backgroundColor = Color.gray
+        submitButton.setTitle("登录", forState: UIControlState.Normal)
+        self.subView.addSubview(submitButton)
+        
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
         cancelButton.backgroundColor = Color.red
         cancelButton.setTitle("取消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)

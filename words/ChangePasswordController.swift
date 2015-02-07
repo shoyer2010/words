@@ -4,6 +4,7 @@ import UIKit
 
 class ChangePasswordController: UIViewController, APIDataDelegate {
     var subView: UIView!
+    var subViewHeight: CGFloat = 150
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -12,14 +13,14 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapView:"))
         
-        self.subView = UIView(frame: CGRect(x: 0, y: -150, width: self.view.frame.width, height: 150))
+        self.subView = UIView(frame: CGRect(x: 0, y: -self.subViewHeight, width: self.view.frame.width, height: self.subViewHeight))
         self.subView.backgroundColor = Color.white.colorWithAlphaComponent(0.89)
         self.subView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil)) // prevent tap event from delivering to parent view.
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
-            self.subView.transform = CGAffineTransformMakeTranslation(0, 150)
+            self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
         }
@@ -68,7 +69,7 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
     
     func closeView() {
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
-            self.subView.transform = CGAffineTransformMakeTranslation(0, -150)
+            self.subView.transform = CGAffineTransformMakeTranslation(0, -self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
             }) { (isDone: Bool) -> Void in
                 self.view.removeFromSuperview()

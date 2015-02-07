@@ -20,9 +20,25 @@ class AccountController: UIViewController {
         usernameLabel.text = "用户名： shoyer"
         self.view.addSubview(usernameLabel)
         
+        var upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 23, width: 70, height: 26))
+        upgradeButton.backgroundColor = Color.gray
+        upgradeButton.layer.cornerRadius = 13
+        upgradeButton.setTitle("升级", forState: UIControlState.Normal)
+        upgradeButton.addTarget(self, action: "goToRegisterPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(upgradeButton)
+        
         var holyWaterLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
         holyWaterLabel.text = "圣水： 2323"
         self.view.addSubview(holyWaterLabel)
+        
+        var holyWaterInfoButton = UIButton(frame: CGRect(x: holyWaterLabel.frame.origin.x + 100, y: 80, width: 20, height: 20))
+        holyWaterInfoButton.setTitle("i", forState: UIControlState.Normal)
+        holyWaterInfoButton.backgroundColor = Color.red
+        holyWaterInfoButton.addTarget(self, action: "showHolyWaterInfo:", forControlEvents: UIControlEvents.TouchUpInside)
+        holyWaterInfoButton.layer.cornerRadius = 10
+        
+        
+        self.view.addSubview(holyWaterInfoButton)
         
         var getHolyWaterButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 75, width: 70, height: 26))
         getHolyWaterButton.backgroundColor = Color.gray
@@ -55,7 +71,14 @@ class AccountController: UIViewController {
         var logoutButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
         logoutButton.backgroundColor = Color.red
         logoutButton.setTitle("切换账户", forState: UIControlState.Normal)
+        logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
+    }
+    
+    func goToRegisterPage(sender: UIButton) {
+        var registerController = RegisterController()
+        self.addChildViewController(registerController)
+        self.view.addSubview(registerController.view)
     }
     
     func goToChangePasswordPage(sender: UIButton) {
@@ -68,5 +91,17 @@ class AccountController: UIViewController {
         var buyHolyWaterController = BuyHolyWaterController()
         self.addChildViewController(buyHolyWaterController)
         self.view.addSubview(buyHolyWaterController.view)
+    }
+    
+    func showHolyWaterInfo(sender: UIButton) {
+        var holyWaterInfoController = HolyWaterInfoController()
+        self.addChildViewController(holyWaterInfoController)
+        self.view.addSubview(holyWaterInfoController.view)
+    }
+    
+    func goToLoginPage(sender: UIButton) {
+        var loginController = LoginController()
+        self.addChildViewController(loginController)
+        self.view.addSubview(loginController.view)
     }
 }

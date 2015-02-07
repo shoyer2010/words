@@ -53,6 +53,7 @@ class SettingsController: UIViewController {
         encourageUsButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
         encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
         encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
+        encourageUsButton.addTarget(self, action: "goToAppstore:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(encourageUsButton)
     }
     
@@ -66,5 +67,10 @@ class SettingsController: UIViewController {
     
     func clearCache(sender: UIButton) {
         println("should cleaer cache here")
+    }
+    
+    func goToAppstore(sender: UIButton) {
+        // TODO: should go to appstore page.
+        println("should go to appstore page")
     }
 }

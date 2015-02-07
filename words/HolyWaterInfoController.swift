@@ -2,7 +2,7 @@
 import Foundation
 import UIKit
 
-class BuyHolyWaterController: UIViewController, APIDataDelegate {
+class HolyWaterInfoController: UIViewController, APIDataDelegate {
     var subView: UIView!
     var subViewHeight: CGFloat = 150
     
@@ -24,36 +24,10 @@ class BuyHolyWaterController: UIViewController, APIDataDelegate {
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
         }
-        var item01 = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 110, y: 20, width: 60, height: 60))
-        item01.backgroundColor = Color.red
-        item01.setTitle("10元500滴", forState: UIControlState.Normal)
-        item01.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item01)
         
-        var item02 = UIButton(frame: CGRect(x: item01.frame.origin.x + item01.frame.width + 20, y: 20, width: 60, height: 60))
-        item02.backgroundColor = Color.red
-        item02.setTitle("20元1500滴", forState: UIControlState.Normal)
-        item02.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item02)
-        
-        var item03 = UIButton(frame: CGRect(x: item02.frame.origin.x + item02.frame.width + 20, y: 20, width: 60, height: 60))
-        item03.backgroundColor = Color.red
-        item03.setTitle("30元3000滴", forState: UIControlState.Normal)
-        item03.titleLabel?.font = UIFont.systemFontOfSize(10)
-        self.subView.addSubview(item03)
-
-        
-        
-        var buyButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
-        buyButton.backgroundColor = Color.gray
-        buyButton.setTitle("购买", forState: UIControlState.Normal)
-        self.subView.addSubview(buyButton)
-        
-        var cancelButton = UIButton(frame: CGRect(x: buyButton.frame.origin.x + buyButton.frame.width + 20, y: 100, width: 60, height: 23))
-        cancelButton.backgroundColor = Color.red
-        cancelButton.setTitle("取消", forState: UIControlState.Normal)
-        cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
-        self.subView.addSubview(cancelButton)
+        var infoLabel = UILabel(frame: CGRect(x: 15, y: 20, width: self.subView.frame.width - 30, height: 100))
+        infoLabel.text = "介绍圣水的使用和获取页面"
+        self.subView.addSubview(infoLabel)
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {

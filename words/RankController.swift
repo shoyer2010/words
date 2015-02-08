@@ -32,7 +32,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         activeRankTableViewWrap.layer.shadowRadius = Layer.shadowRadius
         activeRankTableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
-        var activeRankTableView = UITableView(frame: CGRect(x: 5, y: 5, width: activeRankTableViewWrap.frame.width - 10, height: activeRankTableViewWrap.frame.height - 10), style: UITableViewStyle.Plain)
+        var activeRankTableView = UITableView(frame: CGRect(x: 6, y: 6, width: activeRankTableViewWrap.frame.width - 12, height: activeRankTableViewWrap.frame.height - 12), style: UITableViewStyle.Plain)
         activeRankTableView.dataSource = self
         activeRankTableView.delegate = self
         activeRankTableView.layer.cornerRadius = Layer.cornerRadius

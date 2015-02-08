@@ -132,7 +132,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         var offset = scrollView.contentOffset.y
         var homeController = self.parentViewController as HomeController
         
-        if (offset < -70) {
+        if (offset < Interaction.offsetForChangePage) {
             homeController.scrollToPageUpAndDown(page: 0)
         }
     }

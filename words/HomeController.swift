@@ -108,7 +108,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         var attributesForChinese = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForChinese,
             NSFontAttributeName: chineseLabel.font,
-            NSForegroundColorAttributeName: UIColor(red: 0.41, green: 0.42, blue: 0.42, alpha: 1),
+            NSForegroundColorAttributeName: Color.lightGray,
             NSStrokeWidthAttributeName: NSNumber(float: -1.0)
             ])
         chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)

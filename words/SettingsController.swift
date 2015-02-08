@@ -47,6 +47,20 @@ class SettingsController: UIViewController {
         clearButton.addTarget(self, action: "clearCache:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(clearButton)
         
+        var versionLabel = UILabel(frame: CGRect(x: 15, y: 195, width: 150, height: 20))
+        versionLabel.text = "当前版本：1.0.0"
+        self.view.addSubview(versionLabel)
+        
+        var upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 188, width: 70, height: 30))
+        upgradeButton.backgroundColor = Color.gray
+        upgradeButton.setTitle("升级", forState: UIControlState.Normal)
+        upgradeButton.layer.cornerRadius = 15
+        upgradeButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
+        upgradeButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
+        upgradeButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
+        upgradeButton.addTarget(self, action: "upgradeApp:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(upgradeButton)
+        
         var encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
         encourageUsButton.backgroundColor = Color.gray
         encourageUsButton.setTitle("求个好评", forState: UIControlState.Normal)
@@ -67,6 +81,10 @@ class SettingsController: UIViewController {
     
     func clearCache(sender: UIButton) {
         println("should cleaer cache here")
+    }
+    
+    func upgradeApp(sender: UIButton) {
+        println("should upgrade here")
     }
     
     func goToAppstore(sender: UIButton) {

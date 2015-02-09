@@ -3,6 +3,9 @@ import UIKit
 class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
 
     var commonTableView: UITableView!
+    var dictionaryNameLabelTag = 1000
+    var countLabelTag = 1001
+    var popularLabelTag = 1002
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,27 +64,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         myCurrentDictionaryLabel.attributedText = NSAttributedString(string: myCurrentDictionaryLabel.text!, attributes: attributes)
         myCurrentDictionaryLabelWrap.addSubview(myCurrentDictionaryLabel)
         self.view.addSubview(myCurrentDictionaryLabelWrap)
-      
-//        var breakedCountLabel = UILabel(frame: CGRect(x: 15, y: 100, width: 200, height: 20))
-//        breakedCountLabel.text = "记录被打破：20次"
-//        self.view.addSubview(breakedCountLabel)
-//        
-//        var keeperLabel = UILabel(frame: CGRect(x: 15, y: 130, width: 200, height: 20))
-//        keeperLabel.text = "记录保持者： shoyer"
-//        self.view.addSubview(keeperLabel)
-//        
-//        var keepDaysLabel = UILabel(frame: CGRect(x: 15, y: 160, width: 200, height: 20))
-//        keepDaysLabel.text = "保持时间： 232天"
-//        self.view.addSubview(keepDaysLabel)
-//        
-//        var dictionaryTableView = UITableView(frame: CGRect(x: 15, y: 190, width: self.view.frame.width - 30, height: self.view.frame.height - 200))
-//        dictionaryTableView.backgroundColor = UIColor.whiteColor()
-//        dictionaryTableView.delegate = self
-//        dictionaryTableView.dataSource = self
-        
-//        self.view.addSubview(dictionaryTableView)
-        
-        
 
 //        API.instance.get("/dictionary/list", delegate: self)
     }
@@ -110,92 +92,79 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 注意，实际数据填充的时候，这里要用可复用的cell， 资料；http://www.cnblogs.com/smileEvday/archive/2012/06/28/tableView.html
         
-        var cell = UITableViewCell()
-        cell.separatorInset = UIEdgeInsetsZero
-        cell.layoutMargins = UIEdgeInsetsZero
-        cell.selectionStyle = UITableViewCellSelectionStyle.None
-        
-        if (indexPath.row == 5) { // 当前正在学习词库的样式
-            var selectedRow = UIView(frame: CGRect(x: 0, y: 0, width: 3, height: 40))
-            selectedRow.backgroundColor = Color.red
-            cell.addSubview(selectedRow)
+        var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("dictionaryCell") as? UITableViewCell
+        if (cell == nil) {
+            cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "dictionaryCell")
+            cell!.separatorInset = UIEdgeInsetsZero
+            cell!.layoutMargins = UIEdgeInsetsZero
+//            cell!.selectionStyle = UITableViewCellSelectionStyle.None
+            var selectedView = UIView(frame: cell!.frame)
+            selectedView.backgroundColor = Color.red
+            cell!.selectedBackgroundView = selectedView
+            
+            if (indexPath.row == 5) { // 当前正在学习词库的样式
+                var selectedRow = UIView(frame: CGRect(x: 0, y: 0, width: 3, height: 40))
+                selectedRow.backgroundColor = Color.red
+                cell!.addSubview(selectedRow)
+            }
+            
+            var dictionaryNameLabel = UILabel(frame: CGRect(x: 6, y: 6, width: tableView.frame.width * 0.6, height: 16))
+            dictionaryNameLabel.tag = self.dictionaryNameLabelTag
+            dictionaryNameLabel.text = "大学英语4级"
+            dictionaryNameLabel.textAlignment = NSTextAlignment.Left
+            dictionaryNameLabel.font = UIFont(name: dictionaryNameLabel.font.fontName, size: CGFloat(15))
+            cell!.addSubview(dictionaryNameLabel)
+            
+            var countLabel = UILabel(frame: CGRect(x: 6, y: dictionaryNameLabel.frame.origin.y + dictionaryNameLabel.frame.height + 2, width: 100, height: 12))
+            countLabel.tag = self.countLabelTag
+            countLabel.text = "单词：0"
+            countLabel.textColor = Color.lightGray
+            countLabel.font = UIFont(name: countLabel.font.fontName, size: CGFloat(10))
+            countLabel.textAlignment = NSTextAlignment.Left
+            cell!.addSubview(countLabel)
+            
+            var popularLabel = UILabel(frame: CGRect(x: tableView.frame.width * 0.25, y: dictionaryNameLabel.frame.origin.y + dictionaryNameLabel.frame.height + 2, width: 100, height: 12))
+            popularLabel.tag = self.popularLabelTag
+            popularLabel.text = "人气：2323"
+            popularLabel.textColor = Color.lightGray
+            popularLabel.font = UIFont(name: popularLabel.font.fontName, size: CGFloat(10))
+            popularLabel.textAlignment = NSTextAlignment.Left
+            cell!.addSubview(popularLabel)
         }
         
-        var dictionaryNameLabel = UILabel(frame: CGRect(x: 6, y: 6, width: tableView.frame.width * 0.6, height: 16))
-        dictionaryNameLabel.text = "大学英语4级"
-        dictionaryNameLabel.textAlignment = NSTextAlignment.Left
-        dictionaryNameLabel.font = UIFont(name: dictionaryNameLabel.font.fontName, size: CGFloat(15))
-        cell.addSubview(dictionaryNameLabel)
+        var dictionaryNameLabel = cell!.viewWithTag(self.dictionaryNameLabelTag) as UILabel
+        dictionaryNameLabel.text = "大学英语4级" + String(indexPath.row)
         
-        var countLabel = UILabel(frame: CGRect(x: 6, y: dictionaryNameLabel.frame.origin.y + dictionaryNameLabel.frame.height + 2, width: 100, height: 12))
-        countLabel.text = "单词：2323"
-        countLabel.textColor = Color.lightGray
-        countLabel.font = UIFont(name: countLabel.font.fontName, size: CGFloat(10))
-        countLabel.textAlignment = NSTextAlignment.Left
-        cell.addSubview(countLabel)
+        var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
+        countLabel.text = "单词：\(indexPath.row * 10)"
         
-        var popularLabel = UILabel(frame: CGRect(x: tableView.frame.width * 0.25, y: dictionaryNameLabel.frame.origin.y + dictionaryNameLabel.frame.height + 2, width: 100, height: 12))
-        popularLabel.text = "人气：2323"
-        popularLabel.textColor = Color.lightGray
-        popularLabel.font = UIFont(name: popularLabel.font.fontName, size: CGFloat(10))
-        popularLabel.textAlignment = NSTextAlignment.Left
-        cell.addSubview(popularLabel)
+        var popularLabel = cell!.viewWithTag(self.popularLabelTag) as UILabel
+        popularLabel.text = "人气：\(indexPath.row * 20)"
         
-        if (indexPath.row % 3 == 0) {
-            var downloadIcon = UILabel(frame: CGRect(x: tableView.frame.width - 96, y: 7, width: 26, height: 26))
-            downloadIcon.text = "↓"
-            downloadIcon.textColor = Color.white
-            downloadIcon.textAlignment = NSTextAlignment.Center
-            downloadIcon.backgroundColor = Color.listIconBackground
-            downloadIcon.layer.cornerRadius = 13
-            downloadIcon.layer.masksToBounds = true
-            cell.addSubview(downloadIcon)
-        } else {
-            var removeIcon = UILabel(frame: CGRect(x: tableView.frame.width - 96, y: 7, width: 26, height: 26))
-            removeIcon.text = "删"
-            removeIcon.textColor = Color.white
-            removeIcon.textAlignment = NSTextAlignment.Center
-            removeIcon.backgroundColor = Color.listIconBackground
-            removeIcon.layer.cornerRadius = 13
-            removeIcon.layer.masksToBounds = true
-            cell.addSubview(removeIcon)
-        }
-        
-        var challengeIcon = UILabel(frame: CGRect(x: tableView.frame.width - 64, y: 7, width: 26, height: 26))
-        challengeIcon.text = "战"
-        challengeIcon.textColor = Color.white
-        challengeIcon.textAlignment = NSTextAlignment.Center
-        challengeIcon.backgroundColor = Color.listIconBackground
-        challengeIcon.layer.cornerRadius = 13
-        challengeIcon.layer.masksToBounds = true
-        cell.addSubview(challengeIcon)
-        
-        var infoIcon = UIButton(frame: CGRect(x: tableView.frame.width - 32, y: 7, width: 26, height: 26))
-        infoIcon.setTitle("i", forState: UIControlState.Normal)
-        infoIcon.backgroundColor = Color.listIconBackground
-        infoIcon.layer.cornerRadius = 13
-        infoIcon.layer.masksToBounds = true
-        infoIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)
-        cell.addSubview(infoIcon)
-        
-        return cell
+        return cell!
     }
-    
-    func tableView(tableView: UITableView, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath) {
-        println(indexPath.row)
-    }
-    
-    func showInfoPage(sender: UIButton, event: UIEvent) {
-        var touches = event.allTouches()
-        var touch: AnyObject? = touches?.anyObject()
-        var currentTouchPosition = touch?.locationInView(self.commonTableView)
-        var indexPath = self.commonTableView.indexPathForRowAtPoint(currentTouchPosition!)
-        var row = indexPath!.row
 
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var dictionaryInfoController = DictionaryInfoController()
         self.addChildViewController(dictionaryInfoController)
         self.view.addSubview(dictionaryInfoController.view)
+        println("selected \(indexPath.row)")
     }
+
+    //downloadIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)
+//    func showInfoPage(sender: UIButton, event: UIEvent) {
+//        var touches = event.allTouches()
+//        var touch: AnyObject? = touches?.anyObject()
+//        var currentTouchPosition = touch?.locationInView(self.commonTableView)
+//        var indexPath = self.commonTableView.indexPathForRowAtPoint(currentTouchPosition!)
+//        var row = indexPath!.row
+//        
+//        println(row)
+//
+//        var dictionaryInfoController = DictionaryInfoController()
+//        self.addChildViewController(dictionaryInfoController)
+//        self.view.addSubview(dictionaryInfoController.view)
+//    }
 
     
     

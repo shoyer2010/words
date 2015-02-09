@@ -73,51 +73,65 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // 注意，实际数据填充的时候，这里要用可复用的cell， 资料；http://www.cnblogs.com/smileEvday/archive/2012/06/28/tableView.html
         
-        var tableCell = UITableViewCell()
+        var rankNumberLabelTag = 1000
+        var usernameLableTag = 1001
+        var timeLableTag = 1002
         
-        var rankNumberLabel = UILabel(frame: CGRect(x: 15, y: 3, width: 24, height: 24))
-        rankNumberLabel.backgroundColor = Color.listIconBackground
-        rankNumberLabel.text = String(indexPath.row + 1)
-        rankNumberLabel.textColor = UIColor.whiteColor()
-        rankNumberLabel.textAlignment = NSTextAlignment.Center
-        rankNumberLabel.layer.cornerRadius = 12
-        rankNumberLabel.layer.masksToBounds = true
-        rankNumberLabel.font = UIFont(name: rankNumberLabel.font.fontName, size: CGFloat(12))
-        tableCell.contentView.addSubview(rankNumberLabel)
+        var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("rankCell") as? UITableViewCell
+        if (cell == nil) {
+            cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "rankCell")
+            
+            var rankNumberLabel = UILabel(frame: CGRect(x: 15, y: 3, width: 24, height: 24))
+            rankNumberLabel.tag = rankNumberLabelTag
+            rankNumberLabel.backgroundColor = Color.listIconBackground
+            rankNumberLabel.text = "1"
+            rankNumberLabel.textColor = UIColor.whiteColor()
+            rankNumberLabel.textAlignment = NSTextAlignment.Center
+            rankNumberLabel.layer.cornerRadius = 12
+            rankNumberLabel.layer.masksToBounds = true
+            rankNumberLabel.font = UIFont(name: rankNumberLabel.font.fontName, size: CGFloat(12))
+            cell!.contentView.addSubview(rankNumberLabel)
+            
+            var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.27 , y: 4, width: tableView.frame.width * 0.33, height: 20))
+            usernameLable.tag = usernameLableTag
+            usernameLable.text = "username"
+            usernameLable.font = UIFont(name: usernameLable.font.fontName, size: CGFloat(15))
+            var paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyle.alignment = NSTextAlignment.Center
+            var attributesForUsername = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyle,
+                NSFontAttributeName: usernameLable.font,
+                NSForegroundColorAttributeName: Color.listIconBackground,
+                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                ])
+            usernameLable.attributedText = NSAttributedString(string: usernameLable.text!, attributes: attributesForUsername)
+            cell!.contentView.addSubview(usernameLable)
+            
+            var timeLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.7 , y: 5, width: tableView.frame.width * 0.3 - 15, height: 20))
+            timeLable.tag = timeLableTag
+            timeLable.text = "2小时10分"
+            timeLable.font = UIFont(name: timeLable.font.fontName, size: CGFloat(13))
+            var paragraphStyleForTime = NSMutableParagraphStyle()
+            paragraphStyleForTime.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyleForTime.alignment = NSTextAlignment.Right
+            var attributesForTime = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyleForTime,
+                NSFontAttributeName: timeLable.font,
+                NSForegroundColorAttributeName: Color.listIconBackground,
+                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                ])
+            timeLable.attributedText = NSAttributedString(string: timeLable.text!, attributes: attributesForTime)
+            cell!.contentView.addSubview(timeLable)
+            
+            cell!.userInteractionEnabled = false
+        }
         
-        var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.27 , y: 4, width: tableView.frame.width * 0.33, height: 20))
-        usernameLable.text = "username"
-        usernameLable.font = UIFont(name: usernameLable.font.fontName, size: CGFloat(15))
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyle.alignment = NSTextAlignment.Center
-        var attributesForUsername = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: usernameLable.font,
-            NSForegroundColorAttributeName: Color.listIconBackground,
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        usernameLable.attributedText = NSAttributedString(string: usernameLable.text!, attributes: attributesForUsername)
-        tableCell.contentView.addSubview(usernameLable)
+        (cell!.viewWithTag(rankNumberLabelTag) as UILabel).text = String(indexPath.row + 1)
+        (cell!.viewWithTag(usernameLableTag) as UILabel).text = "username\(indexPath.row)"
+        (cell!.viewWithTag(timeLableTag) as UILabel).text = "2小时\(indexPath.row)分"
         
-        var timeLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.7 , y: 5, width: tableView.frame.width * 0.3 - 15, height: 20))
-        timeLable.text = "2小时10分"
-        timeLable.font = UIFont(name: timeLable.font.fontName, size: CGFloat(13))
-        var paragraphStyleForTime = NSMutableParagraphStyle()
-        paragraphStyleForTime.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyleForTime.alignment = NSTextAlignment.Right
-        var attributesForTime = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyleForTime,
-            NSFontAttributeName: timeLable.font,
-            NSForegroundColorAttributeName: Color.listIconBackground,
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        timeLable.attributedText = NSAttributedString(string: timeLable.text!, attributes: attributesForTime)
-        tableCell.contentView.addSubview(timeLable)
-        
-        tableCell.userInteractionEnabled = false
-        
-        return tableCell
+        return cell!
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

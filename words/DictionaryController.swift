@@ -3,6 +3,7 @@ import UIKit
 class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
 
     var commonTableView: UITableView!
+    var commonTableViewSelectedRow: Int?
     var dictionaryNameLabelTag = 1000
     var countLabelTag = 1001
     var popularLabelTag = 1002
@@ -97,10 +98,11 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "dictionaryCell")
             cell!.separatorInset = UIEdgeInsetsZero
             cell!.layoutMargins = UIEdgeInsetsZero
-//            cell!.selectionStyle = UITableViewCellSelectionStyle.None
-            var selectedView = UIView(frame: cell!.frame)
-            selectedView.backgroundColor = Color.red
-            cell!.selectedBackgroundView = selectedView
+            cell!.selectionStyle = UITableViewCellSelectionStyle.None
+            var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+            selectedView.tag = 999
+            selectedView.backgroundColor = UIColor.clearColor()
+            cell!.addSubview(selectedView)
             
             if (indexPath.row == 5) { // 当前正在学习词库的样式
                 var selectedRow = UIView(frame: CGRect(x: 0, y: 0, width: 3, height: 40))
@@ -141,6 +143,19 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         var popularLabel = cell!.viewWithTag(self.popularLabelTag) as UILabel
         popularLabel.text = "人气：\(indexPath.row * 20)"
         
+        var selectedView = cell!.viewWithTag(999)
+        if (indexPath.row == self.commonTableViewSelectedRow) {
+            selectedView?.backgroundColor = Color.red
+            dictionaryNameLabel.textColor = Color.white
+            countLabel.textColor = Color.white
+            popularLabel.textColor = Color.white
+        } else {
+            selectedView?.backgroundColor = UIColor.clearColor()
+            dictionaryNameLabel.textColor = Color.black
+            countLabel.textColor = Color.lightGray
+            popularLabel.textColor = Color.lightGray
+        }
+        
         return cell!
     }
 
@@ -149,6 +164,8 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         self.addChildViewController(dictionaryInfoController)
         self.view.addSubview(dictionaryInfoController.view)
         println("selected \(indexPath.row)")
+        self.commonTableViewSelectedRow = indexPath.row
+        tableView.reloadData()
     }
 
     //downloadIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)

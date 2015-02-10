@@ -17,7 +17,6 @@
 		812DE6441A8A300C00B9915D /* SQLite-Bridging.c in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6221A8A300C00B9915D /* SQLite-Bridging.c */; };
 		812DE6451A8A300C00B9915D /* Statement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6241A8A300C00B9915D /* Statement.swift */; };
 		812DE6461A8A300C00B9915D /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6251A8A300C00B9915D /* Value.swift */; };
-		812DE64D1A8A300C00B9915D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 812DE62E1A8A300C00B9915D /* Info.plist */; };
 		812DE65E1A8A307400B9915D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 812DE65D1A8A307400B9915D /* libsqlite3.dylib */; };
 		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
 		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
@@ -78,8 +77,6 @@
 		812DE6231A8A300C00B9915D /* SQLite-Bridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SQLite-Bridging.h"; sourceTree = "<group>"; };
 		812DE6241A8A300C00B9915D /* Statement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statement.swift; sourceTree = "<group>"; };
 		812DE6251A8A300C00B9915D /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
-		812DE62E1A8A300C00B9915D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		812DE62F1A8A300C00B9915D /* SQLite iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SQLite iOS.h"; sourceTree = "<group>"; };
 		812DE65D1A8A307400B9915D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -153,7 +150,6 @@
 			isa = PBXGroup;
 			children = (
 				812DE61B1A8A300C00B9915D /* SQLite Common */,
-				812DE62D1A8A300C00B9915D /* SQLite iOS */,
 			);
 			path = SQLite;
 			sourceTree = SOURCE_ROOT;
@@ -173,15 +169,6 @@
 				812DE6251A8A300C00B9915D /* Value.swift */,
 			);
 			path = "SQLite Common";
-			sourceTree = "<group>";
-		};
-		812DE62D1A8A300C00B9915D /* SQLite iOS */ = {
-			isa = PBXGroup;
-			children = (
-				812DE62E1A8A300C00B9915D /* Info.plist */,
-				812DE62F1A8A300C00B9915D /* SQLite iOS.h */,
-			);
-			path = "SQLite iOS";
 			sourceTree = "<group>";
 		};
 		A42703601A7E668A005159AC /* Settings */ = {
@@ -376,7 +363,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				812DE6431A8A300C00B9915D /* SQLite Common.xcconfig in Resources */,
-				812DE64D1A8A300C00B9915D /* Info.plist in Resources */,
 				A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */,
 				A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */,
 				A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */,

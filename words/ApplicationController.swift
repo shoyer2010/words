@@ -75,6 +75,8 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         switch(page) {
         case PageCode.Home:
             self.setUIStatusBarStyle(UIStatusBarStyle.LightContent)
+        case PageCode.ArticleForEnglish:
+            self.setUIStatusBarStyle(UIStatusBarStyle.LightContent)
         default:
             self.setUIStatusBarStyle(UIStatusBarStyle.Default)
         }

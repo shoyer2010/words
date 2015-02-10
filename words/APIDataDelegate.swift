@@ -16,4 +16,7 @@
     optional func dictionaryList(AnyObject)
     
     optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
+    
+    optional func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float)
+
 }

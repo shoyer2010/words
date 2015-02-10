@@ -9,8 +9,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     class var instance: API {
 //        return Inner.instance
-//        return API(host: "dev.coolhey.cn", port: "1337")
-        return API(host: "localhost", port: "1337")
+        return API(host: "dev.coolhey.cn", port: "1337")
+//        return API(host: "localhost", port: "1337")
     }
     
     let host: String
@@ -157,6 +157,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":
                 self.delegate!.dictionarySyncDictionary!(data!, progress: 1.0)
+            case "/dictionary/download":
+                self.delegate!.dictionaryDownloadDictionary!(data!, progress: 1.0)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }

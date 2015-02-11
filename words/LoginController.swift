@@ -57,9 +57,11 @@ class LoginController: UIViewController, APIDataDelegate {
         cancelButton.setTitle("取消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
+
     }
     
     func onLoginTapped(sender: UIButton) {
+        LoadingDialog.showLoading()
         var params: NSMutableDictionary = NSMutableDictionary()
         params.setValue(username.text, forKey: "username")
         params.setValue(password.text, forKey: "password")
@@ -68,7 +70,18 @@ class LoginController: UIViewController, APIDataDelegate {
     }
     
     func userLogin(data:AnyObject) {
-        LocalDatUtils()
+  
+        var dic :NSDictionary = data as NSDictionary
+        
+        if(dic.valueForKey("message") != nil) {
+            CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!)
+            
+            LoadingDialog.dismissLoading()
+            self.closeView()
+        }
+        else {
+            
+        }
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {

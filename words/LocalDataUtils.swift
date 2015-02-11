@@ -13,6 +13,25 @@ class LocalDatUtils :APIDataDelegate {
     
     init() {
         
+
+    }
+    
+    
+    
+    func saveLocalData(key: String, value:AnyObject) {
+        var data:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        data.setObject(value, forKey: key)
+    }
+    
+    func getLocalData(key: String) -> AnyObject {
+        var data:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        return data.objectForKey(key)!
+    }
+    
+    ///////////////////////////
+    
+    func test() {
+        
         saveLocalData("test", value: ["t1","t2"])
         var sArr: [String] = getLocalData("test") as [String]
         
@@ -24,7 +43,7 @@ class LocalDatUtils :APIDataDelegate {
         LogUtils.log("dir=\(dir)")
         
         var fileManager : NSFileManager = NSFileManager.defaultManager()
- 
+        
         getDicDbFile()
     }
     
@@ -73,16 +92,7 @@ class LocalDatUtils :APIDataDelegate {
         }
 
     }
-    
-    func saveLocalData(key: String, value:AnyObject) {
-        var data:NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        data.setObject(value, forKey: key)
-    }
-    
-    func getLocalData(key: String) -> AnyObject {
-        var data:NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        return data.objectForKey(key)!
-    }
+
     
     
 }

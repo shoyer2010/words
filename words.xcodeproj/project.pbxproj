@@ -18,6 +18,8 @@
 		812DE6451A8A300C00B9915D /* Statement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6241A8A300C00B9915D /* Statement.swift */; };
 		812DE6461A8A300C00B9915D /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6251A8A300C00B9915D /* Value.swift */; };
 		812DE65E1A8A307400B9915D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 812DE65D1A8A307400B9915D /* libsqlite3.dylib */; };
+		819CF1141A8B1AE300DCD494 /* LoadingDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819CF1131A8B1AE300DCD494 /* LoadingDialog.swift */; };
+		819CF1781A8B25D600DCD494 /* CacheDataUitls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819CF1771A8B25D600DCD494 /* CacheDataUitls.swift */; };
 		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
 		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
 		A42703671A7F39DD005159AC /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703661A7F39DD005159AC /* Util.swift */; };
@@ -78,6 +80,8 @@
 		812DE6241A8A300C00B9915D /* Statement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statement.swift; sourceTree = "<group>"; };
 		812DE6251A8A300C00B9915D /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
 		812DE65D1A8A307400B9915D /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		819CF1131A8B1AE300DCD494 /* LoadingDialog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingDialog.swift; sourceTree = "<group>"; };
+		819CF1771A8B25D600DCD494 /* CacheDataUitls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheDataUitls.swift; sourceTree = "<group>"; };
 		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A42703661A7F39DD005159AC /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -142,6 +146,8 @@
 			children = (
 				812DE5941A8A172300B9915D /* LocalDataUtils.swift */,
 				812DE5951A8A172300B9915D /* LogUtils.swift */,
+				819CF1131A8B1AE300DCD494 /* LoadingDialog.swift */,
+				819CF1771A8B25D600DCD494 /* CacheDataUitls.swift */,
 			);
 			name = Logic;
 			sourceTree = "<group>";
@@ -399,6 +405,7 @@
 				812DE6451A8A300C00B9915D /* Statement.swift in Sources */,
 				812DE6441A8A300C00B9915D /* SQLite-Bridging.c in Sources */,
 				A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */,
+				819CF1781A8B25D600DCD494 /* CacheDataUitls.swift in Sources */,
 				812DE63F1A8A300C00B9915D /* Database.swift in Sources */,
 				A42703841A7FB5F2005159AC /* StatisticsController.swift in Sources */,
 				812DE6411A8A300C00B9915D /* Query.swift in Sources */,
@@ -419,6 +426,7 @@
 				A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */,
 				812DE5971A8A172300B9915D /* LogUtils.swift in Sources */,
 				A427037C1A7FA272005159AC /* ArticleForChineseController.swift in Sources */,
+				819CF1141A8B1AE300DCD494 /* LoadingDialog.swift in Sources */,
 				A4A8B6301A7AA1A100C59E63 /* APIDataDelegate.swift in Sources */,
 				A4541F981A85D35500EAA761 /* RegisterController.swift in Sources */,
 				812DE6461A8A300C00B9915D /* Value.swift in Sources */,

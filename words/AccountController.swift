@@ -73,6 +73,19 @@ class AccountController: UIViewController {
         logoutButton.setTitle("切换账户", forState: UIControlState.Normal)
         logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
+        
+        
+        if(CacheDataUitls.isHasAnUser()) {
+            var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
+            
+            LogUtils.log("userInfo=\(userInfo)")
+            
+            var userName = userInfo.valueForKey("userName")! as String
+            usernameLabel.text = "用户名： \(userName)"
+            
+            var holyWater = userInfo.valueForKey("holyWater")! as Int
+            holyWaterLabel.text = "圣水 ： \(holyWater)"
+        }
     }
     
     func goToRegisterPage(sender: UIButton) {

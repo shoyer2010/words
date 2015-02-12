@@ -4,11 +4,12 @@ import UIKit
 
 class LoginController: UIViewController, APIDataDelegate {
     var subView: UIView!
-    var subViewHeight: CGFloat = 150
+    var subViewHeight: CGFloat = 170
     
     var username:UITextField!
     var password:UITextField!
     
+    var noticeLabel:UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,14 +47,19 @@ class LoginController: UIViewController, APIDataDelegate {
         password.secureTextEntry = true
         self.subView.addSubview(password)
         
-        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
-        submitButton.backgroundColor = Color.gray
+        
+        noticeLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 85, width: 160, height: 20))
+        noticeLabel.textColor = Color.red
+        self.subView.addSubview(noticeLabel)
+        
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width * 0.23, y: 110, width: 70, height: 23))
+        submitButton.backgroundColor = Color.red
         submitButton.setTitle("登录", forState: UIControlState.Normal)
         submitButton.addTarget(self, action: "onLoginTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
-        cancelButton.backgroundColor = Color.red
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 40, y: 110, width: 70, height: 23))
+        cancelButton.backgroundColor = Color.gray
         cancelButton.setTitle("取消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
@@ -61,28 +67,37 @@ class LoginController: UIViewController, APIDataDelegate {
     }
     
     func onLoginTapped(sender: UIButton) {
-        LoadingDialog.showLoading()
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(username.text, forKey: "username")
-        params.setValue(password.text, forKey: "password")
-        params.setValue(Util.getUDID(), forKey: "udid")
-        API.instance.get("/user/login", delegate: self,  params: params)
+        
+        if(username.text==nil || username.text.isEmpty) {
+           noticeLabel.text="请填写用户名！"
+        }
+        else if(password.text==nil || password.text.isEmpty) {
+            noticeLabel.text="请填写密码！"
+        }
+        else {
+            LoadingDialog.showLoading()
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(username.text, forKey: "username")
+            params.setValue(password.text, forKey: "password")
+            params.setValue(Util.getUDID(), forKey: "udid")
+            API.instance.get("/user/login", delegate: self,  params: params)
+        }
     }
     
     func userLogin(data:AnyObject) {
-  
         var dic :NSDictionary = data as NSDictionary
+
+        CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!)
         
-        if(dic.valueForKey("message") != nil) {
-            CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!)
-            
-            LoadingDialog.dismissLoading()
-            self.closeView()
-        }
-        else {
-            
-        }
+        LoadingDialog.dismissLoading()
+        self.closeView()
     }
+    
+    func error(error: Error, api: String) {
+        LoadingDialog.dismissLoading()
+        noticeLabel.text=error.getMessage()
+    }
+
     
     func onTapView(recognizer: UITapGestureRecognizer) {
         self.closeView()

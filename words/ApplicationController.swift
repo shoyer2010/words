@@ -48,6 +48,38 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         self.scrollView.addSubview(wordDetailController.view)
         
         self.scrollToPage(page: 2)
+        
+        autoLogin()
+    }
+    
+    func autoLogin() {
+        LoadingDialog.showLoading()
+        
+        if(CacheDataUitls.isHasAnUser()) {
+            
+            var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
+            
+            var userName = userInfo.valueForKey("userName")! as String
+            var password = userInfo.valueForKey("passWord")! as String
+            
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(userName, forKey: "username")
+            params.setValue(password, forKey: "password")
+            params.setValue(Util.getUDID(), forKey: "udid")
+            API.instance.get("/user/login", delegate: self,  params: params)
+        }else {
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(Util.getUDID(), forKey: "udid")
+            API.instance.post("/user/trial", delegate: self,  params: params)
+        }
+    }
+    
+    func userTrial(data:AnyObject) {
+        LoadingDialog.dismissLoading()
+    }
+    
+    func userLogin(data:AnyObject) {
+        LoadingDialog.dismissLoading()
     }
     
     func scrollToPage(page: Int = 2) {

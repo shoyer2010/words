@@ -11,6 +11,8 @@ class LoginController: UIViewController, APIDataDelegate {
     
     var noticeLabel:UILabel!
     
+    var accountCtrl :AccountController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -66,6 +68,10 @@ class LoginController: UIViewController, APIDataDelegate {
 
     }
     
+    func setAccountViewController(accountCtrl:AccountController) {
+        self.accountCtrl = accountCtrl
+    }
+    
     func onLoginTapped(sender: UIButton) {
         
         if(username.text==nil || username.text.isEmpty) {
@@ -87,7 +93,9 @@ class LoginController: UIViewController, APIDataDelegate {
     func userLogin(data:AnyObject) {
         var dic :NSDictionary = data as NSDictionary
 
-        CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!)
+        CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!, isTrial: false)
+        
+        self.accountCtrl.refreshUserInfo()
         
         LoadingDialog.dismissLoading()
         self.closeView()

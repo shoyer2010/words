@@ -12,11 +12,24 @@ struct CacheDataUitls {
     
     static let key_user_info = "key_user_info"
     static let key_user_id = "key_user_id"
+    static let key_user_is_trial = "key_user_is_trial"
+    
+    static let key_dictionary_list = "key_dictionary_list"
     
     
-    static func saveUserInfo(id:AnyObject, userName:AnyObject, passWord:AnyObject, holyWater:AnyObject) {
-        let userInfoDic=["id":id, "userName":userName, "passWord":passWord, "holyWater":holyWater]
-        saveLocalData(key_user_info, value: userInfoDic)
+    static func saveUserInfo(id:AnyObject, userName:AnyObject, passWord:AnyObject?, holyWater:AnyObject, isTrial:Bool) {
+        
+        saveLocalData(key_user_is_trial, value: isTrial)
+        
+        if(isTrial) {
+            let userTrialInfoDic = ["id":id, "userName":userName, "holyWater":holyWater]
+            saveLocalData(key_user_info, value: userTrialInfoDic)
+        }
+        else {
+            let userInfoDic = ["id":id, "userName":userName, "passWord":passWord!, "holyWater":holyWater]
+            saveLocalData(key_user_info, value: userInfoDic)
+        }
+        
         saveLocalData(key_user_id, value: id)
     }
     
@@ -40,8 +53,12 @@ struct CacheDataUitls {
         return false
     }
     
+    static func isUserTrial() ->Bool {
+        return getLocalData(key_user_is_trial) as Bool
+    }
     
-    static func saveLocalData(key: String, value:AnyObject) {
+    
+    static func saveLocalData(key: String, value:AnyObject?) {
         var data:NSUserDefaults = NSUserDefaults.standardUserDefaults()
         data.setObject(value, forKey: key)
     }

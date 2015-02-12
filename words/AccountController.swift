@@ -11,23 +11,27 @@ import UIKit
 
 class AccountController: UIViewController {
     
+    var holyWaterLabel :UILabel!
+    var usernameLabel  :UILabel!
+    var upgradeButton :UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(4)
         self.view.backgroundColor = Color.appBackground
         
-        var usernameLabel = UILabel(frame: CGRect(x: 15, y: 25, width: 200, height: 30))
+        usernameLabel = UILabel(frame: CGRect(x: 15, y: 25, width: 200, height: 30))
         usernameLabel.text = "用户名： shoyer"
         self.view.addSubview(usernameLabel)
         
-        var upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 23, width: 70, height: 26))
+        upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 23, width: 70, height: 26))
         upgradeButton.backgroundColor = Color.gray
         upgradeButton.layer.cornerRadius = 13
         upgradeButton.setTitle("升级", forState: UIControlState.Normal)
         upgradeButton.addTarget(self, action: "goToRegisterPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(upgradeButton)
         
-        var holyWaterLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
+        holyWaterLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
         holyWaterLabel.text = "圣水： 2323"
         self.view.addSubview(holyWaterLabel)
         
@@ -74,17 +78,21 @@ class AccountController: UIViewController {
         logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
         
-        
+        refreshUserInfo()
+    }
+    
+    func refreshUserInfo() {
         if(CacheDataUitls.isHasAnUser()) {
             var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
-            
-            LogUtils.log("userInfo=\(userInfo)")
             
             var userName = userInfo.valueForKey("userName")! as String
             usernameLabel.text = "用户名： \(userName)"
             
             var holyWater = userInfo.valueForKey("holyWater")! as Int
             holyWaterLabel.text = "圣水 ： \(holyWater)"
+            
+            upgradeButton.hidden  = !CacheDataUitls.isUserTrial()
+            
         }
     }
     
@@ -114,6 +122,7 @@ class AccountController: UIViewController {
     
     func goToLoginPage(sender: UIButton) {
         var loginController = LoginController()
+        loginController.setAccountViewController(self)
         self.addChildViewController(loginController)
         self.view.addSubview(loginController.view)
     }

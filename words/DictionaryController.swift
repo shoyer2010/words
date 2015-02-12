@@ -8,6 +8,10 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     var countLabelTag = 1001
     var popularLabelTag = 1002
     
+    var dictiontaryListDataArray:NSArray = NSArray()
+    
+    var accountCtrl :AccountController!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
@@ -66,7 +70,72 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         myCurrentDictionaryLabelWrap.addSubview(myCurrentDictionaryLabel)
         self.view.addSubview(myCurrentDictionaryLabelWrap)
 
-//        API.instance.get("/dictionary/list", delegate: self)
+        autoLogin()
+    }
+    
+    func setAccountViewController(accountCtrl:AccountController) {
+        self.accountCtrl = accountCtrl
+    }
+    
+    func autoLogin() {
+        LoadingDialog.showLoading()
+        
+        if(CacheDataUitls.isHasAnUser()) {
+            var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
+            
+            var userName = userInfo.valueForKey("userName")! as String
+            
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(userName, forKey: "username")
+            
+            var isTrial = CacheDataUitls.isUserTrial()
+            LogUtils.log("isTrial=\(isTrial)")
+            
+            if(isTrial) {
+                params.setValue("", forKey: "password")
+                params.setValue(Util.getUDID(), forKey: "udid")
+            }else {
+                var passWord = userInfo.valueForKey("passWord")! as String
+                params.setValue(passWord, forKey: "password")
+            }
+            
+            API.instance.get("/user/login", delegate: self,  params: params)
+        }
+        else {
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(Util.getUDID(), forKey: "udid")
+            API.instance.post("/user/trial", delegate: self,  params: params)
+        }
+    }
+    
+    func userTrial(data:AnyObject) {
+        var trialDic :NSDictionary = data as NSDictionary
+        
+        var params: NSMutableDictionary = NSMutableDictionary()
+        params.setValue(trialDic.valueForKey("username"), forKey: "username")
+        params.setValue("", forKey: "password")
+        params.setValue(Util.getUDID(), forKey: "udid")
+        API.instance.get("/user/login", delegate: self,  params: params)
+    }
+    
+    func userLogin(data:AnyObject) {
+        API.instance.get("/dictionary/list", delegate: self)
+        
+        var userDic :NSDictionary = data as NSDictionary
+        
+        var isTrial = userDic.valueForKey("trial") as Bool
+        if(isTrial) {
+            CacheDataUitls.saveUserInfo(userDic.valueForKey("id")!, userName: userDic.valueForKey("username")!, passWord: nil, holyWater: userDic.valueForKey("holyWater")!, isTrial: isTrial)
+        }
+        self.accountCtrl.refreshUserInfo()
+    }
+    
+    func dictionaryList(data: AnyObject) {
+        LoadingDialog.dismissLoading()
+        
+        dictiontaryListDataArray = data as NSArray
+        
+        commonTableView.reloadData()
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -83,7 +152,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 15
+        return dictiontaryListDataArray.count
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -134,8 +203,10 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             cell!.addSubview(popularLabel)
         }
         
+        let dictionaryItemData:NSDictionary = dictiontaryListDataArray.objectAtIndex(indexPath.row) as NSDictionary
+        
         var dictionaryNameLabel = cell!.viewWithTag(self.dictionaryNameLabelTag) as UILabel
-        dictionaryNameLabel.text = "大学英语4级" + String(indexPath.row)
+        dictionaryNameLabel.text = dictionaryItemData.valueForKey("name") as String + String(indexPath.row)
         
         var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
         countLabel.text = "单词：\(indexPath.row * 10)"
@@ -186,15 +257,20 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     
     
     
-    func dictionaryList(data: AnyObject) {
-        println(self.view)
-        var params: NSMutableDictionary = NSMutableDictionary()
-//        params.setValue(1, forKey: "sync")
+//    func dictionaryList(data: AnyObject) {
+//        LoadingDialog.dismissLoading()
+//        
+//        var dicList:NSDictionary = data as NSDictionary
+//        LogUtils.log("dictionaryList():\(dicList)")
 //
-//        var path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent("54cc5af6c5e20c9b492b39ae.db")
-//        var data: NSData? = NSData(contentsOfFile: path)
-//        API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: data?)
-    }
+//        
+//        var params: NSMutableDictionary = NSMutableDictionary()
+////        params.setValue(1, forKey: "sync")
+////
+////        var path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent("54cc5af6c5e20c9b492b39ae.db")
+////        var data: NSData? = NSData(contentsOfFile: path)
+////        API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: data?)
+//    }
     
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
         println(filePath)

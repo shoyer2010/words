@@ -56,7 +56,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate {
         paragraphStyleForContent.lineSpacing = 5
         var attributesForContent = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForContent,
-            NSFontAttributeName: UIFont(name: "Times New Roman", size: CGFloat(16))!,
+            NSFontAttributeName: UIFont(name: "Times New Roman", size: CGFloat(17))!,
             NSForegroundColorAttributeName: Color.gray,
             NSStrokeWidthAttributeName: NSNumber(float: -1.5)
             ])

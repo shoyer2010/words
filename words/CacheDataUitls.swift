@@ -29,7 +29,7 @@ struct CacheDataUitls {
     }
     
     static func isHasAnUser() ->Bool {
-        var user = getLocalData(key_user_id)
+        var user: AnyObject? = getLocalData(key_user_id)
         
         LogUtils.log("isHasAnUser():user=\(user)")
         

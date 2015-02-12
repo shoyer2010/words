@@ -138,6 +138,10 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         commonTableView.reloadData()
     }
     
+    func error(error: Error, api: String) {
+        LoadingDialog.dismissLoading()
+    }
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
         var offset = scrollView.contentOffset.y
         var homeController = self.parentViewController as HomeController

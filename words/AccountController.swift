@@ -14,6 +14,7 @@ class AccountController: UIViewController {
     var holyWaterLabel :UILabel!
     var usernameLabel  :UILabel!
     var upgradeButton :UIButton!
+    var passwordButton :UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +57,7 @@ class AccountController: UIViewController {
         passwordLabel.text = "密码"
         self.view.addSubview(passwordLabel)
         
-        var passwordButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 125, width: 70, height: 26))
+        passwordButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 125, width: 70, height: 26))
         passwordButton.backgroundColor = Color.gray
         passwordButton.setTitle("修改", forState: UIControlState.Normal)
         passwordButton.layer.cornerRadius = 13
@@ -86,18 +87,19 @@ class AccountController: UIViewController {
             var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
             
             var userName = userInfo.valueForKey("userName")! as String
-            usernameLabel.text = "用户名： \(userName)"
+            self.usernameLabel.text = "用户名： \(userName)"
             
             var holyWater = userInfo.valueForKey("holyWater")! as Int
-            holyWaterLabel.text = "圣水 ： \(holyWater)"
+            self.holyWaterLabel.text = "圣水 ： \(holyWater)"
             
-            upgradeButton.hidden  = !CacheDataUitls.isUserTrial()
-            
+            self.upgradeButton.hidden  = !CacheDataUitls.isUserTrial()
+            self.passwordButton.hidden = CacheDataUitls.isUserTrial()
         }
     }
     
     func goToRegisterPage(sender: UIButton) {
         var registerController = RegisterController()
+        registerController.setAccountViewController(self)
         self.addChildViewController(registerController)
         self.view.addSubview(registerController.view)
     }

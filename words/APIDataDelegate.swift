@@ -8,6 +8,8 @@
     
     optional func userLogin(AnyObject)
     
+    optional func changePassword(AnyObject)
+    
     optional func activeTime(AnyObject)
     
     

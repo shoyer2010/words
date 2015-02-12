@@ -26,4 +26,5 @@ struct LoadingDialog {
             dlg == nil
         }
     }
+    
 }

@@ -17,6 +17,13 @@ struct CacheDataUitls {
     static let key_dictionary_list = "key_dictionary_list"
     
     
+    static func updateUserPassword(newPassword:String) {
+        let userInfo:NSDictionary = getUserInfo() as NSDictionary
+        
+        saveUserInfo(userInfo.valueForKey("id")!, userName: userInfo.valueForKey("userName")!, passWord: newPassword, holyWater: userInfo.valueForKey("holyWater")!, isTrial: false)
+    }
+    
+    
     static func saveUserInfo(id:AnyObject, userName:AnyObject, passWord:AnyObject?, holyWater:AnyObject, isTrial:Bool) {
         
         saveLocalData(key_user_is_trial, value: isTrial)

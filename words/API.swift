@@ -151,6 +151,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.userRegister?(data!)
             case "/user/login":
                 self.delegate!.userLogin?(data!)
+            case "/user/changePassword":
+                self.delegate!.changePassword?(data!)
             case "/user/activeTime":
                 self.delegate!.activeTime?(data!)
             case "/dictionary/list":

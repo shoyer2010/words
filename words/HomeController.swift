@@ -228,7 +228,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.addChildViewController(accountController)
         self.scrollViewForTabItems.addSubview(accountController.view)
         
-        dictionaryController.setAccountViewController(accountController)
+        accountController.setDictionaryViewController(dictionaryController)
         
         self.scrollToPage(page: 2)
     }

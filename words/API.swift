@@ -121,6 +121,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             switch(self.api!) {
             case "/dictionary/syncDictionary":
                 self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+            case "/dictionary/download":
+                self.delegate!.dictionaryDownloadDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }

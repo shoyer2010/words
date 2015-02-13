@@ -9,12 +9,14 @@
 import Foundation
 import UIKit
 
-class AccountController: UIViewController {
+class AccountController: UIViewController,APIDataDelegate {
     
     var holyWaterLabel :UILabel!
     var usernameLabel  :UILabel!
     var upgradeButton :UIButton!
     var passwordButton :UIButton!
+    
+    var dictionaryController:DictionaryController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +81,7 @@ class AccountController: UIViewController {
         logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
         
-        refreshUserInfo()
+        autoLogin()
     }
     
     func refreshUserInfo() {
@@ -94,7 +96,68 @@ class AccountController: UIViewController {
             
             self.upgradeButton.hidden  = !CacheDataUtils.isUserTrial()
             self.passwordButton.hidden = CacheDataUtils.isUserTrial()
+            
+            self.dictionaryController.refreshDictionaryData()
         }
+    }
+    
+    func autoLogin() {
+        LoadingDialog.showLoading()
+        
+        if(CacheDataUtils.isHasAnUser()) {
+            var userInfo :NSDictionary = CacheDataUtils.getUserInfo()! as NSDictionary
+            
+            var userName = userInfo.valueForKey("userName")! as String
+            
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(userName, forKey: "username")
+            
+            var isTrial = CacheDataUtils.isUserTrial()
+            LogUtils.log("isTrial=\(isTrial)")
+            
+            if(isTrial) {
+                params.setValue("", forKey: "password")
+                params.setValue(Util.getUDID(), forKey: "udid")
+            }else {
+                var passWord = userInfo.valueForKey("passWord")! as String
+                params.setValue(passWord, forKey: "password")
+            }
+            
+            API.instance.get("/user/login", delegate: self,  params: params)
+        }
+        else {
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(Util.getUDID(), forKey: "udid")
+            API.instance.post("/user/trial", delegate: self,  params: params)
+        }
+    }
+    
+    func userTrial(data:AnyObject) {
+        var trialDic :NSDictionary = data as NSDictionary
+        
+        var params: NSMutableDictionary = NSMutableDictionary()
+        params.setValue(trialDic.valueForKey("username"), forKey: "username")
+        params.setValue("", forKey: "password")
+        params.setValue(Util.getUDID(), forKey: "udid")
+        API.instance.get("/user/login", delegate: self,  params: params)
+    }
+    
+    func userLogin(data:AnyObject) {
+        //API.instance.get("/dictionary/list", delegate: self)
+        
+        var userDic :NSDictionary = data as NSDictionary
+        
+        var isTrial = userDic.valueForKey("trial") as Bool
+        if(isTrial) {
+            CacheDataUtils.saveUserInfo(userDic.valueForKey("id")!, userName: userDic.valueForKey("username")!, passWord: nil, holyWater: userDic.valueForKey("holyWater")!, isTrial: isTrial)
+        }
+        refreshUserInfo()
+        
+        LoadingDialog.dismissLoading()
+    }
+    
+    func setDictionaryViewController(dictionaryController:DictionaryController) {
+        self.dictionaryController = dictionaryController
     }
     
     func goToRegisterPage(sender: UIButton) {

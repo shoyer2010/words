@@ -10,8 +10,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     
     var dictiontaryListDataArray:NSArray = NSArray()
     
-    var accountCtrl :AccountController!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
@@ -70,69 +68,13 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         myCurrentDictionaryLabelWrap.addSubview(myCurrentDictionaryLabel)
         self.view.addSubview(myCurrentDictionaryLabelWrap)
 
-        autoLogin()
     }
     
-    func setAccountViewController(accountCtrl:AccountController) {
-        self.accountCtrl = accountCtrl
-    }
-    
-    func autoLogin() {
-        LoadingDialog.showLoading()
-        
-        if(CacheDataUtils.isHasAnUser()) {
-            var userInfo :NSDictionary = CacheDataUtils.getUserInfo()! as NSDictionary
-            
-            var userName = userInfo.valueForKey("userName")! as String
-            
-            var params: NSMutableDictionary = NSMutableDictionary()
-            params.setValue(userName, forKey: "username")
-            
-            var isTrial = CacheDataUtils.isUserTrial()
-            LogUtils.log("isTrial=\(isTrial)")
-            
-            if(isTrial) {
-                params.setValue("", forKey: "password")
-                params.setValue(Util.getUDID(), forKey: "udid")
-            }else {
-                var passWord = userInfo.valueForKey("passWord")! as String
-                params.setValue(passWord, forKey: "password")
-            }
-            
-            API.instance.get("/user/login", delegate: self,  params: params)
-        }
-        else {
-            var params: NSMutableDictionary = NSMutableDictionary()
-            params.setValue(Util.getUDID(), forKey: "udid")
-            API.instance.post("/user/trial", delegate: self,  params: params)
-        }
-    }
-    
-    func userTrial(data:AnyObject) {
-        var trialDic :NSDictionary = data as NSDictionary
-        
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(trialDic.valueForKey("username"), forKey: "username")
-        params.setValue("", forKey: "password")
-        params.setValue(Util.getUDID(), forKey: "udid")
-        API.instance.get("/user/login", delegate: self,  params: params)
-    }
-    
-    func userLogin(data:AnyObject) {
+    func refreshDictionaryData() {
         API.instance.get("/dictionary/list", delegate: self)
-        
-        var userDic :NSDictionary = data as NSDictionary
-        
-        var isTrial = userDic.valueForKey("trial") as Bool
-        if(isTrial) {
-            CacheDataUtils.saveUserInfo(userDic.valueForKey("id")!, userName: userDic.valueForKey("username")!, passWord: nil, holyWater: userDic.valueForKey("holyWater")!, isTrial: isTrial)
-        }
-        self.accountCtrl.refreshUserInfo()
     }
     
     func dictionaryList(data: AnyObject) {
-        LoadingDialog.dismissLoading()
-        
         dictiontaryListDataArray = data as NSArray
         
         commonTableView.reloadData()
@@ -236,11 +178,29 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var dictionaryInfoController = DictionaryInfoController()
-        self.addChildViewController(dictionaryInfoController)
-        self.view.addSubview(dictionaryInfoController.view)
+//        self.addChildViewController(dictionaryInfoController)
+//        self.view.addSubview(dictionaryInfoController.view)
         println("selected \(indexPath.row)")
         self.commonTableViewSelectedRow = indexPath.row
         tableView.reloadData()
+        
+        let dictionaryItemData:NSDictionary = dictiontaryListDataArray.objectAtIndex(indexPath.row) as NSDictionary
+        getDictionaryDataBaseFile(dictionaryItemData.valueForKey("id") as String)
+        
+    }
+    
+    func getDictionaryDataBaseFile(dictionaryId:String) {
+        
+        var params: NSMutableDictionary = NSMutableDictionary()
+        params.setValue(dictionaryId, forKey: "id")
+        
+        API.instance.get("/dictionary/download", delegate: self,  params: params)
+    }
+    
+    func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float) {
+        
+        LogUtils.log("filePath=\(filePath),progress\(progress)")
+        
     }
 
     //downloadIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)

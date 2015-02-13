@@ -80,15 +80,15 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func autoLogin() {
         LoadingDialog.showLoading()
         
-        if(CacheDataUitls.isHasAnUser()) {
-            var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
+        if(CacheDataUtils.isHasAnUser()) {
+            var userInfo :NSDictionary = CacheDataUtils.getUserInfo()! as NSDictionary
             
             var userName = userInfo.valueForKey("userName")! as String
             
             var params: NSMutableDictionary = NSMutableDictionary()
             params.setValue(userName, forKey: "username")
             
-            var isTrial = CacheDataUitls.isUserTrial()
+            var isTrial = CacheDataUtils.isUserTrial()
             LogUtils.log("isTrial=\(isTrial)")
             
             if(isTrial) {
@@ -125,7 +125,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         
         var isTrial = userDic.valueForKey("trial") as Bool
         if(isTrial) {
-            CacheDataUitls.saveUserInfo(userDic.valueForKey("id")!, userName: userDic.valueForKey("username")!, passWord: nil, holyWater: userDic.valueForKey("holyWater")!, isTrial: isTrial)
+            CacheDataUtils.saveUserInfo(userDic.valueForKey("id")!, userName: userDic.valueForKey("username")!, passWord: nil, holyWater: userDic.valueForKey("holyWater")!, isTrial: isTrial)
         }
         self.accountCtrl.refreshUserInfo()
     }

@@ -85,7 +85,7 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
     }
     
     func changePassword(data :AnyObject) {
-        CacheDataUitls.updateUserPassword(newPasswordInput.text)
+        CacheDataUtils.updateUserPassword(newPasswordInput.text)
         LoadingDialog.dismissLoading()
         self.closeView()
     }

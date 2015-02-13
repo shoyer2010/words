@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CacheDataUitls {
+struct CacheDataUtils {
     
     static let key_user_info = "key_user_info"
     static let key_user_id = "key_user_id"

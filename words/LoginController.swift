@@ -81,6 +81,7 @@ class LoginController: UIViewController, APIDataDelegate {
             noticeLabel.text="请填写密码！"
         }
         else {
+            noticeLabel.text=nil
             LoadingDialog.showLoading()
             var params: NSMutableDictionary = NSMutableDictionary()
             params.setValue(username.text, forKey: "username")
@@ -93,7 +94,7 @@ class LoginController: UIViewController, APIDataDelegate {
     func userLogin(data:AnyObject) {
         var dic :NSDictionary = data as NSDictionary
 
-        CacheDataUitls.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!, isTrial: false)
+        CacheDataUtils.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!, isTrial: false)
         
         self.accountCtrl.refreshUserInfo()
         

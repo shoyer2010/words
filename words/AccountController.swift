@@ -83,8 +83,8 @@ class AccountController: UIViewController {
     }
     
     func refreshUserInfo() {
-        if(CacheDataUitls.isHasAnUser()) {
-            var userInfo :NSDictionary = CacheDataUitls.getUserInfo()! as NSDictionary
+        if(CacheDataUtils.isHasAnUser()) {
+            var userInfo :NSDictionary = CacheDataUtils.getUserInfo()! as NSDictionary
             
             var userName = userInfo.valueForKey("userName")! as String
             self.usernameLabel.text = "用户名： \(userName)"
@@ -92,8 +92,8 @@ class AccountController: UIViewController {
             var holyWater = userInfo.valueForKey("holyWater")! as Int
             self.holyWaterLabel.text = "圣水 ： \(holyWater)"
             
-            self.upgradeButton.hidden  = !CacheDataUitls.isUserTrial()
-            self.passwordButton.hidden = CacheDataUitls.isUserTrial()
+            self.upgradeButton.hidden  = !CacheDataUtils.isUserTrial()
+            self.passwordButton.hidden = CacheDataUtils.isUserTrial()
         }
     }
     

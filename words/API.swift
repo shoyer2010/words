@@ -163,6 +163,14 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.dictionarySyncDictionary!(data!, progress: 1.0)
             case "/dictionary/download":
                 self.delegate!.dictionaryDownloadDictionary!(data!, progress: 1.0)
+            case "/word/search":
+                self.delegate!.wordSearch!(data!)
+            case "/article/detail":
+                self.delegate!.articleDetail!(data!)
+            case "/article/favourite":
+                self.delegate!.articleFavourite!(data!)
+            case "/article/favouriteList":
+                self.delegate!.articleFavouriteList!(data!)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }

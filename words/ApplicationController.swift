@@ -6,6 +6,12 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
     var scrollView: UIScrollView!
     var statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.LightContent
     var currentPage: PageCode?
+    var previousPage: Int?
+    var articleForChineseController: ArticleForChineseController!
+    var articleForEnglishController: ArticleForEnglishController!
+    var homeController: HomeController!
+    var learnWordController: LearnWordController!
+    var wordDetailController: WordDetailController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,33 +28,34 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         self.scrollView.contentSize = CGSize(width: viewWidth * 5, height: viewHeight)
         self.view.addSubview(self.scrollView)
         
-        var articleForChineseController = ArticleForChineseController()
+        articleForChineseController = ArticleForChineseController()
         self.addChildViewController(articleForChineseController)
         articleForChineseController.view.frame = CGRectMake(0, 0, viewWidth, viewHeight)
         self.scrollView.addSubview(articleForChineseController.view)
         
-        var articleForEnglishController = ArticleForEnglishController()
+        articleForEnglishController = ArticleForEnglishController()
         self.addChildViewController(articleForEnglishController)
         articleForEnglishController.view.frame = CGRectMake(viewWidth, 0, viewWidth, viewHeight)
         self.scrollView.addSubview(articleForEnglishController.view)
         
-        var homeController = HomeController()
+        homeController = HomeController()
         self.addChildViewController(homeController)
         homeController.view.frame = CGRectMake(viewWidth * 2, 0, viewWidth, viewHeight)
+        articleForEnglishController.delegate = homeController
         self.scrollView.addSubview(homeController.view)
         
-        var learnWordController = LearnWordController()
+        learnWordController = LearnWordController()
         self.addChildViewController(learnWordController)
         learnWordController.view.frame = CGRectMake(viewWidth * 3, 0, viewWidth, viewHeight)
         self.scrollView.addSubview(learnWordController.view)
         
-        var wordDetailController = WordDetailController()
+        wordDetailController = WordDetailController()
+        wordDetailController.delegate = learnWordController
         self.addChildViewController(wordDetailController)
         wordDetailController.view.frame = CGRectMake(viewWidth * 4, 0, viewWidth, viewHeight)
         self.scrollView.addSubview(wordDetailController.view)
         
         self.scrollToPage(page: 2)
-        
     }
 
     
@@ -69,6 +76,13 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         default:
             break
         }
+        
+        if (self.previousPage != page) {
+            var info = NSMutableDictionary()
+            info.setValue(page, forKey: "currentPage")
+            NSNotificationCenter.defaultCenter().postNotificationName("onPageChange", object: self, userInfo: info)
+        }
+        self.previousPage = page
     }
     
     func setCurrentPage(page: PageCode) {

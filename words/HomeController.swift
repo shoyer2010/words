@@ -1,6 +1,6 @@
 import UIKit
 
-class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate {
+class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate, SearchWordResultDelegate, ArticleForEnglishDelegate {
     
     var searchBar: UISearchBar!
     var scrollViewForTabItems: UIScrollView!
@@ -342,7 +342,9 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     
     func onRecommendTapped(recognizer: UITapGestureRecognizer) {
         var parentController = self.parentViewController as ApplicationController
-        parentController.scrollToPage(page: 1)    }
+        parentController.articleForEnglishController.delegate = self
+        parentController.scrollToPage(page: 1)
+    }
     
     func onStartLearnTapped(sender: UIView) {
         var parentController = self.parentViewController as ApplicationController
@@ -356,26 +358,22 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         var searchWordResultController = SearchWordResultController()
+        searchWordResultController.delegate = self
         self.addChildViewController(searchWordResultController)
         self.view.addSubview(searchWordResultController.view)
+    }
+    
+    func searchWord() -> String {
+        return self.searchBar.text
     }
     
     func tabBar(tabBar: UITabBar, didSelectItem item: UITabBarItem!) {
         self.scrollToPage(page: item.tag - 1)
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        
-
+    func setArticleId() -> String {
+        return "54e1fadf43125b5a3d836bab"
+    }
     
     
 //    func userTrial(data: AnyObject) {

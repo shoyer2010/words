@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate {
+class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate {
     var optionSelectedRow: Int?
     var sentenceView: UIScrollView!
     var sentencesScrollView: UIScrollView!
@@ -317,5 +317,17 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.optionSelectedRow = indexPath.row
         tableView.reloadData()
+    }
+    
+    func frameOfView() -> CGRect {
+        return CGRect(x: 0, y: 32, width: self.view.frame.width, height: self.view.frame.height - 32)
+    }
+    
+    func searchWord() -> String {
+        return ""
+    }
+    
+    func shoudRegisterNotification() -> Bool {
+        return true
     }
 }

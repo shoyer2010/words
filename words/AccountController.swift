@@ -144,7 +144,7 @@ class AccountController: UIViewController,APIDataDelegate {
     
     func userLogin(data:AnyObject) {
         //API.instance.get("/dictionary/list", delegate: self)
-        
+
         var userDic :NSDictionary = data as NSDictionary
         
         var isTrial = userDic.valueForKey("trial") as Bool

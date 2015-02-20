@@ -9,14 +9,19 @@
 import Foundation
 import UIKit
 
-class FavouriteArticleController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
+class FavouriteArticleController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate, ArticleForEnglishDelegate {
     var contentView: UIView!
     var selectedRow: Int?
     var previousX = CGFloat(0)
+    var data: NSArray!
+    var indicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 30, y: self.view.frame.height / 2 - 30, width: 60, height: 60))
+        indicator.color = Color.red
+        self.view.addSubview(indicator)
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
         var tapView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 55))
@@ -31,7 +36,27 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
             self.contentView.transform = CGAffineTransformMakeTranslation(0, 55 - self.view.frame.height)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
+                self.loadData()
         }
+    }
+
+    func loadData() {
+        var params = NSMutableDictionary()
+        API.instance.get("/article/favouriteList", delegate: self, params: params)
+        self.startLoading()
+    }
+    
+    func startLoading() {
+        self.view.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
+    }
+    
+    func articleFavouriteList(data: AnyObject) {
+        self.data = data as NSArray
         
         var tableView = UITableView(frame: CGRect(x: 0, y: 0, width: self.contentView.frame.width, height: self.contentView.frame.height))
         tableView.backgroundColor = UIColor.clearColor()
@@ -42,8 +67,8 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         tableView.layoutMargins = UIEdgeInsetsZero
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         self.contentView.addSubview(tableView)
+        self.endLoading()
     }
-    
     
     func onPanTableView(recognizer: UIPanGestureRecognizer) {
         if (self.selectedRow == nil) {
@@ -59,7 +84,6 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         var applicationController = homeController.parentViewController as ApplicationController
         var offset = applicationController.scrollView.contentOffset
         
-        println(point.x)
         if (point.x < 0) {
             if (offset.x % self.view.frame.width != 0) {
                 if ((offset.x % self.view.frame.width) < self.view.frame.width / 2) {
@@ -115,7 +139,7 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return self.data.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -153,7 +177,7 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         }
         
         var englishLabel = cell!.viewWithTag(englishLabelTag) as UILabel
-        englishLabel.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun dsafas dfasfasf dfasdfasf dfadsfasfas"
+        englishLabel.text = self.data[indexPath.row]["titleEnglish"] as? String
         var paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyle.lineSpacing = 5
@@ -166,7 +190,7 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
 
         var chineseLabel = cell!.viewWithTag(chineseLabelTag) as UILabel
-        chineseLabel.text = "总体来说个性化定制UITextView中的内容有两种方法总体来说个性化定制UITextView中的内容有两种方法"
+        chineseLabel.text = self.data[indexPath.row]["titleChinese"] as? String
         var paragraphStyleForChinese = NSMutableParagraphStyle()
         paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyleForChinese.lineSpacing = 7
@@ -193,6 +217,11 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         tableView.reloadData()
         var homeController = self.parentViewController as HomeController
         var applicationController = homeController.parentViewController as ApplicationController
+        applicationController.articleForEnglishController.delegate = self
         applicationController.scrollToPage(page: 1)
+    }
+    
+    func setArticleId() -> String {
+        return self.data[self.selectedRow!]["id"] as String
     }
 }

@@ -20,5 +20,13 @@
     optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
     
     optional func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float)
-
+    
+    
+    // 单词
+    optional func wordSearch(AnyObject)
+    
+    // 文章
+    optional func articleDetail(AnyObject)
+    optional func articleFavourite(AnyObject)
+    optional func articleFavouriteList(AnyObject)
 }

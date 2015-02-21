@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum PageCode {
+enum PageCode:Int {
     case ArticleForChinese
     case ArticleForEnglish
     case LearnWord

@@ -111,6 +111,7 @@
 		A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HolyWaterInfoController.swift; sourceTree = "<group>"; };
 		A4541F971A85D35500EAA761 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		A4541F991A85DD0F00EAA761 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		A48C26951A988EEC00CCAF74 /* playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = playground.playground; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -223,6 +224,7 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A48C26951A988EEC00CCAF74 /* playground.playground */,
 				812DE65D1A8A307400B9915D /* libsqlite3.dylib */,
 				A4A8B6061A7A563300C59E63 /* words */,
 				A4A8B61C1A7A563300C59E63 /* wordsTests */,

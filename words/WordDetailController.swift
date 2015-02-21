@@ -330,7 +330,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     }
     
     func onPageChange(notification: NSNotification) {
-        if (notification.userInfo?["currentPage"] as NSObject == 4) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.WordDetail) {
             loadData()
         }
     }

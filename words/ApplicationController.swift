@@ -6,7 +6,7 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
     var scrollView: UIScrollView!
     var statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.LightContent
     var currentPage: PageCode?
-    var previousPage: Int?
+    var previousPage: PageCode?
     var articleForChineseController: ArticleForChineseController!
     var articleForEnglishController: ArticleForEnglishController!
     var homeController: HomeController!
@@ -76,13 +76,6 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         default:
             break
         }
-        
-        if (self.previousPage != page) {
-            var info = NSMutableDictionary()
-            info.setValue(page, forKey: "currentPage")
-            NSNotificationCenter.defaultCenter().postNotificationName("onPageChange", object: self, userInfo: info)
-        }
-        self.previousPage = page
     }
     
     func setCurrentPage(page: PageCode) {
@@ -98,6 +91,13 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         default:
             self.setUIStatusBarStyle(UIStatusBarStyle.Default)
         }
+        
+        if (self.previousPage != self.currentPage) {
+            var info = NSMutableDictionary()
+            info.setValue(page.rawValue, forKey: "currentPage")
+            NSNotificationCenter.defaultCenter().postNotificationName("onPageChange", object: self, userInfo: info)
+        }
+        self.previousPage = self.currentPage
     }
     
     func getCurrentPage() -> PageCode {

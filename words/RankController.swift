@@ -8,12 +8,28 @@
 
 import UIKit
 
-class RankController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
+class RankController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, APIDataDelegate {
+    var indicator: UIActivityIndicatorView!
+    var rankTableView: UITableView!
+    var myRankLabel: UILabel!
+    
+    var activeRankData: AnyObject!
+    var wordRankData: AnyObject!
+    
+    var selectedSegmentIndex: Int! = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: "onPageChange", object: nil)
+        
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(0)
         self.view.backgroundColor = Color.appBackground
+        
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 30, y: self.view.frame.height / 2 - 30, width: 60, height: 60))
+        indicator.color = Color.red
+        self.view.addSubview(indicator)
         
         var segment = UISegmentedControl(frame: CGRect(x: self.view.frame.width / 2 - 55, y: 15, width: 110, height: 26))
         segment.backgroundColor = UIColor.whiteColor()
@@ -24,58 +40,54 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         segment.selectedSegmentIndex = 0
         self.view.addSubview(segment)
         
-        var activeRankTableViewWrap = UIView(frame: CGRect(x: 15, y: 55, width: self.view.frame.width - 30, height: self.view.frame.height - 85))
-        activeRankTableViewWrap.backgroundColor = Color.blockBackground
-        activeRankTableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
-        activeRankTableViewWrap.layer.shadowOffset = Layer.shadowOffset
-        activeRankTableViewWrap.layer.shadowColor = Layer.shadowColor
-        activeRankTableViewWrap.layer.shadowRadius = Layer.shadowRadius
-        activeRankTableViewWrap.layer.cornerRadius = Layer.cornerRadius
+        var rankTableViewWrap = UIView(frame: CGRect(x: 15, y: 55, width: self.view.frame.width - 30, height: self.view.frame.height - 85))
+        rankTableViewWrap.backgroundColor = Color.blockBackground
+        rankTableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
+        rankTableViewWrap.layer.shadowOffset = Layer.shadowOffset
+        rankTableViewWrap.layer.shadowColor = Layer.shadowColor
+        rankTableViewWrap.layer.shadowRadius = Layer.shadowRadius
+        rankTableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
-        var activeRankTableView = UITableView(frame: CGRect(x: 6, y: 6, width: activeRankTableViewWrap.frame.width - 12, height: activeRankTableViewWrap.frame.height - 12), style: UITableViewStyle.Plain)
-        activeRankTableView.dataSource = self
-        activeRankTableView.delegate = self
-        activeRankTableView.layer.cornerRadius = Layer.cornerRadius
-        activeRankTableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
-        activeRankTableViewWrap.addSubview(activeRankTableView)
-        self.view.addSubview(activeRankTableViewWrap)
+        rankTableView = UITableView(frame: CGRect(x: 6, y: 6, width: rankTableViewWrap.frame.width - 12, height: rankTableViewWrap.frame.height - 12), style: UITableViewStyle.Plain)
+        rankTableView.dataSource = self
+        rankTableView.delegate = self
+        rankTableView.layer.cornerRadius = Layer.cornerRadius
+        rankTableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
+        rankTableViewWrap.addSubview(rankTableView)
+        self.view.addSubview(rankTableViewWrap)
         
         
-        var myActiveRankLabelWrap = UIView(frame: CGRectMake(15, self.view.frame.height - 22, self.view.frame.width - 30, 22))
-        myActiveRankLabelWrap.layer.shadowOpacity = Layer.shadowOpacity
-        myActiveRankLabelWrap.layer.shadowOffset = Layer.shadowOffset
-        myActiveRankLabelWrap.layer.shadowColor = Layer.shadowColor
-        myActiveRankLabelWrap.layer.shadowRadius = Layer.shadowRadius
-        myActiveRankLabelWrap.layer.cornerRadius = Layer.cornerRadius
-        myActiveRankLabelWrap.backgroundColor = Color.red
+        var myRankLabelWrap = UIView(frame: CGRectMake(15, self.view.frame.height - 22, self.view.frame.width - 30, 22))
+        myRankLabelWrap.layer.shadowOpacity = Layer.shadowOpacity
+        myRankLabelWrap.layer.shadowOffset = Layer.shadowOffset
+        myRankLabelWrap.layer.shadowColor = Layer.shadowColor
+        myRankLabelWrap.layer.shadowRadius = Layer.shadowRadius
+        myRankLabelWrap.layer.cornerRadius = Layer.cornerRadius
+        myRankLabelWrap.backgroundColor = Color.red
 
-        var myActiveRankLabel = UILabel(frame: CGRect(x: 5, y: 4, width: myActiveRankLabelWrap.frame.width, height: myActiveRankLabelWrap.frame.height))
-        myActiveRankLabel.text = "我的活跃时间2323小时，当前排名2323"
-        myActiveRankLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyle.lineSpacing = 7
-        var attributes = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: myActiveRankLabel.font,
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        myActiveRankLabel.attributedText = NSAttributedString(string: myActiveRankLabel.text!, attributes: attributes)
-        myActiveRankLabelWrap.addSubview(myActiveRankLabel)
-        self.view.addSubview(myActiveRankLabelWrap)
+        myRankLabel = UILabel(frame: CGRect(x: 5, y: 4, width: myRankLabelWrap.frame.width, height: myRankLabelWrap.frame.height))
+        myRankLabel.text = ""
+        myRankLabelWrap.addSubview(myRankLabel)
+        self.view.addSubview(myRankLabelWrap)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        if (self.selectedSegmentIndex == 0 && self.activeRankData != nil) {
+            return (self.activeRankData!["rankList"] as NSArray).count
+        }
+        
+        if (self.selectedSegmentIndex == 1 && self.wordRankData != nil) {
+            return (self.wordRankData!["rankList"] as NSArray).count
+        }
+        
+        return 0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        // 注意，实际数据填充的时候，这里要用可复用的cell， 资料；http://www.cnblogs.com/smileEvday/archive/2012/06/28/tableView.html
-        
         var rankNumberLabelTag = 1000
         var usernameLableTag = 1001
         var timeLableTag = 1002
+        var countLabelTag = 1003
         
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("rankCell") as? UITableViewCell
         if (cell == nil) {
@@ -84,7 +96,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             var rankNumberLabel = UILabel(frame: CGRect(x: 15, y: 3, width: 24, height: 24))
             rankNumberLabel.tag = rankNumberLabelTag
             rankNumberLabel.backgroundColor = Color.listIconBackground
-            rankNumberLabel.text = "1"
+            rankNumberLabel.text = ""
             rankNumberLabel.textColor = UIColor.whiteColor()
             rankNumberLabel.textAlignment = NSTextAlignment.Center
             rankNumberLabel.layer.cornerRadius = 12
@@ -92,10 +104,10 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             rankNumberLabel.font = UIFont(name: rankNumberLabel.font.fontName, size: CGFloat(12))
             cell!.contentView.addSubview(rankNumberLabel)
             
-            var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.27 , y: 4, width: tableView.frame.width * 0.33, height: 20))
+            var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.25 , y: 4, width: tableView.frame.width * 0.4, height: 20))
             usernameLable.tag = usernameLableTag
-            usernameLable.text = "username"
-            usernameLable.font = UIFont(name: usernameLable.font.fontName, size: CGFloat(15))
+            usernameLable.text = ""
+            usernameLable.font = UIFont(name: usernameLable.font.fontName, size: CGFloat(17))
             var paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
             paragraphStyle.alignment = NSTextAlignment.Center
@@ -103,14 +115,14 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
                 NSParagraphStyleAttributeName: paragraphStyle,
                 NSFontAttributeName: usernameLable.font,
                 NSForegroundColorAttributeName: Color.listIconBackground,
-                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                NSStrokeWidthAttributeName: NSNumber(float: -2.0)
                 ])
             usernameLable.attributedText = NSAttributedString(string: usernameLable.text!, attributes: attributesForUsername)
             cell!.contentView.addSubview(usernameLable)
             
-            var timeLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.7 , y: 5, width: tableView.frame.width * 0.3 - 15, height: 20))
+            var timeLable = UILabel(frame: CGRect(x: tableView.frame.width - 100 , y: 5, width: 85, height: 20))
             timeLable.tag = timeLableTag
-            timeLable.text = "2小时10分"
+            timeLable.text = ""
             timeLable.font = UIFont(name: timeLable.font.fontName, size: CGFloat(13))
             var paragraphStyleForTime = NSMutableParagraphStyle()
             paragraphStyleForTime.lineBreakMode = NSLineBreakMode.ByTruncatingTail
@@ -124,12 +136,50 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             timeLable.attributedText = NSAttributedString(string: timeLable.text!, attributes: attributesForTime)
             cell!.contentView.addSubview(timeLable)
             
+            var countLable = UILabel(frame: CGRect(x: tableView.frame.width - 55, y: 5, width: 55, height: 20))
+            countLable.tag = countLabelTag
+            countLable.text = ""
+            countLable.font = UIFont(name: countLable.font.fontName, size: CGFloat(13))
+            var paragraphStyleForCount = NSMutableParagraphStyle()
+            paragraphStyleForCount.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyleForCount.alignment = NSTextAlignment.Right
+            var attributesForCount = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyleForCount,
+                NSFontAttributeName: countLable.font,
+                NSForegroundColorAttributeName: Color.listIconBackground,
+                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                ])
+            countLable.attributedText = NSAttributedString(string: countLable.text!, attributes: attributesForCount)
+            cell!.contentView.addSubview(countLable)
+            
             cell!.userInteractionEnabled = false
         }
         
-        (cell!.viewWithTag(rankNumberLabelTag) as UILabel).text = String(indexPath.row + 1)
-        (cell!.viewWithTag(usernameLableTag) as UILabel).text = "username\(indexPath.row)"
-        (cell!.viewWithTag(timeLableTag) as UILabel).text = "2小时\(indexPath.row)分"
+        
+        if (self.selectedSegmentIndex == 0 && self.activeRankData != nil) {
+            var dataArray = self.activeRankData!["rankList"] as NSArray
+            (cell!.viewWithTag(rankNumberLabelTag) as UILabel).text = String(indexPath.row + 1)
+            (cell!.viewWithTag(usernameLableTag) as UILabel).text = dataArray[indexPath.row]["username"] as? String
+            var timeLabel = cell!.viewWithTag(timeLableTag) as UILabel
+            timeLabel.text = Util.getStringFromSeconds(seconds: dataArray[indexPath.row]["seconds"] as Int)
+            timeLabel.hidden = false
+            
+            var countLabel = cell!.viewWithTag(countLabelTag) as UILabel
+            countLabel.hidden = true
+        }
+        
+        if (self.selectedSegmentIndex == 1 && self.wordRankData != nil) {
+            var dataArray = self.wordRankData!["rankList"] as NSArray
+            (cell!.viewWithTag(rankNumberLabelTag) as UILabel).text = String(indexPath.row + 1)
+            (cell!.viewWithTag(usernameLableTag) as UILabel).text = dataArray[indexPath.row]["username"] as? String
+            var count = dataArray[indexPath.row]["count"] as Int
+            var countLabel = cell!.viewWithTag(countLabelTag) as UILabel
+            countLabel.text = "\(count)个"
+            countLabel.hidden = false
+            
+            var timeLabel = cell!.viewWithTag(timeLableTag) as UILabel
+            timeLabel.hidden = true
+        }
         
         return cell!
     }
@@ -139,7 +189,9 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func onSegmentTapped(sender: UISegmentedControl) {
-        println(sender.selectedSegmentIndex)
+        self.selectedSegmentIndex = sender.selectedSegmentIndex
+        self.rankTableView.reloadData()
+        self.reloadRankLabel()
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -149,6 +201,90 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         if (offset < Interaction.offsetForChangePage) {
             homeController.scrollToPageUpAndDown(page: 0)
         }
+    }
+    
+    func onPageChange(notification: NSNotification) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.Rank) {
+            loadData()
+        }
+    }
+    
+    func loadData() {
+        if (self.activeRankData == nil) {
+            var params = NSMutableDictionary()
+            API.instance.get("/rank/active", delegate: self, params: params)
+            self.startLoading()
+        }
+        
+        if (self.wordRankData == nil) {
+            var params = NSMutableDictionary()
+            API.instance.get("/rank/masteredWords", delegate: self, params: params)
+            self.startLoading()
+        }
+    }
+    
+    func rankActive(data: AnyObject) {
+        self.activeRankData = data
+        self.rankTableView.reloadData()
+        self.reloadRankLabel()
+        self.endLoading()
+    }
+    
+    func rankMasteredWords(data: AnyObject) {
+        self.wordRankData = data
+        self.rankTableView.reloadData()
+        self.reloadRankLabel()
+        self.endLoading()
+    }
+    
+    func reloadRankLabel() {
+        if (self.selectedSegmentIndex == 0 && self.activeRankData != nil) {
+            var mySeconds = self.activeRankData!.valueForKeyPath("myRank.seconds") as Int
+            var myRank = self.activeRankData!.valueForKeyPath("myRank.rank") as Int
+            self.myRankLabel.text = "我已活跃\(Util.getStringFromSeconds(seconds: mySeconds))，当前排名\(myRank)"
+            myRankLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
+            var paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyle.lineSpacing = 7
+            var attributes = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyle,
+                NSFontAttributeName: myRankLabel.font,
+                NSForegroundColorAttributeName: UIColor.whiteColor(),
+                NSStrokeWidthAttributeName: NSNumber(float: -2.0)
+                ])
+            myRankLabel.attributedText = NSAttributedString(string: myRankLabel.text!, attributes: attributes)
+        }
+        
+        if (self.selectedSegmentIndex == 1 && self.wordRankData != nil) {
+            var myCount = self.wordRankData!.valueForKeyPath("myRank.count") as Int
+            var myRank = self.wordRankData!.valueForKeyPath("myRank.rank") as Int
+            self.myRankLabel.text = "我已掌握\(myCount)个单词，当前排名\(myRank)"
+            myRankLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
+            var paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyle.lineSpacing = 7
+            var attributes = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyle,
+                NSFontAttributeName: myRankLabel.font,
+                NSForegroundColorAttributeName: UIColor.whiteColor(),
+                NSStrokeWidthAttributeName: NSNumber(float: -2.0)
+                ])
+            myRankLabel.attributedText = NSAttributedString(string: myRankLabel.text!, attributes: attributes)
+        }
+    }
+    
+    func error(error: Error, api: String) {
+        println(error.getMessage())
+        self.endLoading()
+    }
+    
+    func startLoading() {
+        self.view.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
     }
 }
 

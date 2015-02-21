@@ -197,7 +197,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
     
     func onPageChange(notification: NSNotification) {
-        if (notification.userInfo?["currentPage"] as NSObject == 1) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.ArticleForEnglish) {
             loadData()
         }
     }

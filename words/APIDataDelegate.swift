@@ -29,4 +29,8 @@
     optional func articleDetail(AnyObject)
     optional func articleFavourite(AnyObject)
     optional func articleFavouriteList(AnyObject)
+    
+    //排名
+    optional func rankActive(AnyObject)
+    optional func rankMasteredWords(AnyObject)
 }

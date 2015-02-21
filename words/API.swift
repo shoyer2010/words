@@ -173,6 +173,10 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.articleFavourite!(data!)
             case "/article/favouriteList":
                 self.delegate!.articleFavouriteList!(data!)
+            case "/rank/active":
+                self.delegate!.rankActive!(data!)
+            case "/rank/masteredWords":
+                self.delegate!.rankMasteredWords!(data!)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }

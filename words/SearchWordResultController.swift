@@ -9,9 +9,10 @@
 import Foundation
 import UIKit
 
-class SearchWordResultController: UIViewController, APIDataDelegate {
+class SearchWordResultController: UIViewController, APIDataDelegate, WordDetailDelegate {
     
     var contentView: UIView!
+    var delegate: SearchWordResultDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,12 +27,28 @@ class SearchWordResultController: UIViewController, APIDataDelegate {
         self.contentView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.contentView)
         
+        var wordDetailController = WordDetailController()
+        wordDetailController.delegate = self
+        self.addChildViewController(wordDetailController)
+        self.contentView.addSubview(wordDetailController.view)
+        
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
             self.contentView.transform = CGAffineTransformMakeTranslation(0, 55 - self.view.frame.height)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
         }
+    }
+    
+    func frameOfView() -> CGRect {
+        return CGRect(x: 0, y: 0, width: self.contentView.frame.width, height: self.view.frame.height - 55)
+    }
+    
+    func searchWord() -> String {
+        if (self.delegate != nil) {
+            return self.delegate!.searchWord()
+        }
         
+        return ""
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {

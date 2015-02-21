@@ -26,8 +26,16 @@ class Util {
         return image
     }
     
-    class  func  getUDID() -> String{
+    class func getUDID() -> String{
         return UIDevice.currentDevice().identifierForVendor.UUIDString
+    }
+    
+    class func getVoiceURL(path: String) -> NSURL {
+        if (RegularExpression("^http:").test(path)) {
+            return NSURL(string: path)!
+        } else {
+            return NSURL(string: Server.entry() + "/" + path)!
+        }
     }
 }
 

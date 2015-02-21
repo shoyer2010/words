@@ -9,8 +9,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     class var instance: API {
 //        return Inner.instance
-        return API(host: "dev.coolhey.cn", port: "1337")
-//        return API(host: "localhost", port: "1337")
+        return API(host: Server.host, port: Server.port)
     }
     
     let host: String
@@ -39,6 +38,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         for (key, value) in params {
             queryString += "&\(key)=\(value)"
         }
+        queryString = queryString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
         
         var url: NSURL = NSURL(string: self.apiEntry + self.api!)!
         if (method == "GET") {
@@ -94,6 +94,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     func connection(connection: NSURLConnection, didFailWithError error: NSError) {
         println("http request failed!!!!!");
+        println(error)
+        self.delegate!.error?(Error(message: "服务器正在维护，请稍候再试", code: 500), api: self.api!)
     }
     
     func connection(connection: NSURLConnection, didReceiveResponse response: NSHTTPURLResponse) {
@@ -175,7 +177,11 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }
         } else {
-            self.delegate!.error?(Error(message: dataString!, code: self.responseCode!), api: self.api!)
+            if (data?["message"] as? String != nil) {
+                self.delegate!.error?(Error(message: data!["message"] as String, code: self.responseCode!), api: self.api!)
+            } else {
+                self.delegate!.error?(Error(message: dataString!, code: self.responseCode!), api: self.api!)
+            }
         }
     }
 }

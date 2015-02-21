@@ -191,4 +191,8 @@ class AccountController: UIViewController,APIDataDelegate {
         self.addChildViewController(loginController)
         self.view.addSubview(loginController.view)
     }
+    
+    func error(error: Error, api: String) {
+        println(error.getMessage())
+    }
 }

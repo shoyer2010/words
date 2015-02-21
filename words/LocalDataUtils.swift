@@ -35,12 +35,10 @@ class LocalDatUtils :APIDataDelegate {
         saveLocalData("test", value: ["t1","t2"])
         var sArr: [String] = getLocalData("test") as [String]
         
-        LogUtils.log(sArr[0])
         
         
         var dir :NSString = NSHomeDirectory()
         
-        LogUtils.log("dir=\(dir)")
         
         var fileManager : NSFileManager = NSFileManager.defaultManager()
         
@@ -60,7 +58,6 @@ class LocalDatUtils :APIDataDelegate {
     }
     
     func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float) {
-        LogUtils.log("filePath=\(filePath)")
         testSqlite(filePath as String)
     }
     

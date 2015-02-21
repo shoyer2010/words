@@ -96,7 +96,7 @@ class LoginController: UIViewController, APIDataDelegate {
 
         CacheDataUtils.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!, isTrial: false)
         
-        self.accountCtrl.refreshUserInfo()
+//        self.accountCtrl.refreshUserInfo()
         
         LoadingDialog.dismissLoading()
         self.closeView()

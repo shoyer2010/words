@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		812DE5961A8A172300B9915D /* LocalDataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE5941A8A172300B9915D /* LocalDataUtils.swift */; };
-		812DE5971A8A172300B9915D /* LogUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE5951A8A172300B9915D /* LogUtils.swift */; };
 		812DE63F1A8A300C00B9915D /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE61C1A8A300C00B9915D /* Database.swift */; };
 		812DE6401A8A300C00B9915D /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE61D1A8A300C00B9915D /* Expression.swift */; };
 		812DE6411A8A300C00B9915D /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE61E1A8A300C00B9915D /* Query.swift */; };
 		812DE6421A8A300C00B9915D /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE61F1A8A300C00B9915D /* Schema.swift */; };
-		812DE6431A8A300C00B9915D /* SQLite Common.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 812DE6201A8A300C00B9915D /* SQLite Common.xcconfig */; };
 		812DE6441A8A300C00B9915D /* SQLite-Bridging.c in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6221A8A300C00B9915D /* SQLite-Bridging.c */; };
 		812DE6451A8A300C00B9915D /* Statement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6241A8A300C00B9915D /* Statement.swift */; };
 		812DE6461A8A300C00B9915D /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 812DE6251A8A300C00B9915D /* Value.swift */; };
@@ -42,6 +40,8 @@
 		A4541F961A85D16A00EAA761 /* HolyWaterInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */; };
 		A4541F981A85D35500EAA761 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F971A85D35500EAA761 /* RegisterController.swift */; };
 		A4541F9A1A85DD0F00EAA761 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F991A85DD0F00EAA761 /* LoginController.swift */; };
+		A482C83E1A98D226008D313A /* CacheKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482C83D1A98D226008D313A /* CacheKey.swift */; };
+		A482C8411A98E1F4008D313A /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482C8401A98E1F4008D313A /* ErrorView.swift */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
 		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
@@ -75,7 +75,6 @@
 
 /* Begin PBXFileReference section */
 		812DE5941A8A172300B9915D /* LocalDataUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalDataUtils.swift; sourceTree = "<group>"; };
-		812DE5951A8A172300B9915D /* LogUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 		812DE61C1A8A300C00B9915D /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		812DE61D1A8A300C00B9915D /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		812DE61E1A8A300C00B9915D /* Query.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Query.swift; sourceTree = "<group>"; };
@@ -111,6 +110,8 @@
 		A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HolyWaterInfoController.swift; sourceTree = "<group>"; };
 		A4541F971A85D35500EAA761 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		A4541F991A85DD0F00EAA761 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		A482C83D1A98D226008D313A /* CacheKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheKey.swift; sourceTree = "<group>"; };
+		A482C8401A98E1F4008D313A /* ErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		A48C26951A988EEC00CCAF74 /* playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = playground.playground; sourceTree = "<group>"; };
 		A4A8B6041A7A563300C59E63 /* words.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = words.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -160,7 +161,6 @@
 			isa = PBXGroup;
 			children = (
 				812DE5941A8A172300B9915D /* LocalDataUtils.swift */,
-				812DE5951A8A172300B9915D /* LogUtils.swift */,
 				819CF1131A8B1AE300DCD494 /* LoadingDialog.swift */,
 				819CF1771A8B25D600DCD494 /* CacheDataUtils.swift */,
 			);
@@ -201,6 +201,7 @@
 				A4541F8F1A84B01E00EAA761 /* Layer.swift */,
 				A4B9B1331A8783FE004B7A20 /* Interaction.swift */,
 				A4EBCE9C1A9795F6004AB958 /* Server.swift */,
+				A482C83D1A98D226008D313A /* CacheKey.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -214,9 +215,10 @@
 			name = Misc;
 			sourceTree = "<group>";
 		};
-		A427038F1A80AA70005159AC /* CustomView */ = {
+		A482C83F1A98E1AB008D313A /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				A482C8401A98E1F4008D313A /* ErrorView.swift */,
 			);
 			name = CustomView;
 			sourceTree = "<group>";
@@ -247,8 +249,8 @@
 				812DE6141A8A300C00B9915D /* SQLite */,
 				812DE5931A8A170200B9915D /* Logic */,
 				A4A8B6071A7A563300C59E63 /* Supporting Files */,
-				A427038F1A80AA70005159AC /* CustomView */,
 				A4A8B6101A7A563300C59E63 /* Images.xcassets */,
+				A482C83F1A98E1AB008D313A /* CustomView */,
 				A42703651A7F39CB005159AC /* Misc */,
 				A42703601A7E668A005159AC /* Settings */,
 				A4A8B6311A7B663A00C59E63 /* Error.swift */,
@@ -391,7 +393,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				812DE6431A8A300C00B9915D /* SQLite Common.xcconfig in Resources */,
 				A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */,
 				A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */,
 				A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */,
@@ -430,6 +431,7 @@
 				A4DFB8621A95BC400086105C /* LearnWordDelegate.swift in Sources */,
 				812DE6451A8A300C00B9915D /* Statement.swift in Sources */,
 				812DE6441A8A300C00B9915D /* SQLite-Bridging.c in Sources */,
+				A482C8411A98E1F4008D313A /* ErrorView.swift in Sources */,
 				A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */,
 				819CF1781A8B25D600DCD494 /* CacheDataUtils.swift in Sources */,
 				812DE63F1A8A300C00B9915D /* Database.swift in Sources */,
@@ -450,9 +452,9 @@
 				A42703641A7E7A42005159AC /* Color.swift in Sources */,
 				A4DFB85E1A9480120086105C /* WordDetailDelegate.swift in Sources */,
 				A42703801A7FA462005159AC /* LearnWordController.swift in Sources */,
+				A482C83E1A98D226008D313A /* CacheKey.swift in Sources */,
 				A4A8B6321A7B663A00C59E63 /* Error.swift in Sources */,
 				A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */,
-				812DE5971A8A172300B9915D /* LogUtils.swift in Sources */,
 				A4DFB8681A96214D0086105C /* ArticleForChineseDelegate.swift in Sources */,
 				A427037C1A7FA272005159AC /* ArticleForChineseController.swift in Sources */,
 				819CF1141A8B1AE300DCD494 /* LoadingDialog.swift in Sources */,

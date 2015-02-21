@@ -70,10 +70,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
 
     }
     
-    func refreshDictionaryData() {
-        API.instance.get("/dictionary/list", delegate: self)
-    }
-    
     func dictionaryList(data: AnyObject) {
         dictiontaryListDataArray = data as NSArray
         
@@ -198,8 +194,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float) {
-        
-        LogUtils.log("filePath=\(filePath),progress\(progress)")
         
     }
 

@@ -4,14 +4,11 @@ import UIKit
 
 class RegisterController: UIViewController, APIDataDelegate {
     var subView: UIView!
-    var subViewHeight: CGFloat = 200
+    var subViewHeight: CGFloat = 165
     
     var username :UITextField!
     var password :UITextField!
-    
-    var noticeInfoLabel :UILabel!
-    
-    var accountCtrl :AccountController!
+    var passwordForRegister: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +34,7 @@ class RegisterController: UIViewController, APIDataDelegate {
         self.subView.addSubview(usernameLabel)
         
         username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 120, height: 20))
+        username.placeholder = "5-32个字符"
         username.backgroundColor = Color.white
         self.subView.addSubview(username)
         
@@ -45,34 +43,22 @@ class RegisterController: UIViewController, APIDataDelegate {
         self.subView.addSubview(passwordLabel)
         
         password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 120, height: 20))
+        password.placeholder = "6-32个字符"
         password.backgroundColor = Color.white
         password.secureTextEntry = true
         self.subView.addSubview(password)
         
-        var inviteLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 90, width: 60, height: 20))
-        inviteLabel.text = "邀请者"
-        self.subView.addSubview(inviteLabel)
-        
-        var invitor = UITextField(frame: CGRect(x: inviteLabel.frame.origin.x + inviteLabel.frame.width, y: 90, width: 120, height: 20))
-        invitor.backgroundColor = Color.white
-        invitor.placeholder = "(可选)邀请者的用户名"
-        invitor.font = UIFont(name: invitor.font.fontName, size: CGFloat(12))
-        self.subView.addSubview(invitor)
-        
-        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 125, width: 60, height: 23))
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
         submitButton.backgroundColor = Color.gray
         submitButton.setTitle("升级", forState: UIControlState.Normal)
-        submitButton.addTarget(self, action: "onButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: "onSubmitButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 125, width: 60, height: 23))
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
         cancelButton.backgroundColor = Color.red
         cancelButton.setTitle("取消", forState: UIControlState.Normal)
-        cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        cancelButton.addTarget(self, action: "onCancelButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
-        
-        noticeInfoLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 160, width: 200, height: 20))
-        self.subView.addSubview(noticeInfoLabel)
         
         var tipsLabelWrap = UIView(frame: CGRect(x: 0, y: self.subView.frame.height - 20, width: self.subView.frame.width, height: 20))
         tipsLabelWrap.backgroundColor = Color.red.colorWithAlphaComponent(0.9)
@@ -93,59 +79,62 @@ class RegisterController: UIViewController, APIDataDelegate {
             ])
         tipsLabel.attributedText = NSAttributedString(string: tipsLabel.text!, attributes: attributes)
         tipsLabelWrap.addSubview(tipsLabel)
-
     }
     
-    func setAccountViewController(accountCtrl:AccountController) {
-        self.accountCtrl = accountCtrl
-    }
     
     func onTapView(recognizer: UITapGestureRecognizer) {
         self.closeView()
     }
     
-    func onButtonTapped(sender: UIButton) {
-        if(self.username.text.isEmpty) {
-            self.noticeInfoLabel.text="请输入用户名！"
+    func onSubmitButtonTapped(sender: UIButton) {
+        var username = self.username.text as NSString
+        if (username.length < 5) {
+            ErrorView(view: self.view, message: "用户名至少5个字符")
+            return
         }
-        else if(self.password.text.isEmpty) {
-            self.noticeInfoLabel.text="请输入密码！"
+        
+        if (username.length > 32) {
+            ErrorView(view: self.view, message: "用户名不能多于32个字符")
+            return
         }
-        else {
-            self.noticeInfoLabel.text=nil
-            LoadingDialog.showLoading()
-            var params: NSMutableDictionary = NSMutableDictionary()
-            params.setValue(username.text, forKey: "username")
-            params.setValue(password.text, forKey: "password")
-            API.instance.post("/user/register", delegate: self,  params: params)
+        
+        var password = self.password.text as NSString
+        if (password.length < 6) {
+            ErrorView(view: self.view, message: "密码至少6个字符")
+            return
         }
-    }
-    
-    func error(error: Error, api: String) {
-        self.noticeInfoLabel.text=error.getMessage()
-        LoadingDialog.dismissLoading()
+        
+        if (password.length > 32) {
+            ErrorView(view: self.view, message: "密码不能多于32个字符")
+            return
+        }
+        
+        self.passwordForRegister = password
+        
+        var params = NSMutableDictionary()
+        params.setValue(username, forKey: "username")
+        params.setValue(password, forKey: "password")
+        API.instance.post("/user/register", delegate: self, params: params)
     }
     
     func userRegister(data:AnyObject) {
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(username.text, forKey: "username")
-        params.setValue(password.text, forKey: "password")
-        params.setValue(Util.getUDID(), forKey: "udid")
-        API.instance.get("/user/login", delegate: self,  params: params)
-    }
-    
-    func userLogin(data:AnyObject) {
-        var dic :NSDictionary = data as NSDictionary
+        var user = NSMutableDictionary()
+        user.setDictionary(NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)! as NSMutableDictionary)
+        user.setValue(data["username"], forKey: "username")
+        user.setValue(self.passwordForRegister.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()), forKey: "password")
+        user.setValue(data["trial"], forKey: "trial")
+        NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
+        NSUserDefaults.standardUserDefaults().synchronize()
+        NSNotificationCenter.defaultCenter().postNotificationName("onRegisterSuccess", object: self, userInfo: nil)
         
-        CacheDataUtils.saveUserInfo(dic.valueForKey("id")!, userName: dic.valueForKey("username")!, passWord: password.text, holyWater: dic.valueForKey("holyWater")!, isTrial: false)
-        
-        self.accountCtrl.refreshUserInfo()
-        
-        LoadingDialog.dismissLoading()
         self.closeView()
     }
     
-    func onCancelTapped(sender: UIButton) {
+    func error(error: Error, api: String) {
+        ErrorView(view: self.view, message: error.getMessage())
+    }
+    
+    func onCancelButtonTapped(sender: UIButton) {
         self.closeView()
     }
     

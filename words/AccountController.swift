@@ -99,7 +99,11 @@ class AccountController: UIViewController,APIDataDelegate {
     }
     
     func userLogin(data:AnyObject) {
-        NSUserDefaults.standardUserDefaults().setObject(data, forKey: CacheKey.USER)
+        var oldUser: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var user = NSMutableDictionary()
+        user.setDictionary(data as NSDictionary)
+        user.setValue(oldUser?["password"], forKey: "password")
+        NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
         NSUserDefaults.standardUserDefaults().synchronize()
         self.setToView(data)
     }

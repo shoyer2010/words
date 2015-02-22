@@ -1,6 +1,7 @@
 //
-// SQLite.Value
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -86,18 +87,28 @@ extension Blob: Binding, Value {
 
 }
 
-extension Bool: Binding, Value {
+extension Blob: Printable {
 
-    public typealias Datatype = Bool
+    public var description: String {
+        let buf = UnsafeBufferPointer(start: UnsafePointer<UInt8>(bytes), count: length)
+        let hex = join("", map(buf) { String(format: "%02x", $0) })
+        return "x'\(hex)'"
+    }
 
-    public static var declaredDatatype = "BOOLEAN"
+}
+
+extension Bool: Value {
+
+    public typealias Datatype = Int
+
+    public static var declaredDatatype = Int.declaredDatatype
 
     public static func fromDatatypeValue(datatypeValue: Datatype) -> Bool {
-        return datatypeValue
+        return datatypeValue != 0
     }
 
     public var datatypeValue: Datatype {
-        return self
+        return self ? 1 : 0
     }
 
 }

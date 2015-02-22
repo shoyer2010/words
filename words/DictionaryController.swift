@@ -1,17 +1,30 @@
 import UIKit
 
-class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
+class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate, DictionaryInfoDelegate {
 
     var commonTableView: UITableView!
     var commonTableViewSelectedRow: Int?
     var dictionaryNameLabelTag = 1000
     var countLabelTag = 1001
     var popularLabelTag = 1002
+    var sizeLabelTag = 1003
+    var selectedSegmentIndex: Int = 0
+    var myCurrentDictionaryLabel: UILabel!
     
-    var dictiontaryListDataArray:NSArray = NSArray()
+    var dictionaryList: NSArray!
+    var generalDictionaryList: NSMutableArray!
+    var professionalDictionaryList: NSMutableArray!
+    var specialDictionaryList: NSMutableArray!
+    
+    var selectedDictionaryId: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: "onLoginSuccess", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: "onDictionaryDeleted", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearingDictionaryChanged:", name: "onLearingDictionaryChanged", object: nil)
+        
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
         self.view.backgroundColor = Color.appBackground
         
@@ -33,6 +46,9 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         tableViewWrap.layer.shadowRadius = Layer.shadowRadius
         tableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
+        self.dictionaryList = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.DICTIONARY_LIST) as? NSArray
+        self.groupDictionaryList()
+        
         commonTableView = UITableView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12), style: UITableViewStyle.Plain)
         commonTableView.dataSource = self
         commonTableView.delegate = self
@@ -52,31 +68,14 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         myCurrentDictionaryLabelWrap.layer.cornerRadius = Layer.cornerRadius
         myCurrentDictionaryLabelWrap.backgroundColor = Color.red
         
-        var myCurrentDictionaryLabel = UILabel(frame: CGRect(x: 5, y: 4, width: myCurrentDictionaryLabelWrap.frame.width, height: myCurrentDictionaryLabelWrap.frame.height))
-        myCurrentDictionaryLabel.text = "我正在学习《大学英语4级》"
-        myCurrentDictionaryLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyle.lineSpacing = 7
-        var attributes = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: myCurrentDictionaryLabel.font,
-            NSForegroundColorAttributeName: UIColor.whiteColor(),
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        myCurrentDictionaryLabel.attributedText = NSAttributedString(string: myCurrentDictionaryLabel.text!, attributes: attributes)
+        myCurrentDictionaryLabel = UILabel(frame: CGRect(x: 5, y: 4, width: myCurrentDictionaryLabelWrap.frame.width, height: myCurrentDictionaryLabelWrap.frame.height))
+        self.reloadMyCurrentLabel()
         myCurrentDictionaryLabelWrap.addSubview(myCurrentDictionaryLabel)
         self.view.addSubview(myCurrentDictionaryLabelWrap)
-
     }
     
-    func dictionaryList(data: AnyObject) {
-        dictiontaryListDataArray = data as NSArray
-        
-        commonTableView.reloadData()
-    }
-    
-    func error(error: Error, api: String) {
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return CGFloat(40)
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -89,20 +88,29 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func onSegmentTapped(sender: UISegmentedControl) {
-        println(sender.selectedSegmentIndex)
+        self.selectedSegmentIndex = sender.selectedSegmentIndex
+        commonTableView.reloadData()
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dictiontaryListDataArray.count
-    }
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return CGFloat(40)
+        var count = 0
+        if (self.dictionaryList != nil) {
+            switch self.selectedSegmentIndex {
+            case 0:
+                count = self.generalDictionaryList.count
+            case 1:
+                count = self.professionalDictionaryList.count
+            case 2:
+                count = self.specialDictionaryList.count
+            default:
+                break
+            }
+        }
+        
+        return count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        // 注意，实际数据填充的时候，这里要用可复用的cell， 资料；http://www.cnblogs.com/smileEvday/archive/2012/06/28/tableView.html
-        
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("dictionaryCell") as? UITableViewCell
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "dictionaryCell")
@@ -142,58 +150,99 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             popularLabel.font = UIFont(name: popularLabel.font.fontName, size: CGFloat(10))
             popularLabel.textAlignment = NSTextAlignment.Left
             cell!.addSubview(popularLabel)
+            
+            var sizeLabel = UILabel(frame: CGRect(x: tableView.frame.width - 60, y: 8, width: 50, height: 24))
+            sizeLabel.tag = self.sizeLabelTag
+            sizeLabel.text = "32M"
+            sizeLabel.textColor = Color.lightGray
+            sizeLabel.font = UIFont(name: sizeLabel.font.fontName, size: CGFloat(12))
+            sizeLabel.textAlignment = NSTextAlignment.Right
+            cell!.addSubview(sizeLabel)
         }
         
-        let dictionaryItemData:NSDictionary = dictiontaryListDataArray.objectAtIndex(indexPath.row) as NSDictionary
-        
-        var dictionaryNameLabel = cell!.viewWithTag(self.dictionaryNameLabelTag) as UILabel
-        dictionaryNameLabel.text = dictionaryItemData.valueForKey("name") as String + String(indexPath.row)
-        
-        var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
-        countLabel.text = "单词：\(indexPath.row * 10)"
-        
-        var popularLabel = cell!.viewWithTag(self.popularLabelTag) as UILabel
-        popularLabel.text = "人气：\(indexPath.row * 20)"
-        
-        var selectedView = cell!.viewWithTag(999)
-        if (indexPath.row == self.commonTableViewSelectedRow) {
-            selectedView?.backgroundColor = Color.red
-            dictionaryNameLabel.textColor = Color.white
-            countLabel.textColor = Color.white
-            popularLabel.textColor = Color.white
-        } else {
-            selectedView?.backgroundColor = UIColor.clearColor()
-            dictionaryNameLabel.textColor = Color.black
-            countLabel.textColor = Color.lightGray
-            popularLabel.textColor = Color.lightGray
+        var dictionaryList = self.getCurrentDictionaryList()
+        if (dictionaryList.count > 0) {
+            var dictionary: AnyObject = dictionaryList[indexPath.row]
+            
+            var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
+            var count = dictionary["count"] as Int
+            countLabel.text = "单词：\(count)"
+            
+            var popularLabel = cell!.viewWithTag(self.popularLabelTag) as UILabel
+            var popluarIndex = dictionary["popularIndex"] as Int
+            popularLabel.text = "人气：\(popluarIndex)"
+            
+            var filename = (dictionary["id"] as String) + ".db"
+            var sizeLabel = cell!.viewWithTag(self.sizeLabelTag) as UILabel
+            if (Util.isFileExist(filename)) {
+                sizeLabel.text = Util.fileSizeString(filename)
+            } else {
+                sizeLabel.text = "未下载"
+            }
+            
+            var dictionaryNameLabel = cell!.viewWithTag(self.dictionaryNameLabelTag) as UILabel
+            dictionaryNameLabel.text = dictionary["name"] as? String
+            
+            var selectedView = cell!.viewWithTag(999)
+            if (indexPath.row == self.commonTableViewSelectedRow) {
+                selectedView?.backgroundColor = Color.red
+                dictionaryNameLabel.textColor = Color.white
+                countLabel.textColor = Color.white
+                popularLabel.textColor = Color.white
+                sizeLabel.textColor = Color.white
+            } else {
+                selectedView?.backgroundColor = UIColor.clearColor()
+                dictionaryNameLabel.textColor = Color.black
+                countLabel.textColor = Color.lightGray
+                popularLabel.textColor = Color.lightGray
+                sizeLabel.textColor = Color.lightGray
+            }
         }
         
         return cell!
     }
+    
+    func getCurrentDictionaryList() -> NSArray {
+        var dictionaryList: NSArray!
+        switch self.selectedSegmentIndex {
+        case 0:
+            dictionaryList = self.generalDictionaryList
+        case 1:
+            dictionaryList = self.professionalDictionaryList
+        case 2:
+            dictionaryList = self.specialDictionaryList
+        default:
+            break
+        }
+        
+        return dictionaryList
+    }
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        var dictionaryInfoController = DictionaryInfoController()
-//        self.addChildViewController(dictionaryInfoController)
-//        self.view.addSubview(dictionaryInfoController.view)
-        println("selected \(indexPath.row)")
+        var dictionaryList = self.getCurrentDictionaryList()
+        var selectedDictionary: AnyObject = dictionaryList[indexPath.row]
+        self.selectedDictionaryId = selectedDictionary["id"] as String
+        
+        var filename = self.selectedDictionaryId  + ".db"
+        if (Util.isFileExist(filename)) {
+            var dictionaryInfoController = DictionaryInfoController()
+            dictionaryInfoController.delegate = self
+            self.addChildViewController(dictionaryInfoController)
+            self.view.addSubview(dictionaryInfoController.view)
+        } else {
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(self.selectedDictionaryId, forKey: "id")
+            API.instance.get("/dictionary/download", delegate: self,  params: params)
+        }
+        
         self.commonTableViewSelectedRow = indexPath.row
         tableView.reloadData()
-        
-        let dictionaryItemData:NSDictionary = dictiontaryListDataArray.objectAtIndex(indexPath.row) as NSDictionary
-        getDictionaryDataBaseFile(dictionaryItemData.valueForKey("id") as String)
-        
     }
     
-    func getDictionaryDataBaseFile(dictionaryId:String) {
-        
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(dictionaryId, forKey: "id")
-        
-        API.instance.get("/dictionary/download", delegate: self,  params: params)
-    }
-    
-    func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float) {
-        
+    func dictionaryDownload(filePath: AnyObject, progress: Float) {
+        if (progress >= 1.0) {
+            self.commonTableView.reloadData()
+        }
     }
 
     //downloadIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -232,5 +281,106 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
         println(filePath)
         println(progress)
+    }
+    
+    func onLoginSuccess(notification: NSNotification) {
+        loadData()
+    }
+    
+    func onDictionaryDeleted(notification: NSNotification) {
+        self.commonTableView.reloadData()
+        self.reloadMyCurrentLabel()
+    }
+    
+    func onLearingDictionaryChanged(notification: NSNotification) {
+        self.reloadMyCurrentLabel()
+    }
+    
+    func reloadMyCurrentLabel() {
+        var customDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+        var learningDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+        
+        var string = "我正在学习:"
+        if(learningDictionary != nil) {
+            var dictionary: AnyObject? = self.getDictionaryInfo(learningDictionary! as String)
+            if (dictionary != nil) {
+                string += dictionary!["name"] as String
+            }
+        }
+        
+        if (customDictionary != nil) {
+            if (learningDictionary == nil) {
+                string += "生词本"
+            } else {
+                string += " + 生词本"
+            }
+        }
+        
+        myCurrentDictionaryLabel.text = string
+        myCurrentDictionaryLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
+        var paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+        paragraphStyle.lineSpacing = 7
+        var attributes = NSDictionary(dictionary: [
+            NSParagraphStyleAttributeName: paragraphStyle,
+            NSFontAttributeName: myCurrentDictionaryLabel.font,
+            NSForegroundColorAttributeName: UIColor.whiteColor(),
+            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+            ])
+        myCurrentDictionaryLabel.attributedText = NSAttributedString(string: myCurrentDictionaryLabel.text!, attributes: attributes)
+    }
+    
+    func loadData() {
+        API.instance.get("/dictionary/list", delegate: self, params: NSMutableDictionary())
+    }
+    
+    func groupDictionaryList() {
+        self.generalDictionaryList = NSMutableArray()
+        self.professionalDictionaryList = NSMutableArray()
+        self.specialDictionaryList = NSMutableArray()
+        
+        if (self.dictionaryList != nil) {
+            for dictionary in self.dictionaryList {
+                switch dictionary["type"] as Int {
+                case 3:
+                    self.specialDictionaryList.addObject(dictionary)
+                case 2:
+                    self.professionalDictionaryList.addObject(dictionary)
+                default:
+                    self.generalDictionaryList.addObject(dictionary)
+                }
+            }
+        }
+    }
+    
+    func dictionaryList(data: AnyObject) {
+        self.dictionaryList = data as NSArray
+        self.groupDictionaryList()
+        commonTableView.reloadData()
+        NSUserDefaults.standardUserDefaults().setObject(data, forKey: CacheKey.DICTIONARY_LIST)
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
+    func getDictionaryInfo(dictionaryId: String) -> AnyObject? {
+        var dictionaryList = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.DICTIONARY_LIST) as? NSArray
+        var dictionary: AnyObject?
+        if (dictionaryList != nil) {
+            for item in dictionaryList! {
+                if ((item["id"] as String) == dictionaryId) {
+                    dictionary = item
+                    break
+                }
+            }
+        }
+        
+        return dictionary
+    }
+    
+    func setDictionaryId() -> String {
+        return self.selectedDictionaryId
+    }
+    
+    func error(error: Error, api: String) {
+        ErrorView(view: self.view, message: error.getMessage())
     }
 }

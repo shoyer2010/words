@@ -1,6 +1,7 @@
 //
-// SQLite-Bridging-Header.h
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,4 +22,16 @@
 // THE SOFTWARE.
 //
 
-#include "SQLite-Bridging.h"
+#include <sqlite3.h>
+
+typedef int (^SQLiteBusyHandlerCallback)(int times);
+int SQLiteBusyHandler(sqlite3 * handle, SQLiteBusyHandlerCallback callback);
+
+typedef void (^SQLiteTraceCallback)(const char * SQL);
+void SQLiteTrace(sqlite3 * handle, SQLiteTraceCallback callback);
+
+typedef void (^SQLiteCreateFunctionCallback)(sqlite3_context * context, int argc, sqlite3_value ** argv);
+int SQLiteCreateFunction(sqlite3 * handle, const char * name, int deterministic, SQLiteCreateFunctionCallback callback);
+
+typedef int (^SQLiteCreateCollationCallback)(const char * lhs, const char * rhs);
+int SQLiteCreateCollation(sqlite3 * handle, const char * name, SQLiteCreateCollationCallback callback);

@@ -44,5 +44,33 @@ class Util {
         var minutes = (seconds % 3600) / 60
         return "\(days)天\(hours)小时\(minutes)分"
     }
+    
+    class func getFilePath(filename: String) -> String {
+        return NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent(filename)
+    }
+    
+    class func isFileExist(filename: String) -> Bool {
+        var filePath = Util.getFilePath(filename)
+        return NSFileManager.defaultManager().fileExistsAtPath(filePath)
+    }
+    
+    class func fileSizeString(filename: String) -> String {
+        var filePath = Util.getFilePath(filename)
+        var filesize = NSFileManager.defaultManager().attributesOfItemAtPath(filePath, error: nil)?["NSFileSize"] as Int
+        if (filesize >= 1024 * 1024) {
+            return "\(filesize / (1024 * 1024)) MB"
+        }
+        
+        if (filesize >= 1024) {
+            return "\(filesize / 1024) KB"
+        }
+        
+        return "\(filesize) B"
+    }
+    
+    class func deleteFile(filename: String) {
+        var filePath = Util.getFilePath(filename)
+        NSFileManager.defaultManager().removeItemAtPath(filePath, error: nil)
+    }
 }
 

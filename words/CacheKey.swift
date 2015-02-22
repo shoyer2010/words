@@ -10,4 +10,7 @@
 
 struct CacheKey {
     static let USER = "user"
+    static let LEARNING_CUSTOM_DICTIONARY = "learning_custom_dictionary"
+    static let LEARNING_DICTIONARY = "learning_dictionary"
+    static let DICTIONARY_LIST = "dictionary_list"
 }

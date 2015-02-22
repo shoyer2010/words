@@ -108,6 +108,7 @@ class AccountController: UIViewController,APIDataDelegate {
         NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
         NSUserDefaults.standardUserDefaults().synchronize()
         self.setToView(data)
+        NSNotificationCenter.defaultCenter().postNotificationName("onLoginSuccess", object: self, userInfo: nil)
     }
     
     func onRegisterSuccess(notification: NSNotification) {

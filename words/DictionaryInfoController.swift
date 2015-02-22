@@ -1,10 +1,14 @@
 
 import Foundation
 import UIKit
+import SQLite
 
 class DictionaryInfoController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
     var subView: UIView!
     var subViewHeight: CGFloat = 0
+    var delegate: DictionaryInfoDelegate!
+    var dictionary: AnyObject?
+    var words: NSMutableArray = NSMutableArray()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +28,12 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
+        }
+        
+        self.dictionary = self.getDictionaryInfo()
+        var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
+        for row in db.prepare("SELECT id, word FROM words") {
+            self.words.addObject(["id": row[0] as String, "word": row[1] as String])
         }
         
         var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
@@ -80,25 +90,33 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         self.subView.addSubview(tableViewWrap)
         
         var learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 65, y: self.subView.frame.height - 40, width: 60, height: 30))
-        learnButton.setTitle("学习", forState: UIControlState.Normal)
         learnButton.backgroundColor = Color.gray
+        learnButton.addTarget(self, action: "onLearnButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(learnButton)
+        
+        var isLearning = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+        if (self.dictionary != nil && (self.dictionary!["custom"] as Bool) && isLearning != nil) {
+            learnButton.setTitle("不学习", forState: UIControlState.Normal)
+        } else {
+            learnButton.setTitle("学习", forState: UIControlState.Normal)
+        }
         
         var deleteButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
         deleteButton.setTitle("删除", forState: UIControlState.Normal)
-        deleteButton.backgroundColor = Color.gray
+        deleteButton.backgroundColor = Color.red
+        deleteButton.addTarget(self, action: "onDeleteButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(deleteButton)
+        
+        if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
+            deleteButton.userInteractionEnabled = false
+            deleteButton.layer.opacity = 0.5
+        } else {
+            deleteButton.userInteractionEnabled = true
+            deleteButton.layer.opacity = 1
+        }
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {
-        self.closeView()
-    }
-    
-    func onButtonTapped(sender: UIButton) {
-        self.closeView()
-    }
-    
-    func onCancelTapped(sender: UIButton) {
         self.closeView()
     }
     
@@ -112,15 +130,61 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         }
     }
     
+    func getDictionaryInfo() -> AnyObject? {
+        var dictionaryList = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.DICTIONARY_LIST) as? NSArray
+        var dictionary: AnyObject?
+        if (dictionaryList != nil) {
+            for item in dictionaryList! {
+                if ((item["id"] as String) == self.delegate.setDictionaryId()) {
+                    dictionary = item
+                    break
+                }
+            }
+        }
+        
+        return dictionary
+    }
+    
+    func onDeleteButtonTapped(sender: UIButton) {
+        Util.deleteFile(self.delegate.setDictionaryId() + ".db")
+        var learingDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+        if (learingDictionaryId == self.delegate.setDictionaryId()) {
+            NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+        }
+        
+        var info = NSMutableDictionary()
+        info.setValue(self.delegate.setDictionaryId(), forKey: "id")
+        NSNotificationCenter.defaultCenter().postNotificationName("onDictionaryDeleted", object: self, userInfo: info)
+        self.closeView()
+    }
+    
+    func onLearnButtonTapped(sender: UIButton) {
+        if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
+            var isLearning = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+            if (isLearning != nil) {
+                NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY)
+            } else {
+                NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_CUSTOM_DICTIONARY)
+            }
+        } else {
+            NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_DICTIONARY)
+        }
+
+        NSUserDefaults.standardUserDefaults().synchronize()
+        NSNotificationCenter.defaultCenter().postNotificationName("onLearingDictionaryChanged", object: self, userInfo: nil)
+        self.closeView()
+    }
+    
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return CGFloat(30)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5000
+        return self.words.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var wordLabelTag = 1001
         
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("cell") as? UITableViewCell
         if (cell == nil) {
@@ -130,6 +194,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             cell!.layoutMargins = UIEdgeInsetsZero
             
             var wordLabel = UILabel(frame: CGRect(x: 10, y: 3, width: 100, height: 24))
+            wordLabel.tag = wordLabelTag
             wordLabel.text = "what"
             wordLabel.textColor = Color.gray
             wordLabel.textAlignment = NSTextAlignment.Left
@@ -157,6 +222,9 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             haveMasteredLabel.textAlignment = NSTextAlignment.Center
             cell!.addSubview(haveMasteredLabel)
         }
+        
+        var wordLabel = cell!.viewWithTag(wordLabelTag) as UILabel
+        wordLabel.text = self.words[indexPath.row]["word"] as? String
         
         return cell!
     }

@@ -19,7 +19,7 @@
     
     optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
     
-    optional func dictionaryDownloadDictionary(filePath: AnyObject, progress: Float)
+    optional func dictionaryDownload(filePath: AnyObject, progress: Float)
     
     
     // 单词
@@ -27,10 +27,13 @@
     
     // 文章
     optional func articleDetail(AnyObject)
+    
     optional func articleFavourite(AnyObject)
+    
     optional func articleFavouriteList(AnyObject)
     
     //排名
     optional func rankActive(AnyObject)
+    
     optional func rankMasteredWords(AnyObject)
 }

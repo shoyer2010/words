@@ -1,6 +1,7 @@
 //
-// SQLite.Statement
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,8 +22,8 @@
 // THE SOFTWARE.
 //
 
-private let SQLITE_STATIC = sqlite3_destructor_type(COpaquePointer(bitPattern: 0))
-private let SQLITE_TRANSIENT = sqlite3_destructor_type(COpaquePointer(bitPattern: -1))
+internal let SQLITE_STATIC = sqlite3_destructor_type(COpaquePointer(bitPattern: 0))
+internal let SQLITE_TRANSIENT = sqlite3_destructor_type(COpaquePointer(bitPattern: -1))
 
 /// A single SQL statement.
 public final class Statement {
@@ -86,8 +87,6 @@ public final class Statement {
     private func bind(value: Binding?, atIndex idx: Int) {
         if let value = value as? Blob {
             try(sqlite3_bind_blob(handle, Int32(idx), value.bytes, Int32(value.length), SQLITE_TRANSIENT))
-        } else if let value = value as? Bool {
-            bind(value ? 1 : 0, atIndex: idx)
         } else if let value = value as? Double {
             try(sqlite3_bind_double(handle, Int32(idx), value))
         } else if let value = value as? Int {
@@ -221,16 +220,11 @@ extension Statement: GeneratorType {
             case SQLITE_FLOAT:
                 return Double(sqlite3_column_double(self.handle, Int32(idx)))
             case SQLITE_INTEGER:
-                let int = Int(sqlite3_column_int64(self.handle, Int32(idx)))
-                var bool = false
-                if let type = String.fromCString(sqlite3_column_decltype(self.handle, Int32(idx))) {
-                    bool = type.hasPrefix("BOOL")
-                }
-                return bool ? int != 0 : int
+                return Int(sqlite3_column_int64(self.handle, Int32(idx)))
             case SQLITE_NULL:
                 return nil
             case SQLITE_TEXT:
-                return String.fromCString(UnsafePointer<CChar>(sqlite3_column_text(self.handle, Int32(idx))))!
+                return String.fromCString(UnsafePointer(sqlite3_column_text(self.handle, Int32(idx))))!
             case let type:
                 assertionFailure("unsupported column type: \(type)")
             }

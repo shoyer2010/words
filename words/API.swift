@@ -107,7 +107,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         if (response.allHeaderFields["Content-Disposition"] != nil) {
             self.attachmentFilename = NSString(string: response.allHeaderFields["Content-Disposition"] as String).componentsSeparatedByString("=")[1] as? String
             self.attachmentSize = (response.allHeaderFields["Content-Length"] as String).toInt()
-            self.attachmentSavePath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent(self.attachmentFilename!)
+            self.attachmentSavePath = Util.getFilePath(self.attachmentFilename!)
         } else {
             self.attachmentFilename = nil
             self.attachmentSize = 0
@@ -124,7 +124,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/syncDictionary":
                 self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
             case "/dictionary/download":
-                self.delegate!.dictionaryDownloadDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }
@@ -162,9 +162,9 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/list":
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(data!, progress: 1.0)
+                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0)
             case "/dictionary/download":
-                self.delegate!.dictionaryDownloadDictionary!(data!, progress: 1.0)
+                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0)
             case "/word/search":
                 self.delegate!.wordSearch!(data!)
             case "/article/detail":

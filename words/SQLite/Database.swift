@@ -1,6 +1,7 @@
 //
-// SQLite.Database
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,17 +46,17 @@ public final class Database {
     /// :returns: A new database connection.
     public init(_ path: String? = ":memory:", readonly: Bool = false) {
         let flags = readonly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE
-        try(sqlite3_open_v2(path ?? "", &handle, flags, nil))
+        try(sqlite3_open_v2(path ?? "", &handle, flags | SQLITE_OPEN_FULLMUTEX, nil))
     }
 
     deinit { try(sqlite3_close(handle)) } // sqlite3_close_v2 in Yosemite/iOS 8?
 
     // MARK: -
 
-    /// The last row ID inserted into the database via this connection.
-    public var lastID: Int? {
-        let lastID = Int(sqlite3_last_insert_rowid(handle))
-        return lastID == 0 ? nil : lastID
+    /// The last row id inserted into the database via this connection.
+    public var lastId: Int? {
+        let lastId = Int(sqlite3_last_insert_rowid(handle))
+        return lastId == 0 ? nil : lastId
     }
 
     /// The last number of changes (inserts, updates, or deletes) made to the
@@ -205,6 +206,14 @@ public final class Database {
 
     }
 
+    public enum TransactionResult: String {
+
+        case Commit = "COMMIT TRANSACTION"
+
+        case Rollback = "ROLLBACK TRANSACTION"
+
+    }
+
     /// Runs a series of statements in a transaction. The first statement to
     /// fail will short-circuit the rest and roll back the changes. A successful
     /// transaction will automatically be committed.
@@ -252,12 +261,16 @@ public final class Database {
     ///
     /// :returns: The last statement executed, successful or not.
     public func transaction(mode: TransactionMode, _ statements: [@autoclosure () -> Statement]) -> Statement {
-        var transaction = run("BEGIN \(mode.rawValue) TRANSACTION")
-        // FIXME: rdar://15217242 // for statement in statements { transaction = transaction && statement() }
-        for idx in 0..<statements.count { transaction = transaction && statements[idx]() }
-        transaction = transaction && run("COMMIT TRANSACTION")
-        if transaction.failed { run("ROLLBACK TRANSACTION") }
-        return transaction
+        var statement: Statement!
+        let result = transaction(mode) { transaction in
+            statement = reduce(statements, transaction, &&)
+            return statement.failed ? .Rollback : .Commit
+        }
+        return statement && result
+    }
+
+    public func transaction(_ mode: TransactionMode = .Deferred, block: Statement -> TransactionResult) -> Statement {
+        return run(block(run("BEGIN \(mode.rawValue) TRANSACTION")).rawValue)
     }
 
     // MARK: - Savepoints
@@ -322,6 +335,11 @@ public final class Database {
 
     // MARK: - Configuration
 
+    public var foreignKeys: Bool {
+        get { return Bool.fromDatatypeValue(scalar("PRAGMA foreign_keys") as Int) }
+        set { run("PRAGMA foreign_keys = \(transcode(newValue.datatypeValue))") }
+    }
+
     public var userVersion: Int {
         get { return scalar("PRAGMA user_version") as Int }
         set { run("PRAGMA user_version = \(transcode(newValue))") }
@@ -345,9 +363,9 @@ public final class Database {
     ///                  no further attempts will be made.
     public func busy(callback: (Int -> Bool)?) {
         if let callback = callback {
-            SQLiteBusyHandler(handle) { callback(Int($0)) ? 1 : 0 }
+            try(SQLiteBusyHandler(handle) { callback(Int($0)) ? 1 : 0 })
         } else {
-            SQLiteBusyHandler(handle, nil)
+            try(SQLiteBusyHandler(handle, nil))
         }
     }
 
@@ -363,6 +381,72 @@ public final class Database {
         } else {
             SQLiteTrace(handle, nil)
         }
+    }
+
+    /// Creates or redefines a custom SQL function.
+    ///
+    /// :param: function      The name of the function to create or redefine.
+    ///
+    /// :param: deterministic Whether or not the function is deterministic. If
+    ///                       the function always returns the same result for a
+    ///                       given input, SQLite can make optimizations.
+    ///                       (Default: false.)
+    ///
+    /// :param: block         A block of code to run when the function is
+    ///                       called. The block is called with an array of raw
+    ///                       SQL values mapped to the function's parameters and
+    ///                       should return a raw SQL value (or nil).
+    public func create(#function: String, deterministic: Bool = false, _ block: [Binding?] -> Binding?) {
+        try(SQLiteCreateFunction(handle, function, deterministic ? 1 : 0) { context, argc, argv in
+            let arguments: [Binding?] = map(0..<argc) { idx in
+                let value = argv[Int(idx)]
+                switch sqlite3_value_type(value) {
+                case SQLITE_BLOB:
+                    let bytes = sqlite3_value_blob(value)
+                    let length = sqlite3_value_bytes(value)
+                    return Blob(bytes: bytes, length: Int(length))
+                case SQLITE_FLOAT:
+                    return Double(sqlite3_value_double(value))
+                case SQLITE_INTEGER:
+                    return Int(sqlite3_value_int64(value))
+                case SQLITE_NULL:
+                    return nil
+                case SQLITE_TEXT:
+                    return String.fromCString(UnsafePointer(sqlite3_value_text(value)))!
+                case let type:
+                    assertionFailure("unsupported value type: \(type)")
+                }
+            }
+            let result = block(arguments)
+            if let result = result as? Blob {
+                sqlite3_result_blob(context, result.bytes, Int32(result.length), nil)
+            } else if let result = result as? Double {
+                sqlite3_result_double(context, result)
+            } else if let result = result as? Int {
+                sqlite3_result_int64(context, Int64(result))
+            } else if let result = result as? String {
+                sqlite3_result_text(context, result, Int32(countElements(result)), SQLITE_TRANSIENT)
+            } else if result == nil {
+                sqlite3_result_null(context)
+            } else {
+                assertionFailure("unsupported result type: \(result)")
+            }
+        })
+    }
+
+    /// The return type of a collation comparison function.
+    public typealias ComparisonResult = NSComparisonResult
+
+    /// Defines a new collating sequence.
+    ///
+    /// :param: collation The name of the collation added.
+    ///
+    /// :param: block     A collation function that takes two strings and
+    ///                   returns the comparison result.
+    public func create(#collation: String, _ block: (String, String) -> ComparisonResult) {
+        try(SQLiteCreateCollation(handle, collation) { lhs, rhs in
+            return Int32(block(String.fromCString(lhs)!, String.fromCString(rhs)!).rawValue)
+        })
     }
 
     // MARK: - Error Handling
@@ -401,7 +485,7 @@ internal func quote(#identifier: String) -> String {
 }
 
 private func quote(string: String, mark: Character) -> String {
-    let escaped = Array(string).reduce("") { string, character in
+    let escaped = reduce(string, "") { string, character in
         string + (character == mark ? "\(mark)\(mark)" : "\(character)")
     }
     return "\(mark)\(escaped)\(mark)"

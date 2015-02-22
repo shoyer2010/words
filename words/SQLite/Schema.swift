@@ -1,6 +1,7 @@
 //
-// SQLite.Schema
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +47,7 @@ public extension Database {
         return run("ALTER TABLE \(quote(identifier: table.tableName)) RENAME TO \(quote(identifier: tableName))")
     }
 
-    public func alter<V: Value where V.Datatype: Binding>(
+    public func alter<V: Value>(
         #table: Query,
         add column: Expression<V>,
         check: Expression<Bool>? = nil,
@@ -55,7 +56,7 @@ public extension Database {
         return alter(table, define(column, nil, false, false, check, Expression(value: defaultValue), nil))
     }
 
-    public func alter<V: Value where V.Datatype: Binding>(
+    public func alter<V: Value>(
         #table: Query,
         add column: Expression<V?>,
         check: Expression<Bool>? = nil,
@@ -65,14 +66,40 @@ public extension Database {
         return alter(table, define(Expression<V>(column), nil, true, false, check, value, nil))
     }
 
-    public func alter<V: Value where V.Datatype: Binding>(
+    public func alter<V: Value>(
         #table: Query,
         add column: Expression<V?>,
         check: Expression<Bool>? = nil,
         references: Expression<V>
     ) -> Statement {
-        let expressions = [Expression<()>(literal: "REFERENCES"), namespace(references)]
-        return alter(table, define(Expression<V>(column), nil, true, false, check, nil, expressions))
+        return alter(table, define(Expression<V>(column), nil, true, false, check, nil, [
+            Expression<()>(literal: "REFERENCES"), namespace(references)
+        ]))
+    }
+
+    public func alter(
+        #table: Query,
+        add column: Expression<String>,
+        check: Expression<Bool>? = nil,
+        defaultValue: String,
+        collate: Collation
+    ) -> Statement {
+        return alter(table, define(Expression<String>(column), nil, false, false, check, Expression(value: defaultValue), [
+            Expression<()>(literal: "COLLATE \(collate)")
+        ]))
+    }
+
+    public func alter(
+        #table: Query,
+        add column: Expression<String?>,
+        check: Expression<Bool>? = nil,
+        defaultValue: String? = nil,
+        collate: Collation
+    ) -> Statement {
+        let value = defaultValue.map { Expression<String>(value: $0) }
+        return alter(table, define(Expression<String>(column), nil, true, false, check, value, [
+            Expression<()>(literal: "COLLATE \(collate)")
+        ]))
     }
 
     private func alter(table: Query, _ definition: Expressible) -> Statement {
@@ -100,7 +127,7 @@ public extension Database {
 
     private func indexName(table: Query, on columns: [Expressible]) -> String {
         let string = join(" ", ["index", table.tableName, "on"] + columns.map { $0.expression.SQL })
-        return Array(string).reduce("") { underscored, character in
+        return reduce(string, "") { underscored, character in
             if character == "\"" { return underscored }
             if "A"..."Z" ~= character || "a"..."z" ~= character { return underscored + String(character) }
             return underscored + "_"
@@ -130,7 +157,7 @@ public final class SchemaBuilder {
 
     // MARK: - Column Constraints
 
-    public func column<V: Value where V.Datatype: Binding>(
+    public func column<V: Value>(
         name: Expression<V>,
         unique: Bool = false,
         check: Expression<Bool>? = nil,
@@ -139,7 +166,7 @@ public final class SchemaBuilder {
         column(name, nil, false, unique, check, value)
     }
 
-    public func column<V: Value where V.Datatype: Binding>(
+    public func column<V: Value>(
         name: Expression<V>,
         unique: Bool = false,
         check: Expression<Bool>? = nil,
@@ -148,7 +175,7 @@ public final class SchemaBuilder {
         column(name, nil, false, unique, check, value.map { Expression(value: $0) })
     }
 
-    public func column<V: Value where V.Datatype: Binding>(
+    public func column<V: Value>(
         name: Expression<V?>,
         unique: Bool = false,
         check: Expression<Bool>? = nil,
@@ -157,7 +184,7 @@ public final class SchemaBuilder {
         column(Expression<V>(name), nil, true, unique, check, value)
     }
 
-    public func column<V: Value where V.Datatype: Binding>(
+    public func column<V: Value>(
         name: Expression<V?>,
         unique: Bool = false,
         check: Expression<Bool>? = nil,
@@ -248,7 +275,7 @@ public final class SchemaBuilder {
         )
     }
 
-    // MARK: TEXT Columns
+    // MARK: TEXT Columns (COLLATE)
 
     public func column(
         name: Expression<String>,
@@ -257,7 +284,7 @@ public final class SchemaBuilder {
         defaultValue value: Expression<String>?,
         collate: Collation
     ) {
-        let expressions: [Expressible] = [Expression<()>(literal: "COLLATE \(collate.rawValue)")]
+        let expressions: [Expressible] = [Expression<()>(literal: "COLLATE \(collate)")]
         column(name, nil, false, unique, check, value, expressions)
     }
 
@@ -294,7 +321,7 @@ public final class SchemaBuilder {
 
     // MARK: -
 
-    private func column<V: Value where V.Datatype: Binding>(
+    private func column<V: Value>(
         name: Expression<V>,
         _ primaryKey: PrimaryKey?,
         _ null: Bool,
@@ -308,8 +335,20 @@ public final class SchemaBuilder {
 
     // MARK: - Table Constraints
 
-    public func primaryKey(column: Expressible...) {
-        let primaryKey = Expression<()>.join(", ", column)
+    public func primaryKey<T: Value>(column: Expression<T>) {
+        primaryKey([column])
+    }
+
+    public func primaryKey<T: Value, U: Value>(columnA: Expression<T>, _ B: Expression<U>) {
+        primaryKey([columnA, B])
+    }
+
+    public func primaryKey<T: Value, U: Value, V: Value>(columnA: Expression<T>, _ B: Expression<U>, _ C: Expression<V>) {
+        primaryKey([columnA, B, C])
+    }
+
+    private func primaryKey(composite: [Expressible]) {
+        let primaryKey = Expression<()>.join(", ", composite)
         columns.append(Expression<()>(literal: "PRIMARY KEY(\(primaryKey.SQL))", primaryKey.bindings))
     }
 
@@ -319,7 +358,7 @@ public final class SchemaBuilder {
     }
 
     public func check(condition: Expression<Bool>) {
-        columns.append(Expression<()>(literal: "CHECK \(condition.SQL)", condition.bindings))
+        columns.append(Expression<()>(literal: "CHECK (\(condition.SQL))", condition.bindings))
     }
 
     public enum Dependency: String {
@@ -336,9 +375,9 @@ public final class SchemaBuilder {
 
     }
 
-    public func foreignKey<V: Value where V.Datatype: Binding>(
-        column: Expression<V>,
-        references: Expression<V>,
+    public func foreignKey<T: Value>(
+        column: Expression<T>,
+        references: Expression<T>,
         update: Dependency? = nil,
         delete: Dependency? = nil
     ) {
@@ -349,35 +388,41 @@ public final class SchemaBuilder {
         if let delete = delete { parts.append(Expression<()>(literal: "ON DELETE \(delete.rawValue)")) }
         columns.append(Expression<()>.join(" ", parts))
     }
-    public func foreignKey<V: Value where V.Datatype: Binding>(
-        column: Expression<V?>,
-        references: Expression<V>,
+
+    public func foreignKey<T: Value>(
+        column: Expression<T?>,
+        references: Expression<T>,
         update: Dependency? = nil,
         delete: Dependency? = nil
     ) {
         assertForeignKeysEnabled()
-        foreignKey(Expression<V>(column), references: references, update: update, delete: delete)
+        foreignKey(Expression<T>(column), references: references, update: update, delete: delete)
     }
 
-    public func foreignKey<V: Value where V.Datatype: Binding>(
-        column: Expression<V>,
-        references: Query,
+    public func foreignKey<T: Value, U: Value>(
+        columns: (Expression<T>, Expression<U>),
+        references: (Expression<T>, Expression<U>),
         update: Dependency? = nil,
         delete: Dependency? = nil
     ) {
-        foreignKey(column, references: Expression(references.tableName), update: update, delete: delete)
+        let compositeA = Expression<T>(Expression<()>.join(", ", [columns.0, columns.1]))
+        let compositeB = Expression<T>(Expression<()>.join(", ", [references.0, references.1]))
+        foreignKey(compositeA, references: compositeB, update: update, delete: delete)
     }
-    public func foreignKey<V: Value where V.Datatype: Binding>(
-        column: Expression<V?>,
-        references: Query,
+
+    public func foreignKey<T: Value, U: Value, V: Value>(
+        columns: (Expression<T>, Expression<U>, Expression<V>),
+        references: (Expression<T>, Expression<U>, Expression<V>),
         update: Dependency? = nil,
         delete: Dependency? = nil
     ) {
-        foreignKey(column, references: Expression(references.tableName), update: update, delete: delete)
+        let compositeA = Expression<T>(Expression<()>.join(", ", [columns.0, columns.1, columns.2]))
+        let compositeB = Expression<T>(Expression<()>.join(", ", [references.0, references.1, references.2]))
+        foreignKey(compositeA, references: compositeB, update: update, delete: delete)
     }
 
     private func assertForeignKeysEnabled() {
-        assert(table.database.scalar("PRAGMA foreign_keys") as Int == 1, "foreign key constraints are disabled")
+        assert(table.database.foreignKeys, "foreign key constraints are disabled (run `db.foreignKeys = true`)")
     }
 
 }
@@ -385,14 +430,14 @@ public final class SchemaBuilder {
 private func namespace(column: Expressible) -> Expressible {
     let expression = column.expression
     if !contains(expression.SQL, ".") { return expression }
-    let reference = Array(expression.SQL).reduce("") { SQL, character in
+    let reference = reduce(expression.SQL, "") { SQL, character in
         let string = String(character)
         return SQL + (string == "." ? "(" : string)
     }
     return Expression<()>(literal: "\(reference))", expression.bindings)
 }
 
-private func define<V: Value where V.Datatype: Binding>(
+private func define<V: Value>(
     column: Expression<V>,
     primaryKey: SchemaBuilder.PrimaryKey?,
     null: Bool,
@@ -408,7 +453,7 @@ private func define<V: Value where V.Datatype: Binding>(
     }
     if !null { parts.append(Expression<()>(literal: "NOT NULL")) }
     if unique { parts.append(Expression<()>(literal: "UNIQUE")) }
-    if let check = check { parts.append(Expression<()>(literal: "CHECK \(check.SQL)", check.bindings)) }
+    if let check = check { parts.append(Expression<()>(literal: "CHECK (\(check.SQL))", check.bindings)) }
     if let value = defaultValue { parts.append(Expression<()>(literal: "DEFAULT \(value.SQL)", value.bindings)) }
     if let expressions = expressions { parts += expressions }
     return Expression<()>.join(" ", parts)

@@ -1,6 +1,7 @@
 //
-// SQLite.Query
-// Copyright (c) 2014 Stephen Celis.
+// SQLite.swift
+// https://github.com/stephencelis/SQLite.swift
+// Copyright (c) 2014-2015 Stephen Celis.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -286,7 +287,7 @@ public struct Query {
         return Expression(literal: "\(quote(identifier: alias ?? tableName)).\(column.SQL)", column.bindings)
     }
 
-    // FIXME: rdar://18673897 subscript<T>(expression: Expression<V>) -> Expression<V>
+    // FIXME: rdar://18673897 // ... subscript<T>(expression: Expression<V>) -> Expression<V>
 
     public subscript(column: Expression<Blob>) -> Expression<Blob> { return namespace(column) }
     public subscript(column: Expression<Blob?>) -> Expression<Blob?> { return namespace(column) }
@@ -436,15 +437,15 @@ public struct Query {
     ///
     /// :param: values A list of values to set.
     ///
-    /// :returns: The row ID.
-    public func insert(value: Setter, _ more: Setter...) -> Int? { return insert([value] + more).ID }
+    /// :returns: The row id.
+    public func insert(value: Setter, _ more: Setter...) -> Int? { return insert([value] + more).id }
 
     /// Runs an INSERT statement against the query.
     ///
     /// :param: values A list of values to set.
     ///
-    /// :returns: The row ID and statement.
-    public func insert(value: Setter, _ more: Setter...) -> (ID: Int?, statement: Statement) {
+    /// :returns: The row id and statement.
+    public func insert(value: Setter, _ more: Setter...) -> (id: Int?, statement: Statement) {
         return insert([value] + more)
     }
 
@@ -452,17 +453,17 @@ public struct Query {
     ///
     /// :param: values An array of values to set.
     ///
-    /// :returns: The row ID.
-    public func insert(values: [Setter]) -> Int? { return insert(values).ID }
+    /// :returns: The row id.
+    public func insert(values: [Setter]) -> Int? { return insert(values).id }
 
     /// Runs an INSERT statement against the query.
     ///
     /// :param: values An array of values to set.
     ///
-    /// :returns: The row ID and statement.
-    public func insert(values: [Setter]) -> (ID: Int?, statement: Statement) {
+    /// :returns: The row id and statement.
+    public func insert(values: [Setter]) -> (id: Int?, statement: Statement) {
         let statement = insertStatement(values).run()
-        return (statement.failed ? nil : database.lastID, statement)
+        return (statement.failed ? nil : database.lastId, statement)
     }
 
     public func insert(query: Query) -> Int? { return insert(query).changes }
@@ -475,13 +476,13 @@ public struct Query {
         return (statement.failed ? nil : database.lastChanges, statement)
     }
 
-    public func insert() -> Int? { return insert().ID }
+    public func insert() -> Int? { return insert().id }
 
     public func insert() -> Statement { return insert().statement }
 
-    public func insert() -> (ID: Int?, statement: Statement) {
+    public func insert() -> (id: Int?, statement: Statement) {
         let statement = database.run("INSERT INTO \(quote(identifier: tableName)) DEFAULT VALUES")
-        return (statement.failed ? nil : database.lastID, statement)
+        return (statement.failed ? nil : database.lastId, statement)
     }
 
     /// Runs a REPLACE statement against the query.
@@ -495,15 +496,15 @@ public struct Query {
     ///
     /// :param: values A list of values to set.
     ///
-    /// :returns: The row ID.
-    public func replace(values: Setter...) -> Int? { return replace(values).ID }
+    /// :returns: The row id.
+    public func replace(values: Setter...) -> Int? { return replace(values).id }
 
     /// Runs a REPLACE statement against the query.
     ///
     /// :param: values A list of values to set.
     ///
-    /// :returns: The row ID and statement.
-    public func replace(values: Setter...) -> (ID: Int?, statement: Statement) {
+    /// :returns: The row id and statement.
+    public func replace(values: Setter...) -> (id: Int?, statement: Statement) {
         return replace(values)
     }
 
@@ -511,17 +512,17 @@ public struct Query {
     ///
     /// :param: values An array of values to set.
     ///
-    /// :returns: The row ID.
-    public func replace(values: [Setter]) -> Int? { return replace(values).ID }
+    /// :returns: The row id.
+    public func replace(values: [Setter]) -> Int? { return replace(values).id }
 
     /// Runs a REPLACE statement against the query.
     ///
     /// :param: values An array of values to set.
     ///
-    /// :returns: The row ID and statement.
-    public func replace(values: [Setter]) -> (ID: Int?, statement: Statement) {
+    /// :returns: The row id and statement.
+    public func replace(values: [Setter]) -> (id: Int?, statement: Statement) {
         let statement = insertStatement(values, or: .Replace).run()
-        return (statement.failed ? nil : database.lastID, statement)
+        return (statement.failed ? nil : database.lastId, statement)
     }
 
     /// Runs an UPDATE statement against the query.
@@ -585,14 +586,14 @@ public struct Query {
     // MARK: - Aggregate Functions
 
     /// Runs count(*) against the query and returns it.
-    public var count: Int { return count(Expression<()>(literal: "*")) }
+    public var count: Int { return calculate(SQLite_count(*))! }
 
     /// Runs count() against the query.
     ///
     /// :param: column The column used for the calculation.
     ///
     /// :returns: The number of rows matching the given column.
-    public func count<V>(column: Expression<V>) -> Int {
+    public func count<V: Value>(column: Expression<V?>) -> Int {
         return calculate(SQLite_count(column))!
     }
 
@@ -601,17 +602,17 @@ public struct Query {
     /// :param: column The column used for the calculation.
     ///
     /// :returns: The number of rows matching the given column.
-    public func count<V>(distinct column: Expression<V>) -> Int {
+    public func count<V: Value>(distinct column: Expression<V>) -> Int {
         return calculate(SQLite_count(distinct: column))!
     }
 
-    /// Runs count(DISTINCT *) against the query.
+    /// Runs count() with DISTINCT against the query.
     ///
-    /// :param: star A literal *.
+    /// :param: column The column used for the calculation.
     ///
     /// :returns: The number of rows matching the given column.
-    public func count<V>(distinct star: Star) -> Int {
-        return calculate(SQLite_count(distinct: star(nil, nil)))!
+    public func count<V: Value>(distinct column: Expression<V?>) -> Int {
+        return calculate(SQLite_count(distinct: column))!
     }
 
     /// Runs max() against the query.
@@ -732,10 +733,10 @@ public struct Row {
     /// :param: column An expression representing a column selected in a Query.
     ///
     /// returns The value for the given column.
-    public func get<V: Value where V.Datatype: Binding>(column: Expression<V>) -> V {
+    public func get<V: Value>(column: Expression<V>) -> V {
         return get(Expression<V?>(column))!
     }
-    public func get<V: Value where V.Datatype: Binding>(column: Expression<V?>) -> V? {
+    public func get<V: Value>(column: Expression<V?>) -> V? {
         func valueAtIndex(idx: Int) -> V? {
             if let value = values[idx] as? V.Datatype { return (V.fromDatatypeValue(value) as V) }
             return nil
@@ -752,7 +753,7 @@ public struct Row {
         fatalError("no such column \(quote(literal: column.SQL)) in columns: \(Array(columnNames.keys))")
     }
 
-    // FIXME: rdar://18673897 subscript<T>(expression: Expression<V>) -> Expression<V>
+    // FIXME: rdar://18673897 // ... subscript<T>(expression: Expression<V>) -> Expression<V>
 
     public subscript(column: Expression<Blob>) -> Blob { return get(column) }
     public subscript(column: Expression<Blob?>) -> Blob? { return get(column) }

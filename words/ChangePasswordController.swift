@@ -4,11 +4,10 @@ import UIKit
 
 class ChangePasswordController: UIViewController, APIDataDelegate {
     var subView: UIView!
-    var subViewHeight: CGFloat = 170
+    var subViewHeight: CGFloat = 150
     
     var oldPasswordInput :UITextField!
     var newPasswordInput :UITextField!
-    var noticeInfoLable :UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,52 +49,72 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
         var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
         submitButton.backgroundColor = Color.gray
         submitButton.setTitle("修改", forState: UIControlState.Normal)
-        submitButton.addTarget(self, action: "onButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: "onSubmmitButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
         var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
         cancelButton.backgroundColor = Color.red
         cancelButton.setTitle("取消", forState: UIControlState.Normal)
-        cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        cancelButton.addTarget(self, action: "onCancelButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
-        
-        noticeInfoLable = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 135, width: 200, height: 20))
-        self.subView.addSubview(noticeInfoLable)
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {
         self.closeView()
     }
     
-    func onButtonTapped(sender: UIButton) {
-        if(oldPasswordInput.text.isEmpty) {
-            noticeInfoLable.text = "请填写原密码！"
+    func onSubmmitButtonTapped(sender: UIButton) {
+        var oldPassword = self.oldPasswordInput.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) as NSString
+        if (oldPassword.length < 6) {
+            ErrorView(view: self.view, message: "密码至少6个字符")
+            return
         }
-        else if(newPasswordInput.text.isEmpty) {
-            noticeInfoLable.text = "请填写新密码！"
+        
+        if (oldPassword.length > 32) {
+            ErrorView(view: self.view, message: "密码不能多于32个字符")
+            return
         }
-        else {
-            noticeInfoLable.text = nil
-            LoadingDialog.showLoading()
-            var params: NSMutableDictionary = NSMutableDictionary()
-            params.setValue(oldPasswordInput.text, forKey: "password")
-            params.setValue(newPasswordInput.text, forKey: "newPassword")
-            API.instance.post("/user/changePassword", delegate: self,  params: params)
+        
+        var newPassword = self.newPasswordInput.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) as NSString
+        if (newPassword.length < 6) {
+            ErrorView(view: self.view, message: "密码至少6个字符")
+            return
         }
+        
+        if (newPassword.length > 32) {
+            ErrorView(view: self.view, message: "密码不能多于32个字符")
+            return
+        }
+        
+        if (oldPassword == newPassword) {
+            ErrorView(view: self.view, message: "新密码和原密码不能相同")
+            return
+        }
+        
+        var params: NSMutableDictionary = NSMutableDictionary()
+        params.setValue(oldPassword, forKey: "password")
+        params.setValue(newPassword, forKey: "newPassword")
+        API.instance.post("/user/changePassword", delegate: self,  params: params)
     }
     
     func changePassword(data :AnyObject) {
-        CacheDataUtils.updateUserPassword(newPasswordInput.text)
-        LoadingDialog.dismissLoading()
-        self.closeView()
+        var oldUser: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var user = NSMutableDictionary()
+        user.setDictionary(oldUser as NSDictionary)
+        user.setValue(self.newPasswordInput.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()), forKey: "password")
+        NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
+        NSUserDefaults.standardUserDefaults().synchronize()
+        
+        SuccessView(view: self.view, message: "恭喜，密码修改成功", completion: {() -> Void in
+            self.closeView()
+        })
     }
     
     func error(error: Error, api: String) {
-        LoadingDialog.dismissLoading()
-        noticeInfoLable.text = error.getMessage()
+        ErrorView(view: self.view, message: error.getMessage())
     }
     
-    func onCancelTapped(sender: UIButton) {
+    func onCancelButtonTapped(sender: UIButton) {
         self.closeView()
     }
     

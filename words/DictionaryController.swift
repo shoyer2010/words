@@ -77,7 +77,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func error(error: Error, api: String) {
-        LoadingDialog.dismissLoading()
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {

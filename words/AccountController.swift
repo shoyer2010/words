@@ -22,6 +22,8 @@ class AccountController: UIViewController,APIDataDelegate {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onRegisterSuccess:", name: "onRegisterSuccess", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: "onLoginSuccess", object: nil)
+        
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(4)
         self.view.backgroundColor = Color.appBackground
         
@@ -113,6 +115,11 @@ class AccountController: UIViewController,APIDataDelegate {
         self.setToView(user!)
     }
     
+    func onLoginSuccess(notification: NSNotification) {
+        var user: AnyObject! = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        self.setToView(user!)
+    }
+    
     func setToView(user: AnyObject) {
         self.usernameLabel.text = "用户名： " + (user["username"] as String)
         var isTrial = user["trial"] as Bool
@@ -151,7 +158,6 @@ class AccountController: UIViewController,APIDataDelegate {
     
     func goToLoginPage(sender: UIButton) {
         var loginController = LoginController()
-        loginController.setAccountViewController(self)
         self.addChildViewController(loginController)
         self.view.addSubview(loginController.view)
     }

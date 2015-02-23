@@ -119,7 +119,7 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     func error(error: Error, api: String) {
         var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
         self.view.addSubview(view)
-        ErrorView(view: self.articleView, message: error.getMessage(),completion: {() in
+        ErrorView(view: view, message: error.getMessage(),completion: {() in
             view.removeFromSuperview()
         })
     }

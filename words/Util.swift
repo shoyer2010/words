@@ -93,6 +93,10 @@ class Util {
             }
         }
         
+        if (learningDictionary == nil && customDictionary == nil) {
+            string = "请选择你想学习的词库"
+        }
+        
         return string
     }
     

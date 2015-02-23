@@ -1,4 +1,5 @@
 import UIKit
+import SQLite
 
 class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate, DictionaryInfoDelegate {
 
@@ -166,6 +167,9 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             
             var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
             var count = dictionary["count"] as Int
+            if (dictionary["custom"] as Bool) {
+                count = self.wordCountOfCustomDictionary()
+            }
             countLabel.text = "单词：\(count)"
             
             var popularLabel = cell!.viewWithTag(self.popularLabelTag) as UILabel
@@ -202,6 +206,16 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         return cell!
     }
     
+    func wordCountOfCustomDictionary() -> Int {
+        var db = Database(Util.getFilePath(DictionaryUtil.customDictionaryId() + ".db"))
+        var count = 0
+        for row in db.prepare("SELECT count(id) FROM words") {
+            count = row[0] as Int
+        }
+        
+        return count
+    }
+    
     func getCurrentDictionaryList() -> NSArray {
         var dictionaryList: NSArray!
         switch self.selectedSegmentIndex {
@@ -230,13 +244,25 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             self.addChildViewController(dictionaryInfoController)
             self.view.addSubview(dictionaryInfoController.view)
         } else {
-            var params: NSMutableDictionary = NSMutableDictionary()
-            params.setValue(self.selectedDictionaryId, forKey: "id")
-            API.instance.get("/dictionary/download", delegate: self,  params: params)
+            self.downloadDictionary()
         }
         
         self.commonTableViewSelectedRow = indexPath.row
         tableView.reloadData()
+    }
+    
+    func downloadDictionary() {
+        var params: NSMutableDictionary = NSMutableDictionary()
+        params.setValue(self.selectedDictionaryId, forKey: "id")
+        API.instance.get("/dictionary/download", delegate: self,  params: params)
+    }
+    
+    func downloadCustomDictionary() {
+        self.selectedDictionaryId = DictionaryUtil.customDictionaryId()
+        var filename = self.selectedDictionaryId  + ".db"
+        if (!Util.isFileExist(filename)) {
+            self.downloadDictionary()
+        }
     }
     
     func dictionaryDownload(filePath: AnyObject, progress: Float) {
@@ -284,7 +310,8 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func onLoginSuccess(notification: NSNotification) {
-        loadData()
+        self.loadData()
+        self.downloadCustomDictionary()
     }
     
     func onDictionaryDeleted(notification: NSNotification) {

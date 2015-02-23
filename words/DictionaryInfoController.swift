@@ -83,6 +83,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsetsZero
         tableView.layoutMargins = UIEdgeInsetsZero
+        
         tableViewWrap.addSubview(tableView)
         
         tableViewWrap.bringSubviewToFront(tableHeader)
@@ -182,6 +183,21 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.words.count
     }
+    
+//    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        return true
+//    }
+//    
+//    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        return true
+//    }
+//    
+//    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+//        return UITableViewCellEditingStyle.Delete
+//    }
+//    
+//    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+//    }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var wordLabelTag = 1001

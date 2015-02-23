@@ -12,4 +12,4 @@
 
 #endif
 
-#import "SQLite-Bridging.h"
+#import "SQLite/SQLite-Bridging.h"

@@ -119,7 +119,7 @@
 		A44D1FCC1A9A2EF7007F3F1E /* SQLite.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SQLite.xcconfig; sourceTree = "<group>"; };
 		A44D1FCD1A9A2EF7007F3F1E /* Statement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statement.swift; sourceTree = "<group>"; };
 		A44D1FCE1A9A2EF7007F3F1E /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
-		A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Word-Bridging-Header.h"; sourceTree = "<group>"; };
+		A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Word-Bridging-Header.h"; path = "words/Word-Bridging-Header.h"; sourceTree = "<group>"; };
 		A44D1FDC1A9B1B72007F3F1E /* EventKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventKey.swift; sourceTree = "<group>"; };
 		A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正楷体简体.ttf"; sourceTree = "<group>"; };
 		A4541F8F1A84B01E00EAA761 /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
@@ -232,6 +232,7 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */,
 				A44D1FBF1A9A2E4D007F3F1E /* libsqlite3.dylib */,
 				A48C26951A988EEC00CCAF74 /* playground.playground */,
 				A4A8B6061A7A563300C59E63 /* words */,
@@ -289,7 +290,6 @@
 				A4DFB8651A9610C10086105C /* ArticleForEnglishDelegate.swift */,
 				A4DFB8671A96214D0086105C /* ArticleForChineseDelegate.swift */,
 				A4D09DDE1A99FEF500360AEB /* DictionaryInfoDelegate.swift */,
-				A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */,
 			);
 			path = words;
 			sourceTree = "<group>";
@@ -593,10 +593,11 @@
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
 				);
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
+				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 			};
 			name = Debug;
@@ -611,10 +612,11 @@
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
 				);
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
+				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 			};
 			name = Release;

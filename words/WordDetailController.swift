@@ -98,14 +98,14 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             phoneticSymbolUSLabel.attributedText =  NSAttributedString(string: phoneticSymbolUSLabel.text!, attributes: attributes)
             phoneticSymbolUSLabel.sizeToFit()
             
-            var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUSLabel.frame.origin.x + phoneticSymbolUSLabel.frame.width, y: phoneticSymbolUSLabel.frame.origin.y - 2, width: 24, height: 24))
-            voiceIcon.backgroundColor = Color.red
-            voiceIcon.addTarget(self, action: "usVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+            
             if (data["usPronunciation"] as? String != nil) {
+                var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUSLabel.frame.origin.x + phoneticSymbolUSLabel.frame.width, y: phoneticSymbolUSLabel.frame.origin.y - 2, width: 24, height: 24))
+                voiceIcon.backgroundColor = Color.red
+                voiceIcon.addTarget(self, action: "usVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+                self.wordScrollView.addSubview(voiceIcon)
                 self.voiceUS = Util.getVoiceURL(data["usPronunciation"] as String)
             }
-            
-            self.wordScrollView.addSubview(voiceIcon)
         }
         self.wordScrollView.addSubview(phoneticSymbolUSLabel)
         
@@ -128,13 +128,13 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             phoneticSymbolUKLabel.attributedText =  NSAttributedString(string: phoneticSymbolUKLabel.text!, attributes: attributes)
             phoneticSymbolUKLabel.sizeToFit()
             
-            var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUKLabel.frame.origin.x + phoneticSymbolUKLabel.frame.width, y: phoneticSymbolUKLabel.frame.origin.y - 2, width: 24, height: 24))
-            voiceIcon.backgroundColor = Color.red
-            voiceIcon.addTarget(self, action: "ukVoice:", forControlEvents: UIControlEvents.TouchUpInside)
             if (data["ukPronunciation"] as? String != nil) {
+                var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUKLabel.frame.origin.x + phoneticSymbolUKLabel.frame.width, y: phoneticSymbolUKLabel.frame.origin.y - 2, width: 24, height: 24))
+                voiceIcon.backgroundColor = Color.red
+                voiceIcon.addTarget(self, action: "ukVoice:", forControlEvents: UIControlEvents.TouchUpInside)
                 self.voiceUK = Util.getVoiceURL(data["ukPronunciation"] as String)
+                self.wordScrollView.addSubview(voiceIcon)
             }
-            self.wordScrollView.addSubview(voiceIcon)
         }
         self.wordScrollView.addSubview(phoneticSymbolUKLabel)
         

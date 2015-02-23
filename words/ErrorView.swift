@@ -7,7 +7,7 @@ class ErrorView: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(view: UIView, message: String) {
+    init(view: UIView, message: String, completion: (() -> Void)? = nil) {
         super.init(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 25))
         self.backgroundColor = Color.red
         self.layer.opacity = 0
@@ -33,6 +33,7 @@ class ErrorView: UILabel {
                     self.layer.opacity = 0
                     }) { (isDone: Bool) -> Void in
                         self.removeFromSuperview()
+                        completion?()
                 }
         }
     }

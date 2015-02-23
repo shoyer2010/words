@@ -109,10 +109,18 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     }
     
     func articleFavourite(data: AnyObject) {
-        SuccessView(view: self.articleView, message: "成功收藏", completion: nil)
+        var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        SuccessView(view: view, message: "成功收藏", completion: {() in
+            view.removeFromSuperview()
+        })
     }
     
     func error(error: Error, api: String) {
-        ErrorView(view: self.articleView, message: error.getMessage())
+        var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        ErrorView(view: self.articleView, message: error.getMessage(),completion: {() in
+            view.removeFromSuperview()
+        })
     }
 }

@@ -17,6 +17,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     
     var indicator: UIActivityIndicatorView!
     var wordScrollView: UIScrollView!
+    
+    var word: AnyObject!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +44,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     }
     
     func wordSearch(data: AnyObject) {
+        self.word = data
         self.setToView(data)
         self.endLoading()
     }
@@ -51,6 +54,13 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         headView.text = data["word"] as? String
         headView.font = UIFont(name: headView.font.fontName, size: 30)
         self.wordScrollView.addSubview(headView)
+        
+        if (data["word"] as? String != nil) {
+            var addToCustomDictionaryButton = UIButton(frame: CGRect(x: self.wordScrollView.frame.width - 45, y: 15, width: 30, height: 30))
+            addToCustomDictionaryButton.backgroundColor = Color.red
+            addToCustomDictionaryButton.addTarget(self, action: "onaddToCustomDictionaryButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+            self.wordScrollView.addSubview(addToCustomDictionaryButton)
+        }
         
         var tagsLabel = UILabel(frame: CGRect(x: 15, y: headView.frame.origin.y + headView.frame.height + 5, width: self.wordScrollView.frame.width - 30, height: 0))
         tagsLabel.numberOfLines = 0
@@ -335,6 +345,11 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         }
     }
     
+    func onaddToCustomDictionaryButtonTapped(sender: UIButton) {
+        Word.addToCustomDictionary(self.word)
+        SuccessView(view: self.view, message: "已加入生词本")
+    }
+    
     func loadData() {
         var params = NSMutableDictionary()
         params.setValue(self.searchWord, forKey: "word")
@@ -370,19 +385,11 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     }
     
     func error(error: Error, api: String) {
-        // TODO: need to optimize
         self.endLoading()
-        var tipView = UILabel(frame: CGRect(x: 0, y: self.wordScrollView.frame.height / 3, width: self.wordScrollView.frame.width, height: 20))
-        tipView.backgroundColor = Color.black.colorWithAlphaComponent(0)
-        tipView.text = error.getMessage()
-        tipView.textColor = Color.white
-        self.wordScrollView.addSubview(tipView)
-        self.wordScrollView.bringSubviewToFront(tipView)
-
-        UIView.animateWithDuration(0.3, delay: 2, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
-            tipView.backgroundColor = Color.black.colorWithAlphaComponent(1)
-            }) { (isDone: Bool) -> Void in
-//                tipView.removeFromSuperview()
-        }
+        var view = UIView(frame: CGRect(x: 0, y: 22, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        ErrorView(view: view, message: error.getMessage(),completion: {() in
+            view.removeFromSuperview()
+        })
     }
 }

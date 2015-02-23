@@ -18,7 +18,7 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onArticleChange:", name: "onArticleChange", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onArticleChange:", name: EventKey.ON_ARTICLE_CHANGE, object: nil)
         self.view.backgroundColor = Color.red
         
         var topBar = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 35))
@@ -109,6 +109,10 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     }
     
     func articleFavourite(data: AnyObject) {
-//        println("成功收藏")
+        SuccessView(view: self.articleView, message: "成功收藏", completion: nil)
+    }
+    
+    func error(error: Error, api: String) {
+        ErrorView(view: self.articleView, message: error.getMessage())
     }
 }

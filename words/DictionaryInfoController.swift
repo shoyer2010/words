@@ -154,7 +154,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         var info = NSMutableDictionary()
         info.setValue(self.delegate.setDictionaryId(), forKey: "id")
-        NSNotificationCenter.defaultCenter().postNotificationName("onDictionaryDeleted", object: self, userInfo: info)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_DELETED, object: self, userInfo: info)
         self.closeView()
     }
     
@@ -171,7 +171,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         }
 
         NSUserDefaults.standardUserDefaults().synchronize()
-        NSNotificationCenter.defaultCenter().postNotificationName("onLearingDictionaryChanged", object: self, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
         self.closeView()
     }
     

@@ -22,7 +22,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: "onPageChange", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(0)
         self.view.backgroundColor = Color.appBackground

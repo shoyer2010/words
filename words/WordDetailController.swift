@@ -29,7 +29,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         
         if (self.delegate!.shoudRegisterNotification != nil && self.delegate!.shoudRegisterNotification!()) {
             NSNotificationCenter.defaultCenter().removeObserver(self)
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: "onPageChange", object: nil)
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         }
         
         self.view.backgroundColor = Color.appBackground

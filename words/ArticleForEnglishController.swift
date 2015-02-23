@@ -22,7 +22,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: "onPageChange", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         var applicationController = self.parentViewController as ApplicationController
         applicationController.articleForChineseController.delegate = self
         
@@ -218,7 +218,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         self.setToView(self.data)
         
         var info = NSMutableDictionary()
-        NSNotificationCenter.defaultCenter().postNotificationName("onArticleChange", object: self)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_ARTICLE_CHANGE, object: self)
         self.endLoading()
     }
     
@@ -286,6 +286,10 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
 
     func articleFavourite(data: AnyObject) {
-//        println("成功收藏")
+        SuccessView(view: self.articleView, message: "成功收藏", completion: nil)
+    }
+    
+    func error(error: Error, api: String) {
+        ErrorView(view: self.articleView, message: error.getMessage())
     }
 }

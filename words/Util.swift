@@ -72,5 +72,43 @@ class Util {
         var filePath = Util.getFilePath(filename)
         NSFileManager.defaultManager().removeItemAtPath(filePath, error: nil)
     }
+    
+    class func learningString() -> String {
+        var customDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+        var learningDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+        
+        var string = ""
+        if(learningDictionary != nil) {
+            var dictionary: AnyObject? = Util.getDictionaryInfo(learningDictionary! as String)
+            if (dictionary != nil) {
+                string += dictionary!["name"] as String
+            }
+        }
+        
+        if (customDictionary != nil) {
+            if (learningDictionary == nil) {
+                string += "生词本"
+            } else {
+                string += " + 生词本"
+            }
+        }
+        
+        return string
+    }
+    
+    class func getDictionaryInfo(dictionaryId: String) -> AnyObject? {
+        var dictionaryList = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.DICTIONARY_LIST) as? NSArray
+        var dictionary: AnyObject?
+        if (dictionaryList != nil) {
+            for item in dictionaryList! {
+                if ((item["id"] as String) == dictionaryId) {
+                    dictionary = item
+                    break
+                }
+            }
+        }
+        
+        return dictionary
+    }
 }
 

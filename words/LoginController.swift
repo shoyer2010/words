@@ -107,7 +107,7 @@ class LoginController: UIViewController, APIDataDelegate {
         user.setValue(self.loginPassword, forKey: "password")
         NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
         NSUserDefaults.standardUserDefaults().synchronize()
-        NSNotificationCenter.defaultCenter().postNotificationName("onLoginSuccess", object: self, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LOGIN_SUCCESS, object: self, userInfo: nil)
         self.closeView()
     }
     

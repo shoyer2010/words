@@ -21,9 +21,9 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: "onLoginSuccess", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: "onDictionaryDeleted", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearingDictionaryChanged:", name: "onLearingDictionaryChanged", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: EventKey.ON_DICTIONARY_DELETED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearingDictionaryChanged:", name: EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
         self.view.backgroundColor = Color.appBackground
@@ -297,24 +297,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func reloadMyCurrentLabel() {
-        var customDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
-        var learningDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
-        
-        var string = "我正在学习:"
-        if(learningDictionary != nil) {
-            var dictionary: AnyObject? = self.getDictionaryInfo(learningDictionary! as String)
-            if (dictionary != nil) {
-                string += dictionary!["name"] as String
-            }
-        }
-        
-        if (customDictionary != nil) {
-            if (learningDictionary == nil) {
-                string += "生词本"
-            } else {
-                string += " + 生词本"
-            }
-        }
+        var string = "我正在学习: " + Util.learningString()
         
         myCurrentDictionaryLabel.text = string
         myCurrentDictionaryLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
@@ -359,21 +342,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         commonTableView.reloadData()
         NSUserDefaults.standardUserDefaults().setObject(data, forKey: CacheKey.DICTIONARY_LIST)
         NSUserDefaults.standardUserDefaults().synchronize()
-    }
-    
-    func getDictionaryInfo(dictionaryId: String) -> AnyObject? {
-        var dictionaryList = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.DICTIONARY_LIST) as? NSArray
-        var dictionary: AnyObject?
-        if (dictionaryList != nil) {
-            for item in dictionaryList! {
-                if ((item["id"] as String) == dictionaryId) {
-                    dictionary = item
-                    break
-                }
-            }
-        }
-        
-        return dictionary
     }
     
     func setDictionaryId() -> String {

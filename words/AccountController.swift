@@ -21,8 +21,8 @@ class AccountController: UIViewController,APIDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onRegisterSuccess:", name: "onRegisterSuccess", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: "onLoginSuccess", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onRegisterSuccess:", name: EventKey.ON_REGISTER_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(4)
         self.view.backgroundColor = Color.appBackground
@@ -108,7 +108,7 @@ class AccountController: UIViewController,APIDataDelegate {
         NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
         NSUserDefaults.standardUserDefaults().synchronize()
         self.setToView(data)
-        NSNotificationCenter.defaultCenter().postNotificationName("onLoginSuccess", object: self, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LOGIN_SUCCESS, object: self, userInfo: nil)
     }
     
     func onRegisterSuccess(notification: NSNotification) {

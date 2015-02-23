@@ -34,6 +34,7 @@
 		A44D1FD61A9A2EF7007F3F1E /* SQLite.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A44D1FCC1A9A2EF7007F3F1E /* SQLite.xcconfig */; };
 		A44D1FD71A9A2EF7007F3F1E /* Statement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44D1FCD1A9A2EF7007F3F1E /* Statement.swift */; };
 		A44D1FD81A9A2EF7007F3F1E /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44D1FCE1A9A2EF7007F3F1E /* Value.swift */; };
+		A44D1FDD1A9B1B72007F3F1E /* EventKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44D1FDC1A9B1B72007F3F1E /* EventKey.swift */; };
 		A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */; };
 		A4541F901A84B01E00EAA761 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F8F1A84B01E00EAA761 /* Layer.swift */; };
 		A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F911A850CF500EAA761 /* ChangePasswordController.swift */; };
@@ -119,6 +120,7 @@
 		A44D1FCD1A9A2EF7007F3F1E /* Statement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Statement.swift; sourceTree = "<group>"; };
 		A44D1FCE1A9A2EF7007F3F1E /* Value.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Value.swift; sourceTree = "<group>"; };
 		A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Word-Bridging-Header.h"; sourceTree = "<group>"; };
+		A44D1FDC1A9B1B72007F3F1E /* EventKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventKey.swift; sourceTree = "<group>"; };
 		A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正楷体简体.ttf"; sourceTree = "<group>"; };
 		A4541F8F1A84B01E00EAA761 /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
 		A4541F911A850CF500EAA761 /* ChangePasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordController.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 				A4B9B1331A8783FE004B7A20 /* Interaction.swift */,
 				A4EBCE9C1A9795F6004AB958 /* Server.swift */,
 				A482C83D1A98D226008D313A /* CacheKey.swift */,
+				A44D1FDC1A9B1B72007F3F1E /* EventKey.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -438,6 +441,7 @@
 				A44D1FD71A9A2EF7007F3F1E /* Statement.swift in Sources */,
 				A44D1FD81A9A2EF7007F3F1E /* Value.swift in Sources */,
 				A4B9B1361A87B71A004B7A20 /* DictionaryInfoController.swift in Sources */,
+				A44D1FDD1A9B1B72007F3F1E /* EventKey.swift in Sources */,
 				A44D1FD11A9A2EF7007F3F1E /* Functions.swift in Sources */,
 				A4541F901A84B01E00EAA761 /* Layer.swift in Sources */,
 				A4DFB8621A95BC400086105C /* LearnWordDelegate.swift in Sources */,

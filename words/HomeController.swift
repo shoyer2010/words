@@ -7,17 +7,22 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     var viewTab: UITabBar!
     var homeScrollView: UIScrollView!
     
+    var englishLabel: UILabel!
+    var chineseLabel: UILabel!
+    
+    var dictionaryLabel: UILabel!
+    
+    var rankLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearningDictionaryChange:", name: EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: EventKey.ON_DICTIONARY_DELETED, object: nil)
+        
 
         self.initView()
-        
-        
-        //        var params: NSMutableDictionary = NSMutableDictionary()
-        //        params.setValue(self.udid, forKey: "udid")
-        //        API.instance.post("/user/trial", delegate: self, params: params)
         self.setNeedsStatusBarAppearanceUpdate()
     }
     
@@ -82,40 +87,15 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         recommendView.layer.shadowOffset = Layer.shadowOffset
         recommendView.layer.shadowOpacity = Layer.shadowOpacity
         
-        var englishLabel = UILabel(frame: CGRect(x: 10, y: 3, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
-        englishLabel.text = "If you shed teas when you miss the sun, If you shed teas when you miss the sun ou shed teas when you miss the sun ou shed teas when you miss the sun dsafas dfasfasf dfasdfasf dfadsfasfas"
-        englishLabel.numberOfLines = 2
-        englishLabel.font = UIFont(name: "Cochin", size: CGFloat(16))
-        var paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyle.lineSpacing = 5
-        var attributes = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyle,
-            NSFontAttributeName: englishLabel.font,
-            NSForegroundColorAttributeName: Color.red,
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
+        englishLabel = UILabel(frame: CGRect(x: 10, y: 3, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
         recommendView.addSubview(englishLabel)
         
-        var chineseLabel = UILabel(frame: CGRect(x: 10, y: recommendView.frame.height / 2 + 2, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
-        chineseLabel.text = "总体来说个性化定制UITextView中的内容有两种方法总体来说个性化定制UITextView中的内容有两种方法"
-        chineseLabel.numberOfLines = 2
-        chineseLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
-        var paragraphStyleForChinese = NSMutableParagraphStyle()
-        paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
-        paragraphStyleForChinese.lineSpacing = 7
-        var attributesForChinese = NSDictionary(dictionary: [
-            NSParagraphStyleAttributeName: paragraphStyleForChinese,
-            NSFontAttributeName: chineseLabel.font,
-            NSForegroundColorAttributeName: Color.lightGray,
-            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-            ])
-        chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
+        chineseLabel = UILabel(frame: CGRect(x: 10, y: recommendView.frame.height / 2 + 2, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
         recommendView.addSubview(chineseLabel)
         
         recommendView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onRecommendTapped:"))
         homeBody.addSubview(recommendView)
+        self.setTodayRecommend()
         
         var needToLearnIcon = UIView(frame: CGRect(x: 60, y: 180, width: 24, height: 24))
         needToLearnIcon.backgroundColor = UIColor(patternImage: UIImage(named: "needToLearnIcon.png")!)
@@ -129,17 +109,19 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         rankIcon.backgroundColor = UIColor(patternImage: UIImage(named: "rankIcon.png")!)
         homeBody.addSubview(rankIcon)
         
-        var rankLabel = UILabel(frame: CGRect(x: 90, y: 220, width: 250, height: 24))
-        rankLabel.text = "活跃度排名347"
+        rankLabel = UILabel(frame: CGRect(x: 90, y: 220, width: 250, height: 24))
+        rankLabel.text = "活跃度排名"
         homeBody.addSubview(rankLabel)
+        self.setActiveRank()
         
         var dictionaryIcon = UIView(frame: CGRect(x: 60, y: 260, width: 24, height: 24))
         dictionaryIcon.backgroundColor = UIColor(patternImage: UIImage(named: "dictionaryIcon.png")!)
         homeBody.addSubview(dictionaryIcon)
         
-        var dictionaryLabel = UILabel(frame: CGRect(x: 90, y: 260, width: 250, height: 24))
+        dictionaryLabel = UILabel(frame: CGRect(x: 90, y: 260, width: homeBody.frame.width - 105, height: 24))
         dictionaryLabel.text = "大学英语4级"
         homeBody.addSubview(dictionaryLabel)
+        self.setLearingDictionaryLabel()
         
         var startLearn = UIView(frame: CGRect(x: homeBody.frame.width / 2 - 50, y: homeBody.frame.height - 120, width: 100, height: 100))
         startLearn.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
@@ -239,6 +221,68 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     
     func getPageIndex() -> Int {
         return self.viewTab.selectedItem!.tag - 1
+    }
+    
+    func onLoginSuccess(notification: NSNotification) {
+        self.setTodayRecommend()
+        self.setLearingDictionaryLabel()
+        self.setActiveRank()
+    }
+    
+    func onLearningDictionaryChange(nofification: NSNotification) {
+        self.setLearingDictionaryLabel()
+    }
+    
+    func onDictionaryDeleted(nofification: NSNotification) {
+        self.setLearingDictionaryLabel()
+    }
+    
+    func setTodayRecommend() {
+        var user: NSDictionary? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER) as? NSDictionary
+        
+        if (user != nil) {
+            englishLabel.text = user!.valueForKeyPath("recommendArticle.titleEnglish") as? String
+            englishLabel.numberOfLines = 2
+            englishLabel.font = UIFont(name: "Cochin", size: CGFloat(16))
+            var paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyle.lineSpacing = 5
+            var attributes = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyle,
+                NSFontAttributeName: englishLabel.font,
+                NSForegroundColorAttributeName: Color.red,
+                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                ])
+            englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
+            
+            chineseLabel.text = user!.valueForKeyPath("recommendArticle.titleChinese") as? String
+            chineseLabel.numberOfLines = 2
+            chineseLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(14))
+            var paragraphStyleForChinese = NSMutableParagraphStyle()
+            paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+            paragraphStyleForChinese.lineSpacing = 7
+            var attributesForChinese = NSDictionary(dictionary: [
+                NSParagraphStyleAttributeName: paragraphStyleForChinese,
+                NSFontAttributeName: chineseLabel.font,
+                NSForegroundColorAttributeName: Color.lightGray,
+                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+                ])
+            chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
+        }
+    }
+    
+    func setLearingDictionaryLabel() {
+        self.dictionaryLabel.text = Util.learningString()
+        self.dictionaryLabel.lineBreakMode = NSLineBreakMode.ByTruncatingTail
+    }
+    
+    func setActiveRank() {
+        var user: NSDictionary? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER) as? NSDictionary
+        
+        if (user != nil) {
+            var rank = user!.valueForKey("activeRank") as Int
+            self.rankLabel.text = "活跃度排名 \(rank)"
+        }
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -370,42 +414,16 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     }
     
     func setArticleId() -> String {
-        return "54e1fadf43125b5a3d836bab"
+        var user: NSDictionary? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER) as? NSDictionary
+        
+        if (user != nil) {
+            return user!.valueForKeyPath("recommendArticle.id") as String
+        }
+            
+        return ""
     }
     
-    
-//    func userTrial(data: AnyObject) {
-//        var username = data["username"] as? String
-//        label.text = username
-//        
-//        var params: NSMutableDictionary = NSMutableDictionary()
-//        params.setValue(username, forKey: "username")
-//        params.setValue("sfas", forKey: "password")
-//        params.setValue(self.udid, forKey: "udid")
-//        API.instance.get("/user/login", delegate: self, params: params)
-//    }
-//    
-//    func userRegister(data: AnyObject) {
-//        
-//    }
-//    
-//    func userLogin(data: AnyObject) {
-//        var params: NSMutableDictionary = NSMutableDictionary()
-//        params.setValue(60, forKey: "seconds")
-//        params.setValue("fasffs", forKey: "sign")
-//        API.instance.post("/user/activeTime", delegate: self, params: params)
-//        
-//        var borad = UIStoryboard(name: "Main", bundle: nil)
-//
-//        self.presentViewController(borad.instantiateViewControllerWithIdentifier("dictionaryController") as UIViewController, animated: true, completion: nil)
-//        var navigationController = UINavigationController()
-//        
-//        navigationController.pushViewController(borad.instantiateViewControllerWithIdentifier("dictionaryController") as UIViewController, animated: true)
-//    }
-//    
-//    func error(error: Error, api: String) {
-//        println("\(api) error -->>>>>>>>>>\(error.getMessage())")
-//    }
-
-    
+    func error(error: Error, api: String) {
+        ErrorView(view: self.view, message: error.getMessage())
+    }
 }

@@ -125,7 +125,7 @@ class RegisterController: UIViewController, APIDataDelegate {
         user.setValue(data["trial"], forKey: "trial")
         NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
         NSUserDefaults.standardUserDefaults().synchronize()
-        NSNotificationCenter.defaultCenter().postNotificationName("onRegisterSuccess", object: self, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_REGISTER_SUCCESS, object: self, userInfo: nil)
         
         self.closeView()
     }

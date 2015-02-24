@@ -19,6 +19,22 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     var wordScrollView: UIScrollView!
     
     var word: AnyObject!
+    
+    var headView:UILabel!
+    var addToCustomDictionaryButton: UIButton!
+    var tagsLabel: UILabel!
+    var phoneticSymbolUSLabel: UILabel!
+    var voiceIconUS: UIButton!
+    var phoneticSymbolUKLabel: UILabel!
+    var voiceIconUK: UIButton!
+    var chineseLabel: UILabel!
+    var pluralityLabel: UILabel!
+    var pastLabel: UILabel!
+    var pastParticipleLabel: UILabel!
+    var presentParticipleLabel: UILabel!
+    var thirdSingleLabel: UILabel!
+    var phrasesLabel: UILabel!
+    var sentencesLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,6 +54,73 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         wordScrollView = UIScrollView(frame: self.view.frame)
         self.view.addSubview(wordScrollView)
         
+        headView = UILabel(frame: CGRect(x: 15, y: 10, width: self.wordScrollView.frame.width - 30, height: 40))
+        headView.text = ""
+        headView.font = UIFont(name: headView.font.fontName, size: 30)
+        self.wordScrollView.addSubview(headView)
+        
+        addToCustomDictionaryButton = UIButton(frame: CGRect(x: self.wordScrollView.frame.width - 45, y: 15, width: 30, height: 30))
+        addToCustomDictionaryButton.backgroundColor = Color.red
+        addToCustomDictionaryButton.hidden = true
+        addToCustomDictionaryButton.addTarget(self, action: "onaddToCustomDictionaryButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.wordScrollView.addSubview(addToCustomDictionaryButton)
+        
+        tagsLabel = UILabel()
+        tagsLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(tagsLabel)
+        
+        phoneticSymbolUSLabel = UILabel()
+        phoneticSymbolUSLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(phoneticSymbolUSLabel)
+        
+        voiceIconUS = UIButton()
+        voiceIconUS.hidden = true
+        voiceIconUS.backgroundColor = Color.red
+        voiceIconUS.addTarget(self, action: "usVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.wordScrollView.addSubview(voiceIconUS)
+        
+        phoneticSymbolUKLabel = UILabel()
+        phoneticSymbolUKLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(phoneticSymbolUKLabel)
+        
+        voiceIconUK = UIButton()
+        voiceIconUK.hidden = true
+        voiceIconUK.backgroundColor = Color.red
+        voiceIconUK.addTarget(self, action: "ukVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.wordScrollView.addSubview(voiceIconUK)
+        
+        chineseLabel = UILabel()
+        chineseLabel.numberOfLines = 0
+        wordScrollView.addSubview(chineseLabel)
+        
+        pluralityLabel = UILabel()
+        pluralityLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(pluralityLabel)
+        
+        pastLabel = UILabel()
+        pastLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(pastLabel)
+        
+        pastParticipleLabel = UILabel()
+        pastParticipleLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(pastParticipleLabel)
+        
+        presentParticipleLabel = UILabel()
+        presentParticipleLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(presentParticipleLabel)
+        
+        thirdSingleLabel = UILabel()
+        thirdSingleLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(thirdSingleLabel)
+        
+        phrasesLabel = UILabel()
+        phrasesLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(phrasesLabel)
+        
+        sentencesLabel = UILabel()
+        sentencesLabel.numberOfLines = 0
+        self.wordScrollView.addSubview(sentencesLabel)
+        
         if (self.delegate!.shoudRegisterNotification == nil) {
             loadData()
         }
@@ -49,21 +132,35 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         self.endLoading()
     }
     
+    func clearView() {
+        headView.text = ""
+        tagsLabel.attributedText = NSAttributedString()
+        phoneticSymbolUSLabel.attributedText = NSAttributedString()
+        phoneticSymbolUKLabel.attributedText = NSAttributedString()
+        chineseLabel.attributedText = NSAttributedString()
+        pluralityLabel.attributedText = NSAttributedString()
+        pastLabel.attributedText = NSAttributedString()
+        pastParticipleLabel.attributedText = NSAttributedString()
+        presentParticipleLabel.attributedText = NSAttributedString()
+        thirdSingleLabel.attributedText = NSAttributedString()
+        phrasesLabel.attributedText = NSAttributedString()
+        sentencesLabel.attributedText = NSAttributedString()
+        
+        addToCustomDictionaryButton.hidden = true
+        voiceIconUS.hidden = true
+        voiceIconUK.hidden = true
+    }
+    
     func setToView(data: AnyObject) {
-        var headView:UILabel = UILabel(frame: CGRect(x: 15, y: 10, width: self.wordScrollView.frame.width - 30, height: 40))
         headView.text = data["word"] as? String
-        headView.font = UIFont(name: headView.font.fontName, size: 30)
-        self.wordScrollView.addSubview(headView)
         
         if (data["word"] as? String != nil) {
-            var addToCustomDictionaryButton = UIButton(frame: CGRect(x: self.wordScrollView.frame.width - 45, y: 15, width: 30, height: 30))
-            addToCustomDictionaryButton.backgroundColor = Color.red
-            addToCustomDictionaryButton.addTarget(self, action: "onaddToCustomDictionaryButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
-            self.wordScrollView.addSubview(addToCustomDictionaryButton)
+            addToCustomDictionaryButton.hidden = false
+        } else {
+            addToCustomDictionaryButton.hidden = true
         }
         
-        var tagsLabel = UILabel(frame: CGRect(x: 15, y: headView.frame.origin.y + headView.frame.height + 5, width: self.wordScrollView.frame.width - 30, height: 0))
-        tagsLabel.numberOfLines = 0
+        tagsLabel.frame = CGRect(x: 15, y: headView.frame.origin.y + headView.frame.height + 5, width: self.wordScrollView.frame.width - 30, height: 0)
         var tagsArray = data["tags"] as? NSArray
         if (tagsArray != nil && tagsArray!.count > 0) {
             var tags: String = ""
@@ -86,11 +183,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             tagsLabel.attributedText =  NSAttributedString(string: tagsLabel.text!, attributes: attributesForTags)
             tagsLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(tagsLabel)
         
-        
-        var phoneticSymbolUSLabel = UILabel(frame: CGRect(x: 15, y: tagsLabel.frame.origin.y + tagsLabel.frame.height + 10, width: 0, height: 0))
-        phoneticSymbolUSLabel.numberOfLines = 0
+        phoneticSymbolUSLabel.frame = CGRect(x: 15, y: tagsLabel.frame.origin.y + tagsLabel.frame.height + 10, width: 0, height: 0)
         var phoneticSymbolUS = data["phoneticSymbolUS"] as? String
         if (phoneticSymbolUS != nil) {
             phoneticSymbolUSLabel.text = "美" + phoneticSymbolUS!
@@ -108,19 +202,16 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             phoneticSymbolUSLabel.attributedText =  NSAttributedString(string: phoneticSymbolUSLabel.text!, attributes: attributes)
             phoneticSymbolUSLabel.sizeToFit()
             
-            
             if (data["usPronunciation"] as? String != nil) {
-                var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUSLabel.frame.origin.x + phoneticSymbolUSLabel.frame.width, y: phoneticSymbolUSLabel.frame.origin.y - 2, width: 24, height: 24))
-                voiceIcon.backgroundColor = Color.red
-                voiceIcon.addTarget(self, action: "usVoice:", forControlEvents: UIControlEvents.TouchUpInside)
-                self.wordScrollView.addSubview(voiceIcon)
+                voiceIconUS.frame = CGRect(x: phoneticSymbolUSLabel.frame.origin.x + phoneticSymbolUSLabel.frame.width, y: phoneticSymbolUSLabel.frame.origin.y - 2, width: 24, height: 24)
+                voiceIconUS.hidden = false
                 self.voiceUS = Util.getVoiceURL(data["usPronunciation"] as String)
+            } else {
+                voiceIconUS.hidden = true
             }
         }
-        self.wordScrollView.addSubview(phoneticSymbolUSLabel)
         
-        var phoneticSymbolUKLabel = UILabel(frame: CGRect(x: self.wordScrollView.frame.width / 2, y: tagsLabel.frame.origin.y + tagsLabel.frame.height + 10, width: 0, height: 0))
-        phoneticSymbolUKLabel.numberOfLines = 0
+        phoneticSymbolUKLabel.frame = CGRect(x: self.wordScrollView.frame.width / 2, y: tagsLabel.frame.origin.y + tagsLabel.frame.height + 10, width: 0, height: 0)
         var phoneticSymbolUK = data["phoneticSymbolUK"] as? String
         if (phoneticSymbolUK != nil) {
             phoneticSymbolUKLabel.text = "英" + phoneticSymbolUK!
@@ -139,17 +230,15 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             phoneticSymbolUKLabel.sizeToFit()
             
             if (data["ukPronunciation"] as? String != nil) {
-                var voiceIcon = UIButton(frame: CGRect(x: phoneticSymbolUKLabel.frame.origin.x + phoneticSymbolUKLabel.frame.width, y: phoneticSymbolUKLabel.frame.origin.y - 2, width: 24, height: 24))
-                voiceIcon.backgroundColor = Color.red
-                voiceIcon.addTarget(self, action: "ukVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+                voiceIconUK.frame = CGRect(x: phoneticSymbolUKLabel.frame.origin.x + phoneticSymbolUKLabel.frame.width, y: phoneticSymbolUKLabel.frame.origin.y - 2, width: 24, height: 24)
+                voiceIconUK.hidden = false
                 self.voiceUK = Util.getVoiceURL(data["ukPronunciation"] as String)
-                self.wordScrollView.addSubview(voiceIcon)
+            } else {
+                voiceIconUK.hidden = true
             }
         }
-        self.wordScrollView.addSubview(phoneticSymbolUKLabel)
         
-        var chineseLabel = UILabel(frame: CGRect(x: 15, y: phoneticSymbolUSLabel.frame.origin.y + phoneticSymbolUSLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        chineseLabel.numberOfLines = 0
+        chineseLabel.frame = CGRect(x: 15, y: phoneticSymbolUSLabel.frame.origin.y + phoneticSymbolUSLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         if ((data["chinese"] as? NSDictionary) != nil) {
             var chinese: String = "\n"
             var chineseDictionary = data["chinese"] as NSDictionary
@@ -171,10 +260,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             chineseLabel.attributedText =  NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
             chineseLabel.sizeToFit()
         }
-        wordScrollView.addSubview(chineseLabel)
-        
-        var pluralityLabel = UILabel(frame: CGRect(x: 15, y: chineseLabel.frame.origin.y + chineseLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        pluralityLabel.numberOfLines = 0
+
+        pluralityLabel.frame = CGRect(x: 15, y: chineseLabel.frame.origin.y + chineseLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var plurality = data["plurality"] as? String
         if (plurality != nil) {
             pluralityLabel.text = "复数: " + plurality!
@@ -192,10 +279,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             pluralityLabel.attributedText =  NSAttributedString(string: pluralityLabel.text!, attributes: attributes)
             pluralityLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(pluralityLabel)
         
-        var pastLabel = UILabel(frame: CGRect(x: 15, y: pluralityLabel.frame.origin.y + pluralityLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        pastLabel.numberOfLines = 0
+        pastLabel.frame = CGRect(x: 15, y: pluralityLabel.frame.origin.y + pluralityLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var past = data["past"] as? String
         if (past != nil) {
             pastLabel.text = "过去式: " + past!
@@ -213,10 +298,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             pastLabel.attributedText =  NSAttributedString(string: pastLabel.text!, attributes: attributes)
             pastLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(pastLabel)
         
-        var pastParticipleLabel = UILabel(frame: CGRect(x: 15, y: pastLabel.frame.origin.y + pastLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        pastParticipleLabel.numberOfLines = 0
+        pastParticipleLabel.frame = CGRect(x: 15, y: pastLabel.frame.origin.y + pastLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var pastParticiple = data["pastParticiple"] as? String
         if (pastParticiple != nil) {
             pastParticipleLabel.text = "过去分词: " + pastParticiple!
@@ -234,10 +317,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             pastParticipleLabel.attributedText =  NSAttributedString(string: pastParticipleLabel.text!, attributes: attributes)
             pastParticipleLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(pastParticipleLabel)
-        
-        var presentParticipleLabel = UILabel(frame: CGRect(x: 15, y: pastParticipleLabel.frame.origin.y + pastParticipleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        presentParticipleLabel.numberOfLines = 0
+
+        presentParticipleLabel.frame = CGRect(x: 15, y: pastParticipleLabel.frame.origin.y + pastParticipleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var presentParticiple = data["presentParticiple"] as? String
         if (pastParticiple != nil) {
             presentParticipleLabel.text = "现在分词: " + presentParticiple!
@@ -255,10 +336,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             presentParticipleLabel.attributedText =  NSAttributedString(string: presentParticipleLabel.text!, attributes: attributes)
             presentParticipleLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(presentParticipleLabel)
         
-        var thirdSingleLabel = UILabel(frame: CGRect(x: 15, y: presentParticipleLabel.frame.origin.y + presentParticipleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        thirdSingleLabel.numberOfLines = 0
+        thirdSingleLabel.frame = CGRect(x: 15, y: presentParticipleLabel.frame.origin.y + presentParticipleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var thirdSingle = data["thirdSingle"] as? String
         if (thirdSingle != nil) {
             thirdSingleLabel.text = "第三人称单数: " + thirdSingle!
@@ -276,11 +355,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             thirdSingleLabel.attributedText =  NSAttributedString(string: thirdSingleLabel.text!, attributes: attributes)
             thirdSingleLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(thirdSingleLabel)
-        
-        
-        var phrasesLabel = UILabel(frame: CGRect(x: 15, y: thirdSingleLabel.frame.origin.y + thirdSingleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        phrasesLabel.numberOfLines = 0
+
+        phrasesLabel.frame = CGRect(x: 15, y: thirdSingleLabel.frame.origin.y + thirdSingleLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var phrasesArray = data["phrases"] as? NSArray
         if (phrasesArray != nil && phrasesArray!.count > 0) {
             var phrases: String = "\n"
@@ -302,10 +378,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             phrasesLabel.attributedText =  NSAttributedString(string: phrasesLabel.text!, attributes: attributes)
             phrasesLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(phrasesLabel)
-        
-        var sentencesLabel = UILabel(frame: CGRect(x: 15, y: phrasesLabel.frame.origin.y + phrasesLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0))
-        sentencesLabel.numberOfLines = 0
+
+        sentencesLabel.frame = CGRect(x: 15, y: phrasesLabel.frame.origin.y + phrasesLabel.frame.height, width: self.wordScrollView.frame.width - 30, height: 0)
         var sentencesArray = data["sentences"] as? NSArray
         if (sentencesArray != nil && sentencesArray!.count > 0) {
             var sentences: String = "\n"
@@ -332,8 +406,6 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
             sentencesLabel.attributedText =  NSAttributedString(string: sentencesLabel.text!, attributes: attributes)
             sentencesLabel.sizeToFit()
         }
-        self.wordScrollView.addSubview(sentencesLabel)
-        
         
         
         wordScrollView.contentSize = CGSize(width: wordScrollView.frame.width, height:sentencesLabel.frame.origin.y + sentencesLabel.frame.height)
@@ -347,10 +419,24 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     
     func onaddToCustomDictionaryButtonTapped(sender: UIButton) {
         Word.addToCustomDictionary(self.word)
-        SuccessView(view: self.view, message: "已加入生词本")
+        var y:CGFloat = 0
+        if (self.delegate!.shoudRegisterNotification != nil && self.delegate!.shoudRegisterNotification!()) {
+            y = 22
+        }
+        var view = UIView(frame: CGRect(x: 0, y: y, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        SuccessView(view: view, message: "已加入生词本",completion: {() in
+            view.removeFromSuperview()
+        })
     }
     
     func loadData() {
+        self.searchWord = self.delegate!.searchWord()
+        if (self.word != nil && (self.word!["word"] as? String == self.searchWord)) {
+            return
+        }
+        
+        self.clearView()
         var params = NSMutableDictionary()
         params.setValue(self.searchWord, forKey: "word")
         API.instance.get("/word/search", delegate: self, params: params)
@@ -386,7 +472,12 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     
     func error(error: Error, api: String) {
         self.endLoading()
-        var view = UIView(frame: CGRect(x: 0, y: 22, width: self.view.frame.width, height: 25))
+        
+        var y:CGFloat = 0
+        if (self.delegate!.shoudRegisterNotification != nil && self.delegate!.shoudRegisterNotification!()) {
+            y = 22
+        }
+        var view = UIView(frame: CGRect(x: 0, y: y, width: self.view.frame.width, height: 25))
         self.view.addSubview(view)
         ErrorView(view: view, message: error.getMessage(),completion: {() in
             view.removeFromSuperview()

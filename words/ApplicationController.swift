@@ -95,6 +95,7 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
         if (self.previousPage != self.currentPage) {
             var info = NSMutableDictionary()
             info.setValue(page.rawValue, forKey: "currentPage")
+            info.setValue(self.previousPage?.rawValue, forKey: "previousPage")
             NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAGE_CHAGNE, object: self, userInfo: info)
         }
         self.previousPage = self.currentPage

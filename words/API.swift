@@ -95,6 +95,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     func connection(connection: NSURLConnection, didFailWithError error: NSError) {
         println("http request failed!!!!!");
         println(error)
+        // TODO: check if the network works.
         self.delegate!.error?(Error(message: "服务器正在维护，请稍候再试", code: 500), api: self.api!)
     }
     

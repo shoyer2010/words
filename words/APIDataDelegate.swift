@@ -25,6 +25,9 @@
     // 单词
     optional func wordSearch(AnyObject)
     
+    // 例句
+    optional func sentenceGetByWordId(AnyObject)
+    
     // 文章
     optional func articleDetail(AnyObject)
     

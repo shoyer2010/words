@@ -152,6 +152,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     }
     
     func setToView(data: AnyObject) {
+        wordScrollView.contentOffset = CGPoint(x: 0, y: 0)
         headView.text = data["word"] as? String
         
         if (data["word"] as? String != nil) {

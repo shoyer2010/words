@@ -13,4 +13,7 @@ var b: AnyObject = dic as AnyObject
 
 
 
+var test: NSString?
+
+test? as String
 

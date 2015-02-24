@@ -13,4 +13,5 @@ struct CacheKey {
     static let LEARNING_CUSTOM_DICTIONARY = "learning_custom_dictionary"
     static let LEARNING_DICTIONARY = "learning_dictionary"
     static let DICTIONARY_LIST = "dictionary_list"
+    static let WORD_PHONETIC_TYPE = "word_phonetic_type"
 }

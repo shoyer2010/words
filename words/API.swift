@@ -178,6 +178,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.rankActive!(data!)
             case "/rank/masteredWords":
                 self.delegate!.rankMasteredWords!(data!)
+            case "/sentence/getByWordId":
+                self.delegate!.sentenceGetByWordId!(data!)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }

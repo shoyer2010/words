@@ -47,9 +47,10 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         articleView.backgroundColor = Color.appBackground
 
         titleView = UILabel(frame: CGRect(x: 15, y: 15, width: articleView.frame.width - 30, height: 0))
+        titleView.userInteractionEnabled = true
         titleView.numberOfLines = 0
+        titleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTappedTitleView:"))
         articleView.addSubview(titleView)
-        
         
         contentView = UILabel(frame: CGRect(x: 15, y: 20 + titleView.frame.origin.y + titleView.frame.height, width: articleView.frame.width - 30, height: 0))
         contentView.userInteractionEnabled = true
@@ -125,75 +126,32 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
 ////        CGPoint lineOrigin = CGPointZero;
 //    }
     
+    func onTappedTitleView(recognizer: UITapGestureRecognizer) {
+        var tapPoint:CGPoint = recognizer.locationInView(titleView)
+        self.matchWord = Util.recognizeWord(titleView, recognizer: recognizer)
+        
+        TapPointView(view: titleView, tapPoint: tapPoint, completion: { () -> Void in
+            if (self.matchWord != nil) {
+                var searchWordResultController = SearchWordResultController()
+                searchWordResultController.delegate = self
+                self.addChildViewController(searchWordResultController)
+                self.view.addSubview(searchWordResultController.view)
+            }
+        })
+    }
     
     func onTappedContentView(recognizer: UITapGestureRecognizer) {
         var tapPoint:CGPoint = recognizer.locationInView(contentView)
+        self.matchWord = Util.recognizeWord(contentView, recognizer: recognizer)
         
-        var textStorage = NSTextStorage(attributedString: contentView.attributedText)
-        var layoutManager = NSLayoutManager()
-        textStorage.addLayoutManager(layoutManager)
-        var textContainer = NSTextContainer(size: CGSize(width: contentView.frame.width, height: contentView.frame.height + 2000))
-        textContainer.lineFragmentPadding  = 0;
-        layoutManager.addTextContainer(textContainer)
-        
-        var characterIndex = layoutManager.characterIndexForPoint(tapPoint, inTextContainer: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-        if (characterIndex < textStorage.length) {
-            
-            var startIndex = characterIndex
-            for ( ; startIndex > 0; startIndex--) {
-                var char = contentView.attributedText.attributedSubstringFromRange(NSRange(location: startIndex, length: 1))
-                if (!RegularExpression("[A-Za-z]").test(char.string)) {
-                    if (startIndex < textStorage.length - 1) {
-                        startIndex++
-                    }
-                    
-                    break;
-                }
+        TapPointView(view: contentView, tapPoint: tapPoint, completion: { () -> Void in
+            if (self.matchWord != nil) {
+                var searchWordResultController = SearchWordResultController()
+                searchWordResultController.delegate = self
+                self.addChildViewController(searchWordResultController)
+                self.view.addSubview(searchWordResultController.view)
             }
-            
-            var endIndex = characterIndex >= contentView.attributedText.length - 1 ? characterIndex : characterIndex + 1
-            for ( ; endIndex < textStorage.length - 1; endIndex++) {
-                var char = contentView.attributedText.attributedSubstringFromRange(NSRange(location: endIndex, length: 1))
-                if (!RegularExpression("[A-Za-z]").test(char.string)) {
-                    break;
-                }
-            }
-            
-            var word = contentView.attributedText.attributedSubstringFromRange(NSRange(location: startIndex, length: endIndex - startIndex))
-            self.matchWord = word.string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-            
-            if (!RegularExpression("[A-Za-z]").test(self.matchWord!)) {
-                self.matchWord = nil
-            }
-            
-            
-            var redPoint = UIView(frame: CGRect(x: tapPoint.x - 1, y: tapPoint.y - 1, width: 2, height: 2))
-            redPoint.backgroundColor = Color.red.colorWithAlphaComponent(0)
-            redPoint.layer.cornerRadius = 1
-            redPoint.layer.shadowRadius = 0.5
-            redPoint.layer.shadowOffset = CGSize(width: 0, height: 0)
-            redPoint.layer.shadowOpacity = 1
-            redPoint.layer.shadowColor = Color.red.CGColor
-            contentView.addSubview(redPoint)
-            contentView.bringSubviewToFront(redPoint)
-            
-            UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
-                redPoint.transform = CGAffineTransformMakeScale(10, 10)
-                redPoint.backgroundColor = Color.red.colorWithAlphaComponent(1)
-                }) { (isDone: Bool) -> Void in
-                    redPoint.removeFromSuperview()
-                    
-                    if (self.matchWord != nil) {
-                        var searchWordResultController = SearchWordResultController()
-                        searchWordResultController.delegate = self
-                        self.addChildViewController(searchWordResultController)
-                        self.view.addSubview(searchWordResultController.view)
-                    }
-            }
-
-            
-            
-        }
+        })
     }
     
     func onPageChange(notification: NSNotification) {

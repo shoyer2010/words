@@ -31,10 +31,11 @@ class Util {
     }
     
     class func getVoiceURL(path: String) -> NSURL {
+        var url = path.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
         if (RegularExpression("^http:").test(path)) {
-            return NSURL(string: path)!
+            return NSURL(string: url)!
         } else {
-            return NSURL(string: Server.entry() + "/" + path)!
+            return NSURL(string: Server.entry() + "/" + url)!
         }
     }
     
@@ -113,6 +114,52 @@ class Util {
         }
         
         return dictionary
+    }
+    
+    class func recognizeWord(view: UILabel, recognizer: UITapGestureRecognizer) -> String? {
+        var matchWord: String?
+        
+        var tapPoint:CGPoint = recognizer.locationInView(view)
+        
+        var textStorage = NSTextStorage(attributedString: view.attributedText)
+        var layoutManager = NSLayoutManager()
+        textStorage.addLayoutManager(layoutManager)
+        var textContainer = NSTextContainer(size: CGSize(width: view.frame.width, height: view.frame.height + 2000))
+        textContainer.lineFragmentPadding  = 0;
+        layoutManager.addTextContainer(textContainer)
+        
+        var characterIndex = layoutManager.characterIndexForPoint(tapPoint, inTextContainer: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        if (characterIndex < textStorage.length) {
+            
+            var startIndex = characterIndex
+            for ( ; startIndex > 0; startIndex--) {
+                var char = view.attributedText.attributedSubstringFromRange(NSRange(location: startIndex, length: 1))
+                if (!RegularExpression("[A-Za-z]").test(char.string)) {
+                    if (startIndex < textStorage.length - 1) {
+                        startIndex++
+                    }
+                    
+                    break;
+                }
+            }
+            
+            var endIndex = characterIndex >= view.attributedText.length - 1 ? characterIndex : characterIndex + 1
+            for ( ; endIndex < textStorage.length - 1; endIndex++) {
+                var char = view.attributedText.attributedSubstringFromRange(NSRange(location: endIndex, length: 1))
+                if (!RegularExpression("[A-Za-z]").test(char.string)) {
+                    break;
+                }
+            }
+            
+            var word = view.attributedText.attributedSubstringFromRange(NSRange(location: startIndex, length: endIndex - startIndex + 1))
+            matchWord = word.string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            
+            if (!RegularExpression("[A-Za-z]").test(matchWord!)) {
+                matchWord = nil
+            }
+        }
+        
+        return matchWord
     }
 }
 

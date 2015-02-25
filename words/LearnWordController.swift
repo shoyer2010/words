@@ -325,7 +325,13 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func setToSentencesView() {
         var sentencesCount = CGFloat(self.sentences.count)
         self.sentencesScrollView.contentSize = CGSize(width: self.sentencesScrollView.frame.width * sentencesCount, height: sentencesScrollView.frame.height)
-        self.scrollIndicator.frame = CGRect(x: 0, y: self.sentencesScrollView.frame.height - 2, width: self.sentencesScrollView.frame.width / sentencesCount, height: 2)
+        
+        if (sentencesCount > 0) {
+            self.scrollIndicator.frame = CGRect(x: 0, y: self.sentencesScrollView.frame.height - 2, width: self.sentencesScrollView.frame.width / sentencesCount, height: 2)
+            self.scrollIndicator.hidden = false
+        } else {
+            self.scrollIndicator.hidden = true
+        }
 
         for(var i = 0; i < self.sentences.count; i++) {
             var sentence: AnyObject = self.sentences[i]

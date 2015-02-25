@@ -166,6 +166,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0)
             case "/dictionary/download":
                 self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0)
+            case "/dictionary/customWord":
+                self.delegate!.dictionaryCustomWord!(data!)
             case "/word/search":
                 self.delegate!.wordSearch!(data!)
             case "/article/detail":
@@ -180,8 +182,12 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.rankMasteredWords!(data!)
             case "/sentence/getByWordId":
                 self.delegate!.sentenceGetByWordId!(data!)
+            case "/version/check":
+                self.delegate!.versionCheck!(data!)
+            case "/version/url":
+                self.delegate!.versionUrl!(data!)
             default:
-                self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
+                self.delegate!.error?(Error(message: "No API matched"), api: self.api!)
             }
         } else {
             if (data?["message"] as? String != nil) {

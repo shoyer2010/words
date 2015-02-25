@@ -3,8 +3,10 @@ import Foundation
 import UIKit
 import SQLite
 
-class DictionaryInfoController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate {
+class DictionaryInfoController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, APIDataDelegate {
     var subView: UIView!
+    var tableView: UITableView!
+    var editButton: UIButton!
     var subViewHeight: CGFloat = 0
     var delegate: DictionaryInfoDelegate!
     var dictionary: AnyObject?
@@ -15,12 +17,15 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         // Do any additional setup after loading the view, typically from a nib.
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
-        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapView:"))
-        self.subViewHeight = self.view.frame.height - 120
+        var tapViewHeight = CGFloat(120)
+        self.subViewHeight = self.view.frame.height - tapViewHeight
+        
+        var tapViewToCloseView = UIView(frame: CGRect(x: 0, y: self.subViewHeight, width: self.view.frame.width, height: tapViewHeight))
+        tapViewToCloseView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapView:"))
+        self.view.addSubview(tapViewToCloseView)
         
         self.subView = UIView(frame: CGRect(x: 0, y: -self.subViewHeight, width: self.view.frame.width, height: self.subViewHeight))
         self.subView.backgroundColor = Color.white.colorWithAlphaComponent(0.89)
-        self.subView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil)) // prevent tap event from delivering to parent view.
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
@@ -32,7 +37,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         self.dictionary = self.getDictionaryInfo()
         var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
-        for row in db.prepare("SELECT id, word FROM words") {
+        for row in db.prepare("SELECT id, word FROM words ORDER BY rowid desc") {
             self.words.addObject(["id": row[0] as String, "word": row[1] as String])
         }
         
@@ -76,21 +81,20 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         tableHeader.addSubview(haveMasteredLabel)
         tableViewWrap.addSubview(tableHeader)
         
-        var tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
+        tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
         tableView.delegate = self
         tableView.dataSource = self
         tableView.layer.cornerRadius = Layer.cornerRadius
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsetsZero
         tableView.layoutMargins = UIEdgeInsetsZero
-        
         tableViewWrap.addSubview(tableView)
         
         tableViewWrap.bringSubviewToFront(tableHeader)
         
         self.subView.addSubview(tableViewWrap)
         
-        var learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 65, y: self.subView.frame.height - 40, width: 60, height: 30))
+        var learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 100, y: self.subView.frame.height - 40, width: 60, height: 30))
         learnButton.backgroundColor = Color.gray
         learnButton.addTarget(self, action: "onLearnButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(learnButton)
@@ -102,11 +106,19 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             learnButton.setTitle("学习", forState: UIControlState.Normal)
         }
         
-        var deleteButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
+        editButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
+        editButton.setTitle("编辑", forState: UIControlState.Normal)
+        editButton.backgroundColor = Color.gray
+        editButton.addTarget(self, action: "onEditButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.subView.addSubview(editButton)
+        
+        var deleteButton = UIButton(frame: CGRect(x: editButton.frame.origin.x + editButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
         deleteButton.setTitle("删除", forState: UIControlState.Normal)
         deleteButton.backgroundColor = Color.red
         deleteButton.addTarget(self, action: "onDeleteButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(deleteButton)
+        
+        
         
         if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
             deleteButton.userInteractionEnabled = false
@@ -146,7 +158,22 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         return dictionary
     }
     
+    func onEditButtonTapped(sender: UIButton) {
+        if (self.tableView.editing) {
+            self.tableView.setEditing(false, animated: true)
+            self.editButton.setTitle("编辑", forState: UIControlState.Normal)
+        } else {
+            self.tableView.setEditing(true, animated: true)
+            self.editButton.setTitle("完成", forState: UIControlState.Normal)
+        }
+    }
+    
+    
     func onDeleteButtonTapped(sender: UIButton) {
+//        UIAlertView(title: "", message: "", delegate: self, cancelButtonTitle: "", otherButtonTitles: "", nil)
+////        var alertView = UIAlertView(title: "删除词库", message: "您确认要删除此词库吗？", delegate: self, cancelButtonTitle: "不删了", otherButtonTitles: "无比坚信", moreButtonTitles: "")
+//        alertView.show()
+        
         Util.deleteFile(self.delegate.setDictionaryId() + ".db")
         var learingDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
         if (learingDictionaryId == self.delegate.setDictionaryId()) {
@@ -184,20 +211,39 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         return self.words.count
     }
     
-//    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-//        return true
-//    }
-//    
-//    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-//        return true
-//    }
-//    
-//    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-//        return UITableViewCellEditingStyle.Delete
-//    }
-//    
-//    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-//    }
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+        return UITableViewCellEditingStyle.Delete
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if (UITableViewCellEditingStyle.Delete == editingStyle) {
+            self.dictionary = self.getDictionaryInfo()
+            var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
+            var statement = db.prepare("DELETE FROM words WHERE id=?", self.words[indexPath.row]["id"] as String)
+            statement.run()
+            
+            var params = NSMutableDictionary()
+            params.setValue(self.words[indexPath.row]["id"] as String, forKey: "id")
+            params.setValue(2, forKey: "type")
+            API.instance.post("/dictionary/customWord", delegate: self, params: params)
+            
+            self.words.removeObjectAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Bottom)
+            
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_CHANGED, object: self, userInfo: nil)
+        }
+    }
+    
+    func dictionaryCustomWord(data: AnyObject) {
+    }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var wordLabelTag = 1001
@@ -205,7 +251,6 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("cell") as? UITableViewCell
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "cell")
-            cell!.frame = CGRect(x: 0, y: 0, width: tableView.frame.width, height: 30)
             cell!.separatorInset = UIEdgeInsetsZero
             cell!.layoutMargins = UIEdgeInsetsZero
             
@@ -215,7 +260,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             wordLabel.textColor = Color.gray
             wordLabel.textAlignment = NSTextAlignment.Left
             wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
-            cell!.addSubview(wordLabel)
+            cell!.contentView.addSubview(wordLabel)
             
             var appearCountLabel = UILabel(frame: CGRect(x: 100, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
             appearCountLabel.text = "23"

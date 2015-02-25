@@ -21,6 +21,8 @@
     
     optional func dictionaryDownload(filePath: AnyObject, progress: Float)
     
+    optional func dictionaryCustomWord(AnyObject)
+    
     
     // 单词
     optional func wordSearch(AnyObject)
@@ -39,4 +41,9 @@
     optional func rankActive(AnyObject)
     
     optional func rankMasteredWords(AnyObject)
+    
+    //版本
+    optional func versionCheck(AnyObject)
+    
+    optional func versionUrl(AnyObject)
 }

@@ -25,6 +25,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: EventKey.ON_DICTIONARY_DELETED, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearingDictionaryChanged:", name: EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryChanged:", name: EventKey.ON_DICTIONARY_CHANGED, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(2)
         self.view.backgroundColor = Color.appBackground
@@ -164,11 +165,15 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         var dictionaryList = self.getCurrentDictionaryList()
         if (dictionaryList.count > 0) {
             var dictionary: AnyObject = dictionaryList[indexPath.row]
+            var filename = (dictionary["id"] as String) + ".db"
             
             var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
             var count = dictionary["count"] as Int
             if (dictionary["custom"] as Bool) {
-                count = self.wordCountOfCustomDictionary()
+                count = self.wordCountOfLocalDictionary(DictionaryUtil.customDictionaryId())
+            }
+            if (Util.isFileExist(filename)) {
+                count = self.wordCountOfLocalDictionary(dictionary["id"] as String)
             }
             countLabel.text = "单词：\(count)"
             
@@ -176,7 +181,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             var popluarIndex = dictionary["popularIndex"] as Int
             popularLabel.text = "人气：\(popluarIndex)"
             
-            var filename = (dictionary["id"] as String) + ".db"
+            
             var sizeLabel = cell!.viewWithTag(self.sizeLabelTag) as UILabel
             if (Util.isFileExist(filename)) {
                 sizeLabel.text = Util.fileSizeString(filename)
@@ -206,8 +211,8 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         return cell!
     }
     
-    func wordCountOfCustomDictionary() -> Int {
-        var db = Database(Util.getFilePath(DictionaryUtil.customDictionaryId() + ".db"))
+    func wordCountOfLocalDictionary(dictionaryId: String) -> Int {
+        var db = Database(Util.getFilePath(dictionaryId + ".db"))
         var count = 0
         for row in db.prepare("SELECT count(id) FROM words") {
             count = row[0] as Int
@@ -263,6 +268,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         if (!Util.isFileExist(filename)) {
             self.downloadDictionary()
         }
+        // TODO: 检查网络类型，如果是wifi网络则下载，非wifi网络不下载
     }
     
     func dictionaryDownload(filePath: AnyObject, progress: Float) {
@@ -317,6 +323,10 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func onDictionaryDeleted(notification: NSNotification) {
         self.commonTableView.reloadData()
         self.reloadMyCurrentLabel()
+    }
+    
+    func onDictionaryChanged(notification: NSNotification) {
+        self.commonTableView.reloadData()
     }
     
     func onLearingDictionaryChanged(notification: NSNotification) {

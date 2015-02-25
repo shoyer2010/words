@@ -429,6 +429,15 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         SuccessView(view: view, message: "已加入生词本",completion: {() in
             view.removeFromSuperview()
         })
+        
+        var params = NSMutableDictionary()
+        params.setValue(self.word!["id"] as String, forKey: "id")
+        params.setValue(1, forKey: "type")
+        API.instance.post("/dictionary/customWord", delegate: self, params: params)
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_CHANGED, object: self, userInfo: nil)
+    }
+    
+    func dictionaryCustomWord(data: AnyObject) {
     }
     
     func loadData() {

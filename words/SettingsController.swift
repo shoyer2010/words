@@ -9,10 +9,18 @@
 import Foundation
 import UIKit
 
-class SettingsController: UIViewController {
+class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate {
+    var upgradeButton: UIButton!
+    var encourageUsButton: UIButton!
+    var cachedLabel: UILabel!
+    var upgradeUrl: NSURL!
+    var appUrl: NSURL!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
+        
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(3)
         self.view.backgroundColor = Color.appBackground
         
@@ -22,22 +30,47 @@ class SettingsController: UIViewController {
         
         var shouldNotify = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 17, width: 100, height: 20))
         shouldNotify.onTintColor = Color.red
-        shouldNotify.setOn(true, animated: true)
+        shouldNotify.addTarget(self, action: "onShouldNotify:", forControlEvents: UIControlEvents.TouchUpInside)
+        var shouldNotifyValue = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SHOULD_NOTIFY) as? Bool
+        if (shouldNotifyValue == nil) {
+            shouldNotifyValue = true
+        }
+        shouldNotify.setOn(shouldNotifyValue!, animated: true)
         self.view.addSubview(shouldNotify)
         
-        var shouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 85, width: 200, height: 20))
-        shouldAutoVoiceLabel.text = "自动发音"
-        self.view.addSubview(shouldAutoVoiceLabel)
+        var wordShouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 85, width: 200, height: 20))
+        wordShouldAutoVoiceLabel.text = "单词自动发音"
+        self.view.addSubview(wordShouldAutoVoiceLabel)
         
-        var shouldAutoVoice = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 77, width: 100, height: 20))
-        shouldAutoVoice.onTintColor = Color.red
-        self.view.addSubview(shouldAutoVoice)
+        var wordShouldAutoVoice = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 77, width: 100, height: 20))
+        wordShouldAutoVoice.onTintColor = Color.red
+        wordShouldAutoVoice.addTarget(self, action: "onShouldAutoVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+        var shouldAutoVoiceValue = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as? Bool
+        if (shouldAutoVoiceValue == nil) {
+            shouldAutoVoiceValue = true
+        }
+        wordShouldAutoVoice.setOn(shouldAutoVoiceValue!, animated: true)
+        self.view.addSubview(wordShouldAutoVoice)
         
-        var cachedLabel = UILabel(frame: CGRect(x: 15, y: 140, width: 150, height: 20))
-        cachedLabel.text = "缓存占用: 20M"
+        var sentenceShouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 145, width: 200, height: 20))
+        sentenceShouldAutoVoiceLabel.text = "例句自动发音"
+        self.view.addSubview(sentenceShouldAutoVoiceLabel)
+        
+        var sentenceShouldAutoVoice = UISwitch(frame: CGRect(x: self.view.frame.width - 65, y: 137, width: 100, height: 20))
+        sentenceShouldAutoVoice.onTintColor = Color.red
+        sentenceShouldAutoVoice.addTarget(self, action: "onSentenceShouldAutoVoice:", forControlEvents: UIControlEvents.TouchUpInside)
+        var sentenceShouldAutoVoiceValue = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as? Bool
+        if (sentenceShouldAutoVoiceValue == nil) {
+            sentenceShouldAutoVoiceValue = true
+        }
+        sentenceShouldAutoVoice.setOn(sentenceShouldAutoVoiceValue!, animated: true)
+        self.view.addSubview(sentenceShouldAutoVoice)
+        
+        cachedLabel = UILabel(frame: CGRect(x: 15, y: 200, width: 150, height: 20))
+        cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
         self.view.addSubview(cachedLabel)
         
-        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 133, width: 70, height: 30))
+        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 193, width: 70, height: 30))
         clearButton.backgroundColor = Color.gray
         clearButton.setTitle("清理", forState: UIControlState.Normal)
         clearButton.layer.cornerRadius = 15
@@ -47,12 +80,13 @@ class SettingsController: UIViewController {
         clearButton.addTarget(self, action: "clearCache:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(clearButton)
         
-        var versionLabel = UILabel(frame: CGRect(x: 15, y: 195, width: 150, height: 20))
-        versionLabel.text = "当前版本：1.0.0"
+        var versionLabel = UILabel(frame: CGRect(x: 15, y: 255, width: 150, height: 20))
+        versionLabel.text = "当前版本:" + Util.getVersion()
         self.view.addSubview(versionLabel)
         
-        var upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 188, width: 70, height: 30))
+        upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 248, width: 70, height: 30))
         upgradeButton.backgroundColor = Color.gray
+        upgradeButton.hidden = true
         upgradeButton.setTitle("升级", forState: UIControlState.Normal)
         upgradeButton.layer.cornerRadius = 15
         upgradeButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
@@ -61,9 +95,10 @@ class SettingsController: UIViewController {
         upgradeButton.addTarget(self, action: "upgradeApp:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(upgradeButton)
         
-        var encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
-        encourageUsButton.backgroundColor = Color.gray
+        encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
         encourageUsButton.setTitle("求个好评", forState: UIControlState.Normal)
+        encourageUsButton.backgroundColor = Color.gray
+        self.refreshEncourageUsButton()
         encourageUsButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
         encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
         encourageUsButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
@@ -79,16 +114,98 @@ class SettingsController: UIViewController {
         sender.backgroundColor = Color.gray
     }
     
+    func onShouldAutoVoice(sender: UISwitch) {
+        NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.WORD_AUTO_VOICE)
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
+    func onSentenceShouldAutoVoice(sender: UISwitch) {
+        NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SENTENCE_AUTO_VOICE)
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
+    func onShouldNotify(sender: UISwitch) {
+        NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SHOULD_NOTIFY)
+        NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
     func clearCache(sender: UIButton) {
-        println("should cleaer cache here")
+        var path = Util.getCachePath()
+        var files: NSArray? = NSFileManager.defaultManager().subpathsAtPath(path)
+        if (files != nil) {
+            for filename in files! {
+                NSFileManager.defaultManager().removeItemAtPath(path + "/" + (filename as String), error: nil)
+            }
+        }
+        
+        cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
+    }
+    
+    func getCacheFileSize() -> NSString {
+        var size = 0
+        var files: NSArray? = NSFileManager.defaultManager().subpathsAtPath(Util.getCachePath())
+        if (files != nil) {
+            for filename in files! {
+                var filesize = NSFileManager.defaultManager().attributesOfItemAtPath(Util.getCacheFilePath(filename as String), error: nil)?["NSFileSize"] as Int
+                size += filesize
+            }
+        }
+        
+        return NSString(format: "%.1f MB", Float(size) / (1024.0 * 1024.0))
     }
     
     func upgradeApp(sender: UIButton) {
-        println("should upgrade here")
+        UIApplication.sharedApplication().openURL(self.upgradeUrl)
     }
     
     func goToAppstore(sender: UIButton) {
-        // TODO: should go to appstore page.
-        println("should go to appstore page")
+        UIApplication.sharedApplication().openURL(self.appUrl)
+    }
+    
+    func onLoginSuccess(notification: NSNotification) {
+        var params = NSMutableDictionary()
+        params.setValue(1, forKey: "platform")
+        params.setValue(Util.getVersion(), forKey: "version")
+        API.instance.get("/version/check", delegate: self, params: params)
+        
+        var url: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.APP_URL)
+        if (url == nil) {
+            API.instance.get("/version/url", delegate: self, params: params)
+        }
+    }
+    
+    func versionCheck(data: AnyObject) {
+        if (data["version"] != nil) {
+            self.upgradeButton.hidden = false
+            self.upgradeUrl = NSURL(string: data["url"] as String)
+            if (data["force"] as Bool) {
+                var alertView = UIAlertView(title: "好消息！", message: "亲，我们不建议您继续使用此版本，好吧，这不是建议，请升级至最新版本", delegate: self, cancelButtonTitle: "被迫升级")
+                alertView.show()
+            }
+        }
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if (buttonIndex == 0) {
+            UIApplication.sharedApplication().openURL(self.upgradeUrl)
+        }
+    }
+    
+    func versionUrl(data: AnyObject) {
+        if (data["url"] != nil) {
+            NSUserDefaults.standardUserDefaults().setObject(data["url"] as String, forKey: CacheKey.APP_URL)
+            NSUserDefaults.standardUserDefaults().synchronize()
+            self.refreshEncourageUsButton()
+        }
+    }
+    
+    func refreshEncourageUsButton() {
+        var url: String? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.APP_URL) as? String
+        if (url == nil) {
+            encourageUsButton.hidden = true
+        } else {
+            encourageUsButton.hidden = false
+            self.appUrl = NSURL(string: url!)
+        }
     }
 }

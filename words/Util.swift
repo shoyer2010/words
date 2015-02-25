@@ -26,8 +26,13 @@ class Util {
         return image
     }
     
-    class func getUDID() -> String{
+    class func getUDID() -> String {
         return UIDevice.currentDevice().identifierForVendor.UUIDString
+    }
+    
+    class func getVersion() -> String {
+        var info = NSBundle.mainBundle().infoDictionary! as NSDictionary
+        return info.objectForKey("CFBundleShortVersionString") as String
     }
     
     class func getVoiceURL(path: String) -> NSURL {
@@ -55,15 +60,30 @@ class Util {
         return NSFileManager.defaultManager().fileExistsAtPath(filePath)
     }
     
+    class func getCachePath() -> String {
+        var cachePath = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.CachesDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0] as String
+        var path = cachePath + "/words_app_cache_path"
+        var exists = NSFileManager.defaultManager().fileExistsAtPath(path)
+        if (!exists) {
+            NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil, error: nil)
+        }
+        
+        return path
+    }
+    
+    class func getCacheFilePath(filename: String) -> String {
+        return Util.getCachePath() + "/" + filename
+    }
+    
     class func fileSizeString(filename: String) -> String {
         var filePath = Util.getFilePath(filename)
         var filesize = NSFileManager.defaultManager().attributesOfItemAtPath(filePath, error: nil)?["NSFileSize"] as Int
         if (filesize >= 1024 * 1024) {
-            return "\(filesize / (1024 * 1024)) MB"
+            return NSString(format: "%.1f MB", Float(filesize) / (1024.0 * 1024.0))
         }
         
         if (filesize >= 1024) {
-            return "\(filesize / 1024) KB"
+            return NSString(format: "%.1f KB", Float(filesize) / 1024.0)
         }
         
         return "\(filesize) B"

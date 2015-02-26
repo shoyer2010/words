@@ -124,11 +124,10 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             selectedView.backgroundColor = UIColor.clearColor()
             cell!.addSubview(selectedView)
             
-            if (indexPath.row == 5) { // 当前正在学习词库的样式
-                var selectedRow = UIView(frame: CGRect(x: 0, y: 0, width: 3, height: 40))
-                selectedRow.backgroundColor = Color.red
-                cell!.addSubview(selectedRow)
-            }
+            var learingRow = UIView(frame: CGRect(x: 0, y: 0, width: 3, height: 40))
+            learingRow.tag = 998
+            learingRow.backgroundColor = Color.red
+            cell!.addSubview(learingRow)
             
             var dictionaryNameLabel = UILabel(frame: CGRect(x: 6, y: 6, width: tableView.frame.width * 0.6, height: 16))
             dictionaryNameLabel.tag = self.dictionaryNameLabelTag
@@ -165,7 +164,8 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         var dictionaryList = self.getCurrentDictionaryList()
         if (dictionaryList.count > 0) {
             var dictionary: AnyObject = dictionaryList[indexPath.row]
-            var filename = (dictionary["id"] as String) + ".db"
+            var dictionaryId = dictionary["id"] as String
+            var filename = dictionaryId + ".db"
             
             var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
             var count = dictionary["count"] as Int
@@ -173,7 +173,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
                 count = self.wordCountOfLocalDictionary(DictionaryUtil.customDictionaryId())
             }
             if (Util.isFileExist(filename)) {
-                count = self.wordCountOfLocalDictionary(dictionary["id"] as String)
+                count = self.wordCountOfLocalDictionary(dictionaryId)
             }
             countLabel.text = "单词：\(count)"
             
@@ -205,6 +205,16 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
                 countLabel.textColor = Color.lightGray
                 popularLabel.textColor = Color.lightGray
                 sizeLabel.textColor = Color.lightGray
+            }
+            
+            
+            var customDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+            var learningDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+            var learingRow = cell!.viewWithTag(998)
+            if (dictionaryId == customDictionary || dictionaryId == learningDictionary) {
+                learingRow!.hidden = false
+            } else {
+                learingRow!.hidden = true
             }
         }
         

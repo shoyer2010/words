@@ -28,8 +28,24 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var wordPhoneticButton: UIButton!
     var wordPhoneticSymbolLabel: UILabel!
     var knowButton: UIButton!
+    var nextButton: UIButton!
+    var removeButton: UIButton!
+    
+    var wordView: UIView!
     var tableViewWrap: UIView!
     var tableView: UITableView!
+    var chineseView: UILabel!
+    var blurView: FXBlurView!
+    var blurViewForWord: FXBlurView!
+    var timer: NSTimer!
+    
+    
+    // 0 no word to show. 
+    // 1 no button, and four options to choose.
+    // 2 word and right chinese , next button
+    // 3 word and blured right chinese with a timecount progress, known button.
+    // 4 blured word with a timecount progress, and right chinese, known button.
+    var pageMode: Int! = 0
     
     var viewLearnWordSentenceHeight = CGFloat(150)
     
@@ -76,11 +92,22 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         viewLearnWordPage.backgroundColor = Color.appBackground
         viewLearnWordPage.frame = CGRectMake(0, viewLearnWordSentenceHeight, learnWordScrollView.frame.width, learnWordScrollView.frame.height)
         
-        wordLabel = UILabel(frame: CGRect(x: 0, y: viewLearnWordPage.frame.height * 0.1, width: viewLearnWordPage.frame.width, height: 45))
+        removeButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width - 45, y: 32, width: 30, height: 30))
+        removeButton.backgroundColor = UIColor.purpleColor()
+        removeButton.layer.cornerRadius = 15
+        removeButton.layer.masksToBounds = true
+        removeButton.tintColor = UIColor.whiteColor()
+        removeButton.setTitle("删", forState: UIControlState.Normal)
+        viewLearnWordPage.addSubview(removeButton)
+        
+        wordView = UIView(frame: CGRect(x: 0, y: viewLearnWordPage.frame.height * 0.17, width: viewLearnWordPage.frame.width, height: 90))
+        wordView.backgroundColor = Color.appBackground
+        wordLabel = UILabel(frame: CGRect(x: 0, y: 0, width: wordView.frame.width, height: 45))
         wordLabel.textAlignment = NSTextAlignment.Center
         wordLabel.userInteractionEnabled = true
         wordLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onWordLabelTapped:"))
-        viewLearnWordPage.addSubview(wordLabel)
+        wordView.addSubview(wordLabel)
+        
         
         wordPhoneticButton = UIButton(frame: CGRect(x: 0, y: wordLabel.frame.origin.y + wordLabel.frame.height + 10, width: 24, height: 24))
         wordPhoneticButton.hidden = true
@@ -96,10 +123,30 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         wordPhoneticSymbolLabel.userInteractionEnabled = true
         wordPhoneticSymbolLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onWordPhoneticSymbolLabelTapped:"))
         wordPhoneticSymbolLabel.sizeToFit()
-        viewLearnWordPage.addSubview(wordPhoneticButton)
-        viewLearnWordPage.addSubview(wordPhoneticSymbolLabel)
+        wordView.addSubview(wordPhoneticButton)
+        wordView.addSubview(wordPhoneticSymbolLabel)
+        viewLearnWordPage.addSubview(wordView)
         
-        tableViewWrap = UIView(frame: CGRect(x: 15, y: viewLearnWordPage.frame.height * 0.3, width: self.view.frame.width - 30, height: 171))
+        blurViewForWord = FXBlurView(frame: CGRect(x: 0, y: 0, width: wordView.frame.width, height: wordView.frame.height))
+        blurViewForWord.dynamic = false
+        blurViewForWord.tintColor = UIColor.clearColor()
+        blurViewForWord.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onBlurViewForWordTapped:"))
+        
+        var progressViewForWord = UAProgressView()
+        progressViewForWord.tag = 10009
+        progressViewForWord.frame = CGRect(x: blurViewForWord.frame.width / 2 - 20, y: blurViewForWord.frame.height / 2 - 20, width: 40, height: 40)
+        progressViewForWord.lineWidth = 3
+        progressViewForWord.tintColor = Color.red
+        progressViewForWord.animationDuration = 1
+        progressViewForWord.didSelectBlock = {(progressView: UAProgressView!) -> Void in
+            self.hideBlurViewForWord()
+        }
+        blurViewForWord.addSubview(progressViewForWord)
+        self.showBlurViewForWord()
+        self.hideBlurViewForWord()
+        wordView.addSubview(blurViewForWord)
+        
+        tableViewWrap = UIView(frame: CGRect(x: 15, y: wordView.frame.origin.y + wordView.frame.height + 15, width: self.view.frame.width - 30, height: 171))
         tableViewWrap.backgroundColor = Color.blockBackground
         tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
         tableViewWrap.layer.shadowOffset = Layer.shadowOffset
@@ -115,11 +162,37 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableView.scrollEnabled = false
         tableView.separatorInset = UIEdgeInsetsZero
         tableView.layoutMargins = UIEdgeInsetsZero
+        
+        chineseView = UILabel(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
+        chineseView.text = ""
+        chineseView.numberOfLines = 0
+        chineseView.backgroundColor = Color.white
+        tableViewWrap.addSubview(chineseView)
         tableViewWrap.addSubview(tableView)
         
         viewLearnWordPage.addSubview(tableViewWrap)
         
-        knowButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width / 2 - 50, y: tableViewWrap.frame.origin.y + tableViewWrap.frame.height + 40, width: 100, height: 100))
+        blurView = FXBlurView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
+        blurView.dynamic = false
+        blurView.tintColor = UIColor.clearColor()
+        blurView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onBlurViewTapped:"))
+        
+        var progressView = UAProgressView()
+        progressView.tag = 10009
+        progressView.frame = CGRect(x: blurView.frame.width / 2 - 20, y: blurView.frame.height / 2 - 20, width: 40, height: 40)
+        progressView.lineWidth = 3
+        progressView.tintColor = Color.red
+        progressView.animationDuration = 1
+        progressView.didSelectBlock = {(progressView: UAProgressView!) -> Void in
+            self.hideBlurView()
+        }
+        blurView.addSubview(progressView)
+        self.showBlurView()
+        self.hideBlurView()
+        tableViewWrap.addSubview(blurView)
+        
+        
+        knowButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width / 2 - 50, y: tableViewWrap.frame.origin.y + tableViewWrap.frame.height + 20, width: 100, height: 100))
         knowButton.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
         knowButton.layer.cornerRadius = 50
         knowButton.layer.masksToBounds = true
@@ -134,57 +207,25 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         knowButtonLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
         knowButton.addSubview(knowButtonLabel)
         knowButton.addTarget(self, action: "onKnowButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        knowButton.hidden = true
         viewLearnWordPage.addSubview(knowButton)
-//        
-//        var wordLabel = UILabel(frame: CGRect(x: 0, y: 60, width: viewLearnWordPage.frame.width, height: 40))
-//        wordLabel.textAlignment = NSTextAlignment.Center
-//        wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(40))
-//        wordLabel.text = "what"
-//        viewLearnWordPage.addSubview(wordLabel)
-//        
-//        var wordPhoneticSymbolLabel = UILabel(frame: CGRect(x: 0, y: 105, width: viewLearnWordPage.frame.width, height: 20))
-//        wordPhoneticSymbolLabel.textAlignment = NSTextAlignment.Center
-//        wordPhoneticSymbolLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(20))
-//        wordPhoneticSymbolLabel.text = "英[wa:t]"
-//        viewLearnWordPage.addSubview(wordPhoneticSymbolLabel)
-//        
-//        var optionsTableView = UITableView(frame: CGRect(x: 15, y: 130, width: viewLearnWordPage.frame.width - 30, height: viewLearnWordPage.frame.height - 280), style: UITableViewStyle.Plain)
-//        optionsTableView.backgroundColor = UIColor.whiteColor()
-//        optionsTableView.dataSource = self
-//        optionsTableView.delegate = self
-//        viewLearnWordPage.addSubview(optionsTableView)
-//        
-//        var knowButton = UIButton(frame: CGRect(x: 15, y: viewLearnWordPage.frame.height - 120, width: 60, height: 60))
-//        knowButton.backgroundColor = UIColor.purpleColor()
-//        knowButton.layer.cornerRadius = 30
-//        knowButton.layer.masksToBounds = true
-//        knowButton.tintColor = UIColor.whiteColor()
-//        knowButton.setTitle("认识", forState: UIControlState.Normal)
-//        viewLearnWordPage.addSubview(knowButton)
-//        
-//        var unknowButton = UIButton(frame: CGRect(x: 80, y: viewLearnWordPage.frame.height - 120, width: 60, height: 60))
-//        unknowButton.backgroundColor = UIColor.purpleColor()
-//        unknowButton.layer.cornerRadius = 30
-//        unknowButton.layer.masksToBounds = true
-//        unknowButton.tintColor = UIColor.whiteColor()
-//        unknowButton.setTitle("不认识", forState: UIControlState.Normal)
-//        viewLearnWordPage.addSubview(unknowButton)
-//        
-//        var nextButton = UIButton(frame: CGRect(x: 150, y: viewLearnWordPage.frame.height - 120, width: 60, height: 60))
-//        nextButton.backgroundColor = UIColor.purpleColor()
-//        nextButton.layer.cornerRadius = 30
-//        nextButton.layer.masksToBounds = true
-//        nextButton.tintColor = UIColor.whiteColor()
-//        nextButton.setTitle("下一个", forState: UIControlState.Normal)
-//        viewLearnWordPage.addSubview(nextButton)
-//        
-//        var removeButton = UIButton(frame: CGRect(x: 220, y: viewLearnWordPage.frame.height - 120, width: 60, height: 60))
-//        removeButton.backgroundColor = UIColor.purpleColor()
-//        removeButton.layer.cornerRadius = 30
-//        removeButton.layer.masksToBounds = true
-//        removeButton.tintColor = UIColor.whiteColor()
-//        removeButton.setTitle("删除", forState: UIControlState.Normal)
-//        viewLearnWordPage.addSubview(removeButton)
+        
+        nextButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width / 2 - 50, y: tableViewWrap.frame.origin.y + tableViewWrap.frame.height + 20, width: 100, height: 100))
+        nextButton.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
+        nextButton.layer.cornerRadius = 50
+        nextButton.layer.masksToBounds = true
+        var nextButtonLabel = UILabel(frame: CGRect(x: 29, y: 2, width: 100, height: 80))
+        nextButtonLabel.text = "下一个"
+        nextButtonLabel.font = UIFont(name: nextButtonLabel.font.fontName, size: CGFloat(15))
+        nextButtonLabel.textColor = Color.red
+        nextButtonLabel.layer.shadowColor = UIColor.redColor().CGColor
+        nextButtonLabel.layer.shadowOpacity = 0.3
+        nextButtonLabel.layer.shadowRadius = 2
+        nextButtonLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
+        nextButton.addSubview(nextButtonLabel)
+        nextButton.addTarget(self, action: "onNextButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        nextButton.hidden = true
+        viewLearnWordPage.addSubview(nextButton)
         
         learnWordScrollView.addSubview(viewLearnWordPage)
 
@@ -194,7 +235,14 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         if (scrollView == self.sentencesScrollView) {
             self.currentSentenceIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
-            self.playSentence()
+            if (self.player != nil) {
+                self.player.stop()
+            }
+            
+            var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as Bool
+            if (shouldAutoVoice) {
+                self.playSentence()
+            }
             var x = CGFloat(scrollView.contentOffset.x / scrollView.frame.width) * self.scrollIndicator.frame.width
             var offset = x - self.scrollIndicator.frame.origin.x
             UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
@@ -208,6 +256,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView == self.learnWordScrollView && scrollView.contentOffset.y < 100) {
             self.loadSentences()
+        } else {
+            if (self.player != nil) {
+                self.player.stop()
+            }
         }
     }
     
@@ -301,7 +353,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func loadSentences() {
-        if (self.sentences.count == 0) {
+        if (self.sentences.count == 0 && self.word != nil) {
             var params = NSMutableDictionary()
             params.setValue(self.word!["id"] as String, forKey: "id")
             API.instance.get("/sentence/getByWordId", delegate: self, params: params)
@@ -312,8 +364,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.sentences.setArray(data as NSArray)
         self.setToSentencesView()
         
-        // TODO: check if auto play the sentence
-        self.playSentence()
+        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as Bool
+        if (shouldAutoVoice) {
+            self.playSentence()
+        }
     }
     
     func clearSentencesView() {
@@ -335,7 +389,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
 
         for(var i = 0; i < self.sentences.count; i++) {
             var sentence: AnyObject = self.sentences[i]
-            var sentenceView = UIScrollView(frame: CGRect(x: CGFloat(i) * self.sentencesScrollView.frame.width, y: 22, width: self.sentencesScrollView.frame.width, height: self.sentencesScrollView.frame.height - 22))
+            var sentenceView = UIScrollView(frame: CGRect(x: CGFloat(i) * self.sentencesScrollView.frame.width, y: 20, width: self.sentencesScrollView.frame.width, height: self.sentencesScrollView.frame.height - 20))
             var sentenceEnglishView = UILabel(frame: CGRect(x: 15, y: 5, width: sentenceView.frame.width - 30, height: 0))
             sentenceEnglishView.numberOfLines = 0
             sentenceEnglishView.text = sentence["english"] as? String
@@ -414,6 +468,11 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func onSentencesScrollViewTapped(recognizer: UITapGestureRecognizer) {
+        if (self.player == nil) {
+            self.playSentence()
+            return
+        }
+        
         if (self.player.playing) {
             self.player.stop()
         } else {
@@ -429,11 +488,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             type = "us"
         }
         
-        println(type)
         NSUserDefaults.standardUserDefaults().setObject(type, forKey: CacheKey.WORD_PHONETIC_TYPE)
         NSUserDefaults.standardUserDefaults().synchronize()
         
-        self.setToView()
+        self.setWordPhonetic()
     }
     
     func onKnowButtonTapped(sender: UIButton) {
@@ -441,9 +499,122 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.setToView()
     }
     
+    func onNextButtonTapped(sender: UIButton) {
+        self.setNextWord()
+        self.setToView()
+    }
+    
+    func onBlurViewTapped(recognizer: UIGestureRecognizer) {
+        self.hideBlurView()
+    }
+    
+    func onBlurViewForWordTapped(recognizer: UIGestureRecognizer) {
+        self.hideBlurViewForWord()
+    }
+    
+    func showBlurView() {
+        self.blurView.hidden = false
+        self.blurView.blurRadius = 5
+        var progressView = blurView.viewWithTag(10009) as UAProgressView
+        progressView.setProgress(1, animated: true)
+        self.blurView.updateAsynchronously(true, completion: {() in
+            progressView.setProgress(0.8, animated: true)
+        })
+        
+        if (self.timer != nil) {
+            self.timer.invalidate()
+        }
+        
+        self.timer = NSTimer(timeInterval: NSTimeInterval(1), target: self, selector: "updateProgress:", userInfo: self.blurView, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(self.timer, forMode: NSDefaultRunLoopMode)
+    }
+    
+    func showBlurViewForWord() {
+        self.blurViewForWord.hidden = false
+        self.blurViewForWord.blurRadius = 8
+        var progressView = blurViewForWord.viewWithTag(10009) as UAProgressView
+        progressView.setProgress(1, animated: true)
+        self.blurViewForWord.updateAsynchronously(true, completion: {() in
+            progressView.setProgress(0.8, animated: true)
+        })
+        
+        if (self.timer != nil) {
+            self.timer.invalidate()
+        }
+        
+        self.timer = NSTimer(timeInterval: NSTimeInterval(1), target: self, selector: "updateProgressForWord:", userInfo: self.blurViewForWord, repeats: true)
+        NSRunLoop.currentRunLoop().addTimer(self.timer, forMode: NSDefaultRunLoopMode)
+    }
+    
+    
+    func hideBlurView() {
+        self.blurView.blurRadius = 0
+        self.blurView.updateAsynchronously(true, completion: {()in
+            self.blurView.hidden = true
+            if (self.timer != nil) {
+                self.timer.invalidate()
+                self.timer = nil
+            }
+        })
+        
+        if (knowButton != nil && nextButton != nil) {
+            knowButton.hidden = true
+            nextButton.hidden = false
+        }
+    }
+    
+    func hideBlurViewForWord() {
+        self.blurViewForWord.blurRadius = 0
+        self.blurViewForWord.updateAsynchronously(true, completion: {()in
+            self.blurViewForWord.hidden = true
+            if (self.timer != nil) {
+                self.timer.invalidate()
+                self.timer = nil
+            }
+        })
+        
+        if (knowButton != nil && nextButton != nil) {
+            knowButton.hidden = true
+            nextButton.hidden = false
+        }
+    }
+    
+    func updateProgress(timer: NSTimer) {
+        var blurView = timer.userInfo as FXBlurView
+        var progressView = blurView.viewWithTag(10009) as UAProgressView
+        progressView.setProgress(progressView.progress - 0.2, animated: true)
+        if (progressView.progress == 0) {
+            self.hideBlurView()
+        }
+    }
+    
+    func updateProgressForWord(timer: NSTimer) {
+        var blurView = timer.userInfo as FXBlurView
+        var progressView = blurView.viewWithTag(10009) as UAProgressView
+        progressView.setProgress(progressView.progress - 0.2, animated: true)
+        if (progressView.progress == 0) {
+            self.hideBlurViewForWord()
+        }
+    }
+    
     func onWordLabelTapped(recognizer: UITapGestureRecognizer) {
-        var applicationContoller = self.parentViewController as ApplicationController
-        applicationContoller.scrollToPage(page: 4)
+        if (self.word != nil) {
+            var tapPoint:CGPoint = recognizer.locationInView(self.wordLabel)
+            TapPointView(view: self.wordLabel, tapPoint: tapPoint, completion: {() in
+                var applicationContoller = self.parentViewController as ApplicationController
+                applicationContoller.scrollToPage(page: 4)
+            })
+        } else {
+            var applicationController = self.parentViewController as ApplicationController
+            var homeController = applicationController.homeController
+            applicationController.scrollToPage(page: 2)
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                homeController.scrollToPageUpAndDown(page: 1)
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                    homeController.scrollToPage(page: 2)
+                })
+            })
+        }
     }
     
     func onWordPhoneticSymbolLabelTapped(recognizer: UITapGestureRecognizer) {
@@ -586,6 +757,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         if (customDictionary == nil && learningDictionary == nil) {
             self.word = nil
+            self.pageMode = 0
+        } else {
+            self.pageMode = 1
         }
         
         self.optionSelectedRow = nil
@@ -618,32 +792,90 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func setToView() {
-        if (self.word == nil) {
+        // hide all the view
+        wordLabel.hidden = true
+        removeButton.hidden = true
+        tableViewWrap.hidden = true
+        wordPhoneticButton.hidden = true
+        wordPhoneticSymbolLabel.hidden = true
+        knowButton.hidden = true
+        nextButton.hidden = true
+        tableView.hidden = true
+        chineseView.hidden = true
+        blurView.hidden = true
+        
+        removeButton.hidden = (self.pageMode == 0)
+        tableViewWrap.hidden = (self.pageMode == 0)
+        
+        if (self.pageMode == 0) {
             wordLabel.text = "请选择您想学习的词库"
             wordLabel.font = UIFont.systemFontOfSize(20)
+            wordLabel.hidden = false
             return
+        } else {
+            wordLabel.text = self.word!["word"] as? String
+            wordLabel.textColor = Color.gray
+            wordLabel.font = UIFont.systemFontOfSize(40)
+            wordLabel.hidden = false
         }
         
-        wordLabel.text = self.word!["word"] as? String
-        wordLabel.textColor = Color.gray
-        wordLabel.font = UIFont.systemFontOfSize(40)
+        if (self.pageMode != 0) {
+            self.setWordPhonetic()
+        }
         
+        if (self.pageMode == 2) { // show the chinese , and the next button
+            chineseView.hidden = false
+            chineseView.text = self.chineseString
+            chineseView.textColor = Color.gray
+            chineseView.font = UIFont(name: Fonts.kaiti, size: CGFloat(18))
+            chineseView.textAlignment = NSTextAlignment.Center
+        }
+        
+        if (self.pageMode == 3) {
+            chineseView.hidden = false
+            chineseView.text = self.chineseString
+            chineseView.textColor = Color.gray
+            chineseView.font = UIFont(name: Fonts.kaiti, size: CGFloat(18))
+            chineseView.textAlignment = NSTextAlignment.Center
+            self.showBlurView()
+        }
+        
+        if (self.pageMode == 4) {
+            chineseView.hidden = false
+            chineseView.text = self.chineseString
+            chineseView.textColor = Color.gray
+            chineseView.font = UIFont(name: Fonts.kaiti, size: CGFloat(18))
+            chineseView.textAlignment = NSTextAlignment.Center
+            self.showBlurViewForWord()
+        }
+        
+        knowButton.hidden = (self.pageMode == 0 || self.pageMode == 1 || self.pageMode == 2)
+        nextButton.hidden = (self.pageMode == 0 || self.pageMode == 1 || self.pageMode == 3 || self.pageMode == 4)
+        tableView.hidden = (self.pageMode == 0 || self.pageMode == 2 || self.pageMode == 3 || self.pageMode == 4)
+        
+        self.tableView.reloadData()
+    }
+    
+    func setWordPhonetic() {
         var type = self.wordPhoneticType()
         wordPhoneticButton.setTitle(type, forState: UIControlState.Normal)
         wordPhoneticButton.hidden = false
         if (type == "us") {
             wordPhoneticSymbolLabel.text = self.word!["phoneticSymbolUS"]? as? String
+            wordPhoneticSymbolLabel.hidden = false
         }
         if (type == "uk") {
             wordPhoneticSymbolLabel.text = self.word!["phoneticSymbolUK"]? as? String
+            wordPhoneticSymbolLabel.hidden = false
         }
         wordPhoneticSymbolLabel.sizeToFit()
         wordPhoneticButton.frame = CGRect(x: viewLearnWordPage.frame.width / 2 - (wordPhoneticButton.frame.width + wordPhoneticSymbolLabel.frame.width) / 2, y: wordPhoneticButton.frame.origin.y, width: wordPhoneticButton.frame.width, height: wordPhoneticButton.frame.height)
         wordPhoneticSymbolLabel.frame = CGRect(x: wordPhoneticButton.frame.origin.x + wordPhoneticButton.frame.width, y: wordPhoneticSymbolLabel.frame.origin.y, width: wordPhoneticSymbolLabel.frame.width, height: wordPhoneticSymbolLabel.frame.height)
         
-        self.playVoice()
-        
-        self.tableView.reloadData()
+        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as Bool
+        if (shouldAutoVoice) {
+            self.playVoice()
+        }
     }
     
     func playVoice() {

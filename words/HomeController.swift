@@ -119,7 +119,9 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(dictionaryIcon)
         
         dictionaryLabel = UILabel(frame: CGRect(x: 90, y: 260, width: homeBody.frame.width - 105, height: 24))
+        dictionaryLabel.userInteractionEnabled = true
         dictionaryLabel.text = "大学英语4级"
+        dictionaryLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onDictionaryLabelTapped:"))
         homeBody.addSubview(dictionaryLabel)
         self.setLearingDictionaryLabel()
         
@@ -356,14 +358,29 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     }
     
     func scrollToPageUpAndDown(page: Int = 0) {
-        self.homeScrollView.setContentOffset(CGPoint(x: 0, y: self.view.frame.height * CGFloat(page)), animated: true)
-        
         var parentController = self.parentViewController as ApplicationController
-        switch(page) {
-        case 0:
+        
+        if (page == 0) {
+            self.homeScrollView.setContentOffset(CGPoint(x: 0, y: self.view.frame.height * CGFloat(page)), animated: true)
             parentController.setCurrentPage(PageCode.Home)
-        default:
-            break
+        } else {
+            self.homeScrollView.setContentOffset(CGPoint(x: 0, y: self.view.frame.height * CGFloat(page) - 20), animated: true)
+
+            var subPage = self.getPageIndex()
+            switch(subPage) {
+            case 0:
+                parentController.setCurrentPage(PageCode.Rank)
+            case 1:
+                parentController.setCurrentPage(PageCode.Statistics)
+            case 2:
+                parentController.setCurrentPage(PageCode.Dictionary)
+            case 3:
+                parentController.setCurrentPage(PageCode.Settings)
+            case 4:
+                parentController.setCurrentPage(PageCode.Account)
+            default:
+                break
+            }
         }
     }
     
@@ -386,6 +403,13 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         var parentController = self.parentViewController as ApplicationController
         parentController.articleForEnglishController.delegate = self
         parentController.scrollToPage(page: 1)
+    }
+    
+    func onDictionaryLabelTapped(recognizer: UITapGestureRecognizer) {
+        self.scrollToPageUpAndDown(page: 1)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+            self.scrollToPage(page: 2)
+        })
     }
     
     func onStartLearnTapped(sender: UIView) {

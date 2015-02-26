@@ -12,4 +12,8 @@
 
 #endif
 
-#import "SQLite/SQLite-Bridging.h"
+#import "SQLite-Bridging.h"
+
+#import "FXBlurView.h"
+
+#import "UAProgressView.h"

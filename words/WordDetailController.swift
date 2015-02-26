@@ -422,7 +422,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         Word.addToCustomDictionary(self.word)
         var y:CGFloat = 0
         if (self.delegate!.shoudRegisterNotification != nil && self.delegate!.shoudRegisterNotification!()) {
-            y = 22
+            y = 20
         }
         var view = UIView(frame: CGRect(x: 0, y: y, width: self.view.frame.width, height: 25))
         self.view.addSubview(view)
@@ -485,7 +485,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         
         var y:CGFloat = 0
         if (self.delegate!.shoudRegisterNotification != nil && self.delegate!.shoudRegisterNotification!()) {
-            y = 22
+            y = 20
         }
         var view = UIView(frame: CGRect(x: 0, y: y, width: self.view.frame.width, height: 25))
         self.view.addSubview(view)

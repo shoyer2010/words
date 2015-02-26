@@ -37,7 +37,11 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         self.dictionary = self.getDictionaryInfo()
         var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
-        for row in db.prepare("SELECT id, word FROM words ORDER BY rowid desc") {
+        var sql = "SELECT id, word FROM words"
+        if (self.dictionary!["custom"] as Bool) {
+            sql = "SELECT id, word FROM words ORDER BY rowid desc"
+        }
+        for row in db.prepare(sql) {
             self.words.addObject(["id": row[0] as String, "word": row[1] as String])
         }
         
@@ -99,11 +103,21 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         learnButton.addTarget(self, action: "onLearnButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(learnButton)
         
-        var isLearning = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
-        if (self.dictionary != nil && (self.dictionary!["custom"] as Bool) && isLearning != nil) {
-            learnButton.setTitle("不学习", forState: UIControlState.Normal)
-        } else {
-            learnButton.setTitle("学习", forState: UIControlState.Normal)
+        if (self.dictionary != nil && self.dictionary!["custom"] as Bool) {
+            if ((NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String ) != nil) {
+                learnButton.setTitle("不学习", forState: UIControlState.Normal)
+            } else {
+                learnButton.setTitle("学习", forState: UIControlState.Normal)
+            }
+        }
+        
+        if (self.dictionary != nil && !(self.dictionary!["custom"] as Bool)) {
+            var dictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+            if (dictionaryId != nil && dictionaryId! == self.dictionary!["id"] as String) {
+                learnButton.setTitle("不学习", forState: UIControlState.Normal)
+            } else{
+                learnButton.setTitle("学习", forState: UIControlState.Normal)
+            }
         }
         
         editButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
@@ -188,15 +202,22 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     
     func onLearnButtonTapped(sender: UIButton) {
         if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
-            var isLearning = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
-            if (isLearning != nil) {
+            if ((NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String ) != nil) {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY)
-            } else {
+            } else{
                 NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_CUSTOM_DICTIONARY)
             }
-        } else {
-            NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_DICTIONARY)
         }
+        
+        if (self.dictionary != nil && !(self.dictionary!["custom"] as Bool)) {
+            var dictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+            if (dictionaryId != nil && dictionaryId! == self.dictionary!["id"] as String) {
+                NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+            } else{
+                NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_DICTIONARY)
+            }
+        }
+        
 
         NSUserDefaults.standardUserDefaults().synchronize()
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)

@@ -20,6 +20,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     var responseCode: Int?
     var delegate: APIDataDelegate?
     var api: String?
+    var params: NSMutableDictionary?
     var attachmentFilename: String?
     var attachmentSize: Int?
     var attachmentSavePath: NSString?
@@ -33,6 +34,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     func request(api: String, method: String = "GET", params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) -> Void {
         self.api = api
+        self.params = params
         
         var queryString: String = "?"
         for (key, value) in params {
@@ -167,7 +169,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/download":
                 self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0)
             case "/dictionary/customWord":
-                self.delegate!.dictionaryCustomWord!(data!)
+                self.delegate!.dictionaryCustomWord!(data!, params: self.params!)
             case "/word/search":
                 self.delegate!.wordSearch!(data!)
             case "/article/detail":

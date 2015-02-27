@@ -68,6 +68,7 @@
 		A4DFB8681A96214D0086105C /* ArticleForChineseDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB8671A96214D0086105C /* ArticleForChineseDelegate.swift */; };
 		A4E9F2261A9E5165008FB300 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E9F2251A9E5165008FB300 /* FXBlurView.m */; };
 		A4E9F22A1A9F0E5F008FB300 /* UAProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E9F2291A9F0E5F008FB300 /* UAProgressView.m */; };
+		A4E9F22C1AA06DA1008FB300 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E9F22B1AA06DA1008FB300 /* Constant.swift */; };
 		A4EBCE9D1A9795F6004AB958 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EBCE9C1A9795F6004AB958 /* Server.swift */; };
 /* End PBXBuildFile section */
 
@@ -166,6 +167,7 @@
 		A4E9F2251A9E5165008FB300 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
 		A4E9F2281A9F0E3B008FB300 /* UAProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAProgressView.h; sourceTree = "<group>"; };
 		A4E9F2291A9F0E5F008FB300 /* UAProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProgressView.m; sourceTree = "<group>"; };
+		A4E9F22B1AA06DA1008FB300 /* Constant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		A4EBCE9C1A9795F6004AB958 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -191,6 +193,7 @@
 		A42703601A7E668A005159AC /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				A4E9F22B1AA06DA1008FB300 /* Constant.swift */,
 				A42703631A7E7A42005159AC /* Color.swift */,
 				A42703921A812AB0005159AC /* PageCode.swift */,
 				A402249E1A83D39B006AF7E4 /* Fonts.swift */,
@@ -481,6 +484,7 @@
 				A44D1FD11A9A2EF7007F3F1E /* Functions.swift in Sources */,
 				A4541F901A84B01E00EAA761 /* Layer.swift in Sources */,
 				A4DFB8621A95BC400086105C /* LearnWordDelegate.swift in Sources */,
+				A4E9F22C1AA06DA1008FB300 /* Constant.swift in Sources */,
 				A482C8411A98E1F4008D313A /* ErrorView.swift in Sources */,
 				A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */,
 				A42703841A7FB5F2005159AC /* StatisticsController.swift in Sources */,

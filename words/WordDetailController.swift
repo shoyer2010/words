@@ -437,7 +437,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_CHANGED, object: self, userInfo: nil)
     }
     
-    func dictionaryCustomWord(data: AnyObject) {
+    func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {
     }
     
     func loadData() {

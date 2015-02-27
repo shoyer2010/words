@@ -879,15 +879,23 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func setWordPhonetic() {
         var type = self.wordPhoneticType()
         wordPhoneticButton.setTitle(type, forState: UIControlState.Normal)
-        wordPhoneticButton.hidden = false
+        
         if (type == "us") {
             wordPhoneticSymbolLabel.text = self.word!["phoneticSymbolUS"]? as? String
-            wordPhoneticSymbolLabel.hidden = false
         }
+        
         if (type == "uk") {
             wordPhoneticSymbolLabel.text = self.word!["phoneticSymbolUK"]? as? String
-            wordPhoneticSymbolLabel.hidden = false
         }
+        
+        if (wordPhoneticSymbolLabel.text != nil && (wordPhoneticSymbolLabel.text! as NSString).length > 0) {
+            wordPhoneticSymbolLabel.hidden = false
+            wordPhoneticButton.hidden = false
+        } else {
+            wordPhoneticSymbolLabel.hidden = true
+            wordPhoneticButton.hidden = true
+        }
+        
         wordPhoneticSymbolLabel.sizeToFit()
         wordPhoneticButton.frame = CGRect(x: viewLearnWordPage.frame.width / 2 - (wordPhoneticButton.frame.width + wordPhoneticSymbolLabel.frame.width) / 2, y: wordPhoneticButton.frame.origin.y, width: wordPhoneticButton.frame.width, height: wordPhoneticButton.frame.height)
         wordPhoneticSymbolLabel.frame = CGRect(x: wordPhoneticButton.frame.origin.x + wordPhoneticButton.frame.width, y: wordPhoneticSymbolLabel.frame.origin.y, width: wordPhoneticSymbolLabel.frame.width, height: wordPhoneticSymbolLabel.frame.height)

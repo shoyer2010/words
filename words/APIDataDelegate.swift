@@ -21,7 +21,7 @@
     
     optional func dictionaryDownload(filePath: AnyObject, progress: Float)
     
-    optional func dictionaryCustomWord(AnyObject)
+    optional func dictionaryCustomWord(AnyObject, params: NSMutableDictionary)
     
     
     // 单词

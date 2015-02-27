@@ -184,20 +184,29 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     
     
     func onDeleteButtonTapped(sender: UIButton) {
-//        UIAlertView(title: "", message: "", delegate: self, cancelButtonTitle: "", otherButtonTitles: "", nil)
-////        var alertView = UIAlertView(title: "删除词库", message: "您确认要删除此词库吗？", delegate: self, cancelButtonTitle: "不删了", otherButtonTitles: "无比坚信", moreButtonTitles: "")
-//        alertView.show()
-        
-        Util.deleteFile(self.delegate.setDictionaryId() + ".db")
-        var learingDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
-        if (learingDictionaryId == self.delegate.setDictionaryId()) {
-            NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+        var alertView = UIAlertView(title: "删除词库", message: "同时将会删除与词库相关的学习记录，好处是会释放一些存储空间，您坚信要删除吗？", delegate: self, cancelButtonTitle: "不删了")
+        alertView.addButtonWithTitle("无比坚信")
+        alertView.delegate = self
+        alertView.show()
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if (buttonIndex == 0) {
+            return
         }
         
-        var info = NSMutableDictionary()
-        info.setValue(self.delegate.setDictionaryId(), forKey: "id")
-        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_DELETED, object: self, userInfo: info)
-        self.closeView()
+        if (buttonIndex == 1) {
+            Util.deleteFile(self.delegate.setDictionaryId() + ".db")
+            var learingDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+            if (learingDictionaryId == self.delegate.setDictionaryId()) {
+                NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+            }
+            
+            var info = NSMutableDictionary()
+            info.setValue(self.delegate.setDictionaryId(), forKey: "id")
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_DELETED, object: self, userInfo: info)
+            self.closeView()
+        }
     }
     
     func onLearnButtonTapped(sender: UIButton) {
@@ -248,13 +257,17 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         if (UITableViewCellEditingStyle.Delete == editingStyle) {
             self.dictionary = self.getDictionaryInfo()
             var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
-            var statement = db.prepare("DELETE FROM words WHERE id=?", self.words[indexPath.row]["id"] as String)
-            statement.run()
+            db.prepare("DELETE FROM words WHERE id=?", self.words[indexPath.row]["id"] as String).run()
             
-            var params = NSMutableDictionary()
-            params.setValue(self.words[indexPath.row]["id"] as String, forKey: "id")
-            params.setValue(2, forKey: "type")
-            API.instance.post("/dictionary/customWord", delegate: self, params: params)
+            if (self.dictionary!["custom"] as Bool) {
+                db.prepare("CREATE TABLE IF NOT EXISTS operationLogs(wordId, wordStatus)").run()
+                db.prepare("INSERT INTO operationLogs(wordId, wordStatus) VALUES(?, ?)", self.words[indexPath.row]["id"] as String, Constant.DELETE).run()
+                
+                var params = NSMutableDictionary()
+                params.setValue(self.words[indexPath.row]["id"] as String, forKey: "id")
+                params.setValue(2, forKey: "type")
+                API.instance.post("/dictionary/customWord", delegate: self, params: params)
+            }
             
             self.words.removeObjectAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Bottom)
@@ -263,7 +276,13 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         }
     }
     
-    func dictionaryCustomWord(data: AnyObject) {
+    func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {
+        var wordId = params["id"] as String
+        var type = params["type"] as Int
+        
+        var customDictionayId = DictionaryUtil.customDictionaryId()
+        var db = Database(Util.getFilePath(customDictionayId + ".db"))
+        db.prepare("DELETE FROM operationLogs WHERE wordId=? and wordStatus=?", wordId, type).run()
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

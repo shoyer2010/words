@@ -278,7 +278,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         if (!Util.isFileExist(filename)) {
             self.downloadDictionary()
         }
-        // TODO: 检查网络类型，如果是wifi网络则下载，非wifi网络不下载
     }
     
     func dictionaryDownload(filePath: AnyObject, progress: Float) {
@@ -301,24 +300,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
 //        self.addChildViewController(dictionaryInfoController)
 //        self.view.addSubview(dictionaryInfoController.view)
 //    }
-
-    
-    
-    
-//    func dictionaryList(data: AnyObject) {
-//        LoadingDialog.dismissLoading()
-//        
-//        var dicList:NSDictionary = data as NSDictionary
-//        LogUtils.log("dictionaryList():\(dicList)")
-//
-//        
-//        var params: NSMutableDictionary = NSMutableDictionary()
-////        params.setValue(1, forKey: "sync")
-////
-////        var path = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)[0].stringByAppendingPathComponent("54cc5af6c5e20c9b492b39ae.db")
-////        var data: NSData? = NSData(contentsOfFile: path)
-////        API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: data?)
-//    }
     
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
         println(filePath)
@@ -328,6 +309,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func onLoginSuccess(notification: NSNotification) {
         self.loadData()
         self.downloadCustomDictionary()
+        self.syncOperationOfCustomDictionary()
     }
     
     func onDictionaryDeleted(notification: NSNotification) {
@@ -389,6 +371,30 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         commonTableView.reloadData()
         NSUserDefaults.standardUserDefaults().setObject(data, forKey: CacheKey.DICTIONARY_LIST)
         NSUserDefaults.standardUserDefaults().synchronize()
+    }
+    
+    func syncOperationOfCustomDictionary() {
+        var customDictionayId = DictionaryUtil.customDictionaryId()
+        
+        if (Util.isFileExist(customDictionayId + ".db")) {
+            var db = Database(Util.getFilePath(customDictionayId + ".db"))
+            
+            for row in db.prepare("SELECT wordId, wordStatus FROM operationLogs WHERE wordStatus=?", Constant.DELETE) {
+                var params = NSMutableDictionary()
+                params.setValue(row[0] as String, forKey: "id")
+                params.setValue(2, forKey: "type")
+                API.instance.post("/dictionary/customWord", delegate: self, params: params)
+            }
+        }
+    }
+    
+    func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {
+        var wordId = params["id"] as String
+        var type = params["type"] as Int
+        
+        var customDictionayId = DictionaryUtil.customDictionaryId()
+        var db = Database(Util.getFilePath(customDictionayId + ".db"))
+        db.prepare("DELETE FROM operationLogs WHERE wordId=? and wordStatus=?", wordId, type).run()
     }
     
     func setDictionaryId() -> String {

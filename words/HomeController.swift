@@ -102,6 +102,8 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.addSubview(needToLearnIcon)
         
         var needToLearnLabel = UILabel(frame: CGRect(x: 90, y: 180, width: 250, height: 24))
+        needToLearnLabel.userInteractionEnabled = true
+        needToLearnLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onNeedToLearnLabelTapped:"))
         needToLearnLabel.text = "45个单词需要复习"
         homeBody.addSubview(needToLearnLabel)
         
@@ -111,6 +113,8 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         rankLabel = UILabel(frame: CGRect(x: 90, y: 220, width: 250, height: 24))
         rankLabel.text = "活跃度排名"
+        rankLabel.userInteractionEnabled = true
+        rankLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onRankLabelTapped:"))
         homeBody.addSubview(rankLabel)
         self.setActiveRank()
         
@@ -405,10 +409,22 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         parentController.scrollToPage(page: 1)
     }
     
+    func onNeedToLearnLabelTapped(recogizer: UITapGestureRecognizer) {
+        var parentController = self.parentViewController as ApplicationController
+        parentController.scrollToPage(page: 3)
+    }
+    
     func onDictionaryLabelTapped(recognizer: UITapGestureRecognizer) {
         self.scrollToPageUpAndDown(page: 1)
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
             self.scrollToPage(page: 2)
+        })
+    }
+    
+    func onRankLabelTapped(recognizer: UITapGestureRecognizer) {
+        self.scrollToPageUpAndDown(page: 1)
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+            self.scrollToPage(page: 0)
         })
     }
     

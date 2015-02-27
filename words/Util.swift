@@ -181,5 +181,9 @@ class Util {
         
         return matchWord
     }
+    
+    class func getRandomInt(from: Int = 0, to: Int = 10000) -> Int {
+        return from + (Int(arc4random() % (to - from + 1)))
+    }
 }
 

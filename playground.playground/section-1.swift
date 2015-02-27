@@ -11,9 +11,11 @@ var dic = ["a": 1, "b": 3]
 
 var b: AnyObject = dic as AnyObject
 
+var string = 50 + (arc4random() % (100 - 50 + 1))
 
 
-var test: NSString?
+//srandom(time(0))
+//var i = random()
 
-test? as String
 
+Int(arc4random() % 2)

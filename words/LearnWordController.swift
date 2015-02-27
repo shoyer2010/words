@@ -18,6 +18,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var word: AnyObject?
     var sentences: NSMutableArray! = NSMutableArray()
     var chineseString: String?
+    var correctOptinIndex: Int?
     var randomChineseArray: NSMutableArray! = NSMutableArray()
     var player: AVAudioPlayer!
     var currentSentenceIndex: Int! = 0
@@ -307,13 +308,13 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         if (self.randomChineseArray.count >= 3) {
             switch (indexPath.row) {
             case 0:
-                answerLabel.text = self.chineseString
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
             case 1:
-                answerLabel.text = self.randomChineseArray?[0] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
             case 2:
-                answerLabel.text = self.randomChineseArray?[1] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
             case 3:
-                answerLabel.text = self.randomChineseArray?[2] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
             default:
                 break
             }
@@ -324,8 +325,11 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         answerLabel.textAlignment = NSTextAlignment.Left
         cell.addSubview(answerLabel)
         
-        if (indexPath.row == self.optionSelectedRow) {
+        if (indexPath.row == self.optionSelectedRow && indexPath.row == self.correctOptinIndex) {
             selectedView.backgroundColor = Color.green // if right use Color.green, if wrong use Color.red
+            answerLabel.textColor = Color.white
+        } else if (indexPath.row == self.optionSelectedRow && indexPath.row != self.correctOptinIndex) {
+            selectedView.backgroundColor = Color.red // if right use Color.green, if wrong use Color.red
             answerLabel.textColor = Color.white
         } else {
             selectedView.backgroundColor = UIColor.clearColor()
@@ -338,10 +342,19 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         self.optionSelectedRow = indexPath.row
         tableView.reloadData()
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(200 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+            if (indexPath.row == self.correctOptinIndex) {
+                self.setNextWord()
+            } else {
+                self.pageMode = 2
+                self.setToView()
+            }
+        })
     }
     
     func frameOfView() -> CGRect {
-        return CGRect(x: 0, y: 32, width: self.view.frame.width, height: self.view.frame.height - 32)
+        return CGRect(x: 0, y: 20, width: self.view.frame.width, height: self.view.frame.height - 20)
     }
     
     func searchWord() -> String {
@@ -384,6 +397,12 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             self.scrollIndicator.frame = CGRect(x: 0, y: self.sentencesScrollView.frame.height - 2, width: self.sentencesScrollView.frame.width / sentencesCount, height: 2)
             self.scrollIndicator.hidden = false
         } else {
+            var noSentencsFound = UILabel(frame: self.sentencesScrollView.frame)
+            noSentencsFound.text = "此单词暂无例句"
+            noSentencsFound.font = UIFont(name: Fonts.kaiti, size: 18)
+            noSentencsFound.textAlignment = NSTextAlignment.Center
+            noSentencsFound.textColor = Color.gray
+            self.sentencesScrollView.addSubview(noSentencsFound)
             self.scrollIndicator.hidden = true
         }
 
@@ -496,12 +515,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     
     func onKnowButtonTapped(sender: UIButton) {
         self.setNextWord()
-        self.setToView()
     }
     
     func onNextButtonTapped(sender: UIButton) {
         self.setNextWord()
-        self.setToView()
     }
     
     func onBlurViewTapped(recognizer: UIGestureRecognizer) {
@@ -521,9 +538,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             progressView.setProgress(0.8, animated: true)
         })
         
-        if (self.timer != nil) {
-            self.timer.invalidate()
-        }
+        self.stopTimer()
         
         self.timer = NSTimer(timeInterval: NSTimeInterval(1), target: self, selector: "updateProgress:", userInfo: self.blurView, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(self.timer, forMode: NSDefaultRunLoopMode)
@@ -538,23 +553,24 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             progressView.setProgress(0.8, animated: true)
         })
         
-        if (self.timer != nil) {
-            self.timer.invalidate()
-        }
+        self.stopTimer()
         
         self.timer = NSTimer(timeInterval: NSTimeInterval(1), target: self, selector: "updateProgressForWord:", userInfo: self.blurViewForWord, repeats: true)
         NSRunLoop.currentRunLoop().addTimer(self.timer, forMode: NSDefaultRunLoopMode)
     }
     
+    func stopTimer() {
+        if (self.timer != nil) {
+            self.timer.invalidate()
+            self.timer = nil
+        }
+    }
     
     func hideBlurView() {
         self.blurView.blurRadius = 0
         self.blurView.updateAsynchronously(true, completion: {()in
             self.blurView.hidden = true
-            if (self.timer != nil) {
-                self.timer.invalidate()
-                self.timer = nil
-            }
+            self.stopTimer()
         })
         
         if (knowButton != nil && nextButton != nil) {
@@ -567,10 +583,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.blurViewForWord.blurRadius = 0
         self.blurViewForWord.updateAsynchronously(true, completion: {()in
             self.blurViewForWord.hidden = true
-            if (self.timer != nil) {
-                self.timer.invalidate()
-                self.timer = nil
-            }
+            self.stopTimer()
         })
         
         if (knowButton != nil && nextButton != nil) {
@@ -759,17 +772,23 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             self.word = nil
             self.pageMode = 0
         } else {
-            self.pageMode = 1
+            self.pageMode = Util.getRandomInt(from: 1, to: 4)
         }
         
+        self.stopTimer()
         self.optionSelectedRow = nil
         self.currentSentenceIndex = 0
         self.sentencesScrollView.contentOffset = CGPoint(x: 0, y: 0)
         self.scrollIndicator.frame = CGRect(x: 0, y: self.scrollIndicator.frame.origin.y, width: self.scrollIndicator.frame.width, height: 2)
         self.setChineseString()
+        self.setCorrectOptinIndex()
         self.sentences = NSMutableArray()
         self.clearSentencesView()
         self.setToView()
+    }
+    
+    func setCorrectOptinIndex() {
+        self.correctOptinIndex = Util.getRandomInt(from: 0, to: 3)
     }
     
     func setChineseString() {
@@ -803,6 +822,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableView.hidden = true
         chineseView.hidden = true
         blurView.hidden = true
+        blurViewForWord.hidden = true
         
         removeButton.hidden = (self.pageMode == 0)
         tableViewWrap.hidden = (self.pageMode == 0)
@@ -873,7 +893,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         wordPhoneticSymbolLabel.frame = CGRect(x: wordPhoneticButton.frame.origin.x + wordPhoneticButton.frame.width, y: wordPhoneticSymbolLabel.frame.origin.y, width: wordPhoneticSymbolLabel.frame.width, height: wordPhoneticSymbolLabel.frame.height)
         
         var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as Bool
-        if (shouldAutoVoice) {
+        if (shouldAutoVoice && self.pageMode != 4) {
             self.playVoice()
         }
     }

@@ -16,6 +16,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var sentencesScrollView: UIScrollView!
     var scrollIndicator: UIView!
     var word: AnyObject?
+    var selectedDictionaryId: String?
     var sentences: NSMutableArray! = NSMutableArray()
     var chineseString: String?
     var correctOptinIndex: Int?
@@ -46,6 +47,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     // 2 word and right chinese , next button
     // 3 word and blured right chinese with a timecount progress, known button.
     // 4 blured word with a timecount progress, and right chinese, known button.
+    // 5 TODO: all the words has been mastered no word to show
+    
     var pageMode: Int! = 0
     
     var viewLearnWordSentenceHeight = CGFloat(150)
@@ -310,11 +313,11 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             case 0:
                 answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
             case 1:
-                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[1] as? String
             case 2:
-                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[2] as? String
             case 3:
-                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[0] as? String
+                answerLabel.text = indexPath.row == self.correctOptinIndex ? self.chineseString : self.randomChineseArray?[3] as? String
             default:
                 break
             }
@@ -640,139 +643,122 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         return true
     }
     
-    func setNextWord() {
+    func setTheDictionary() {
         var customDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
         var learningDictionary = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
         
+        var customDictionaryWeight = 0
         if (customDictionary != nil) {
             var db = Database(Util.getFilePath((customDictionary! as String) + ".db"))
-            for row in db.prepare("SELECT id, word, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese FROM words order by random() limit 1") {
-                var id: String = ""
-                if (row[0] != nil) {
-                    id = row[0] as String
-                }
-                
-                var wordString: String = ""
-                if (row[1] != nil) {
-                    wordString = row[1] as String
-                }
-                
-                var phoneticSymbolUS: String = ""
-                if (row[2] != nil) {
-                    phoneticSymbolUS = row[2] as String
-                }
-                
-                var usPronunciation: String = ""
-                if (row[3] != nil) {
-                    usPronunciation = row[3] as String
-                }
-                
-                var phoneticSymbolUK: String = ""
-                if (row[4] != nil) {
-                    phoneticSymbolUK = row[4] as String
-                }
-                
-                var ukPronunciation: String = ""
-                if (row[5] != nil) {
-                    ukPronunciation = row[5] as String
-                }
-                
-                var chinese: NSDictionary! = NSDictionary()
-                if (row[6] != nil) {
-                    var chineseData = (row[6] as String).dataUsingEncoding(NSUTF8StringEncoding)
-                    if (chineseData != nil) {
-                        chinese = NSJSONSerialization.JSONObjectWithData(chineseData!, options: NSJSONReadingOptions.allZeros, error: nil) as NSDictionary
-                    }
-                }
-                
-                self.word = ["id": id, "word": wordString, "phoneticSymbolUS": phoneticSymbolUS, "usPronunciation": usPronunciation, "phoneticSymbolUK": phoneticSymbolUK, "ukPronunciation": ukPronunciation, "chinese": chinese]
+            for row in db.prepare("SELECT count(rowid) FROM words") {
+                customDictionaryWeight = row[0] as Int
+            }
+        }
+        
+        var learningDictionaryWeight = 0
+        if (learningDictionary != nil) {
+            var db = Database(Util.getFilePath((learningDictionary! as String) + ".db"))
+            for row in db.prepare("SELECT count(rowid) FROM words") {
+                learningDictionaryWeight = row[0] as Int
+            }
+        }
+        
+        var total = customDictionaryWeight + learningDictionaryWeight
+        
+        if (total <= 0) {
+            self.selectedDictionaryId = nil
+        } else if (total == customDictionaryWeight) {
+            self.selectedDictionaryId = customDictionary
+        } else if (total == learningDictionaryWeight) {
+            self.selectedDictionaryId = learningDictionary
+        }else {
+            if (Util.getRandomInt(from: 1, to: total) <= customDictionaryWeight) {
+                self.selectedDictionaryId = customDictionary
+            } else {
+                self.selectedDictionaryId = learningDictionary
+            }
+        }
+    }
+    
+    func setTheWord() {
+        var db = Database(Util.getFilePath(self.selectedDictionaryId! + ".db"))
+        for row in db.prepare("SELECT id, word, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese FROM words order by random() limit 1") {
+            var id: String = ""
+            if (row[0] != nil) {
+                id = row[0] as String
             }
             
-            self.randomChineseArray = NSMutableArray()
-            for row in db.prepare("SELECT chinese FROM words WHERE chinese IS NOT NULL order by random() limit 3") {
-                var chineseData = (row[0] as String).dataUsingEncoding(NSUTF8StringEncoding)
-                var chinese: NSDictionary! = NSDictionary()
+            var wordString: String = ""
+            if (row[1] != nil) {
+                wordString = row[1] as String
+            }
+            
+            var phoneticSymbolUS: String = ""
+            if (row[2] != nil) {
+                phoneticSymbolUS = row[2] as String
+            }
+            
+            var usPronunciation: String = ""
+            if (row[3] != nil) {
+                usPronunciation = row[3] as String
+            }
+            
+            var phoneticSymbolUK: String = ""
+            if (row[4] != nil) {
+                phoneticSymbolUK = row[4] as String
+            }
+            
+            var ukPronunciation: String = ""
+            if (row[5] != nil) {
+                ukPronunciation = row[5] as String
+            }
+            
+            var chinese: NSDictionary! = NSDictionary()
+            if (row[6] != nil) {
+                var chineseData = (row[6] as String).dataUsingEncoding(NSUTF8StringEncoding)
                 if (chineseData != nil) {
                     chinese = NSJSONSerialization.JSONObjectWithData(chineseData!, options: NSJSONReadingOptions.allZeros, error: nil) as NSDictionary
                 }
-                
-                var string = ""
-                for (key, value) in chinese {
-                    string += "\(value)，"
-                }
-                
-                var tempString = string as NSString
-                self.randomChineseArray.addObject(tempString.substringToIndex(tempString.length - 1))
             }
             
+            self.word = ["id": id, "word": wordString, "phoneticSymbolUS": phoneticSymbolUS, "usPronunciation": usPronunciation, "phoneticSymbolUK": phoneticSymbolUK, "ukPronunciation": ukPronunciation, "chinese": chinese]
             
+            // TODO: set the pageMode
+            
+            self.pageMode = Util.getRandomInt(from: 1, to: 4)
         }
         
-//        if (learningDictionary != nil) {
-//            var db = Database(Util.getFilePath((learningDictionary! as String) + ".db"))
-//            for row in db.prepare("SELECT id, word, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese FROM words order by random() limit 1") {
-//                var id: String = ""
-//                if (row[0] != nil) {
-//                    id = row[0] as String
-//                }
-//                
-//                var wordString: String = ""
-//                if (row[1] != nil) {
-//                    wordString = row[1] as String
-//                }
-//                
-//                var phoneticSymbolUS: String = ""
-//                if (row[2] != nil) {
-//                    phoneticSymbolUS = row[2] as String
-//                }
-//                
-//                var usPronunciation: String = ""
-//                if (row[3] != nil) {
-//                    usPronunciation = row[3] as String
-//                }
-//                
-//                var phoneticSymbolUK: String = ""
-//                if (row[4] != nil) {
-//                    phoneticSymbolUK = row[4] as String
-//                }
-//                
-//                var ukPronunciation: String = ""
-//                if (row[5] != nil) {
-//                    ukPronunciation = row[5] as String
-//                }
-//                
-//                var chineseData = (row[6] as String).dataUsingEncoding(NSUTF8StringEncoding)
-//                var chinese: NSDictionary! = NSDictionary()
-//                if (chineseData != nil) {
-//                    chinese = NSJSONSerialization.JSONObjectWithData(chineseData!, options: NSJSONReadingOptions.allZeros, error: nil) as NSDictionary
-//                }
-//                
-//                self.word = ["id": id, "word": wordString, "phoneticSymbolUS": phoneticSymbolUS, "usPronunciation": usPronunciation, "phoneticSymbolUK": phoneticSymbolUK, "ukPronunciation": ukPronunciation, "chinese": chinese]
-//            }
-//            
-//            self.randomChineseArray = NSMutableArray()
-//            for row in db.prepare("SELECT chinese FROM words WHERE chinese IS NOT NULL order by random() limit 3") {
-//                var chineseData = (row[0] as String).dataUsingEncoding(NSUTF8StringEncoding)
-//                var chinese: NSDictionary! = NSDictionary()
-//                if (chineseData != nil) {
-//                    chinese = NSJSONSerialization.JSONObjectWithData(chineseData!, options: NSJSONReadingOptions.allZeros, error: nil) as NSDictionary
-//                }
-//                
-//                var string = ""
-//                for (key, value) in chinese {
-//                    string += "\(value)，"
-//                }
-//                
-//                var tempString = string as NSString
-//                self.randomChineseArray.addObject(tempString.substringToIndex(tempString.length - 1))
-//            }
-//        }
-        
-        if (customDictionary == nil && learningDictionary == nil) {
+        self.randomChineseArray = NSMutableArray()
+        for row in db.prepare("SELECT chinese FROM words WHERE chinese IS NOT NULL order by random() limit 4") {
+            var chineseData = (row[0] as String).dataUsingEncoding(NSUTF8StringEncoding)
+            var chinese: NSDictionary! = NSDictionary()
+            if (chineseData != nil) {
+                chinese = NSJSONSerialization.JSONObjectWithData(chineseData!, options: NSJSONReadingOptions.allZeros, error: nil) as NSDictionary
+            }
+            
+            var string = ""
+            for (key, value) in chinese {
+                string += "\(value)，"
+            }
+            
+            var tempString = string as NSString
+            self.randomChineseArray.addObject(tempString.substringToIndex(tempString.length - 1))
+        }
+    }
+    
+    func setNextWord() {
+        self.setTheDictionary()
+
+        if (self.selectedDictionaryId == nil) {
             self.word = nil
             self.pageMode = 0
         } else {
-            self.pageMode = Util.getRandomInt(from: 1, to: 4)
+            self.setTheWord()
+            
+            // if the word is still null,  that means this dictionary has been done
+            if (self.word == nil) {
+                self.pageMode = 5
+            }
         }
         
         self.stopTimer()
@@ -824,13 +810,23 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         blurView.hidden = true
         blurViewForWord.hidden = true
         
-        removeButton.hidden = (self.pageMode == 0)
+        removeButton.hidden = (self.pageMode == 0 || self.pageMode == 5)
         tableViewWrap.hidden = (self.pageMode == 0)
         
         if (self.pageMode == 0) {
             wordLabel.text = "请选择您想学习的词库"
             wordLabel.font = UIFont.systemFontOfSize(20)
             wordLabel.hidden = false
+            return
+        } else if (self.pageMode == 5) {
+            var dictionary: AnyObject? = DictionaryUtil.getDictionaryInfo(self.selectedDictionaryId!)
+            var name = dictionary!["name"] as String
+            chineseView.hidden = false
+            chineseView.text = "恭喜，功夫不负有心人!\n \(name) \n 已经全部掌握 \n 如不想看到此页面，请将此词库设为非学习状态"
+            chineseView.textColor = Color.red
+            chineseView.font = UIFont(name: Fonts.kaiti, size: CGFloat(18))
+            chineseView.textAlignment = NSTextAlignment.Center
+            nextButton.hidden = false
             return
         } else {
             wordLabel.text = self.word!["word"] as? String
@@ -920,7 +916,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             player = AVAudioPlayer(data: NSData(contentsOfURL: Util.getVoiceURL(self.word!["ukPronunciation"] as String)), error: nil)
         }
         
-        player.play()
+        if (player != nil) {
+            player.play()
+        }
     }
     
     func playSentence() {

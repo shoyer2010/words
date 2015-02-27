@@ -54,6 +54,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             if (file == nil) {
                 request.HTTPBody = NSString(string: queryString).dataUsingEncoding(NSUTF8StringEncoding)
             } else {
+                self.attachmentSavePath = ""
                 var boundary = "||"
                 request.addValue("multipart/form-data; boundary=" + boundary, forHTTPHeaderField: "Content-Type")
                 var sendBody = NSMutableData()

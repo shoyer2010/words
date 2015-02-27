@@ -285,31 +285,41 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             self.commonTableView.reloadData()
         }
     }
-
-    //downloadIcon.addTarget(self, action: "showInfoPage:event:", forControlEvents: UIControlEvents.TouchUpInside)
-//    func showInfoPage(sender: UIButton, event: UIEvent) {
-//        var touches = event.allTouches()
-//        var touch: AnyObject? = touches?.anyObject()
-//        var currentTouchPosition = touch?.locationInView(self.commonTableView)
-//        var indexPath = self.commonTableView.indexPathForRowAtPoint(currentTouchPosition!)
-//        var row = indexPath!.row
-//        
-//        println(row)
-//
-//        var dictionaryInfoController = DictionaryInfoController()
-//        self.addChildViewController(dictionaryInfoController)
-//        self.view.addSubview(dictionaryInfoController.view)
-//    }
     
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
-        println(filePath)
-        println(progress)
     }
     
     func onLoginSuccess(notification: NSNotification) {
         self.loadData()
         self.downloadCustomDictionary()
         self.syncOperationOfCustomDictionary()
+        self.downloadLearningRecord()
+        self.syncLearningRecordToServer()
+    }
+    
+    func downloadLearningRecord() {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        if (user != nil) {
+            var userId = user!["id"] as String
+            if (!Util.isFileExist(userId + ".db")) {
+                var params: NSMutableDictionary = NSMutableDictionary()
+                params.setValue(2, forKey: "sync")
+                API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params)
+            }
+        }
+    }
+    
+    func syncLearningRecordToServer() {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        if (user != nil) {
+            var userId = user!["id"] as String
+            if (Util.isFileExist(userId + ".db")) { // TODO: set the duration between two sync opearations
+                var params: NSMutableDictionary = NSMutableDictionary()
+                params.setValue(1, forKey: "sync")
+                var file: NSData = NSData(contentsOfFile: Util.getFilePath(userId + ".db"))!
+                API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: file)
+            }
+        }
     }
     
     func onDictionaryDeleted(notification: NSNotification) {

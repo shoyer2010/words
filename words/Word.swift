@@ -31,6 +31,6 @@ class Word {
         
         statement.run(id, wordString, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese)
         
-        // TODO: should sync to server.
+        DictionaryUtil.importDataToLearingProcess(DictionaryUtil.customDictionaryId())
     }
 }

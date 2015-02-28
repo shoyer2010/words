@@ -60,6 +60,7 @@
 		A4D0FF751A9B9A2500A28CBD /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF741A9B9A2500A28CBD /* Word.swift */; };
 		A4D0FF771A9BA8E600A28CBD /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */; };
 		A4D0FF791A9C967100A28CBD /* TapPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF781A9C967100A28CBD /* TapPointView.swift */; };
+		A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFA71AA0E302008E064C /* DateUtil.swift */; };
 		A4DFB85C1A9472F90086105C /* RegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85B1A9472F90086105C /* RegularExpression.swift */; };
 		A4DFB85E1A9480120086105C /* WordDetailDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */; };
 		A4DFB8601A9487F50086105C /* SearchWordResultDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85F1A9487F50086105C /* SearchWordResultDelegate.swift */; };
@@ -157,6 +158,7 @@
 		A4D0FF741A9B9A2500A28CBD /* Word.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
 		A4D0FF781A9C967100A28CBD /* TapPointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapPointView.swift; sourceTree = "<group>"; };
+		A4D5EFA71AA0E302008E064C /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		A4DFB85B1A9472F90086105C /* RegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegularExpression.swift; sourceTree = "<group>"; };
 		A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordDetailDelegate.swift; sourceTree = "<group>"; };
 		A4DFB85F1A9487F50086105C /* SearchWordResultDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchWordResultDelegate.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				A4DFB85B1A9472F90086105C /* RegularExpression.swift */,
 				A4D0FF741A9B9A2500A28CBD /* Word.swift */,
 				A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */,
+				A4D5EFA71AA0E302008E064C /* DateUtil.swift */,
 			);
 			name = Misc;
 			sourceTree = "<group>";
@@ -477,6 +480,7 @@
 				A4B9B1341A8783FE004B7A20 /* Interaction.swift in Sources */,
 				A427038C1A809891005159AC /* HelpController.swift in Sources */,
 				A44D1FCF1A9A2EF7007F3F1E /* Database.swift in Sources */,
+				A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */,
 				A44D1FD71A9A2EF7007F3F1E /* Statement.swift in Sources */,
 				A44D1FD81A9A2EF7007F3F1E /* Value.swift in Sources */,
 				A4B9B1361A87B71A004B7A20 /* DictionaryInfoController.swift in Sources */,

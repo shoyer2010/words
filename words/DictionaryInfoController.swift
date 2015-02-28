@@ -41,8 +41,14 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         if (self.dictionary!["custom"] as Bool) {
             sql = "SELECT id, word FROM words ORDER BY rowid desc"
         }
+        
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var userId = user!["id"] as String
+        var dbUser = Database(Util.getFilePath(userId + ".db"))
         for row in db.prepare(sql) {
-            self.words.addObject(["id": row[0] as String, "word": row[1] as String])
+            for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
+                self.words.addObject(["id": row[0] as String, "word": row[1] as String, "wordStatus": row2[0] as Int, "appearTimes": row2[1] as Int, "rightTimes": row2[2] as Int])
+            }
         }
         
         var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
@@ -266,6 +272,9 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var wordLabelTag = 1001
+        var appearCountLabelTag = 1002
+        var wrongLabelTag = 1003
+        var haveMasteredLabelTag = 1004
         
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("cell") as? UITableViewCell
         if (cell == nil) {
@@ -282,6 +291,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             cell!.contentView.addSubview(wordLabel)
             
             var appearCountLabel = UILabel(frame: CGRect(x: 100, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            appearCountLabel.tag = appearCountLabelTag
             appearCountLabel.text = "23"
             appearCountLabel.textColor = Color.gray
             appearCountLabel.font = UIFont(name: appearCountLabel.font.fontName, size: CGFloat(14))
@@ -289,6 +299,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             cell!.addSubview(appearCountLabel)
             
             var wrongLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.33, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            wrongLabel.tag = wrongLabelTag
             wrongLabel.text = "12"
             wrongLabel.textColor = Color.gray
             wrongLabel.font = UIFont(name: wrongLabel.font.fontName, size: CGFloat(14))
@@ -296,8 +307,9 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             cell!.addSubview(wrongLabel)
             
             var haveMasteredLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.66, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            haveMasteredLabel.tag = haveMasteredLabelTag
             haveMasteredLabel.text = "√"
-            haveMasteredLabel.textColor = Color.gray
+            haveMasteredLabel.textColor = Color.green
             haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(14))
             haveMasteredLabel.textAlignment = NSTextAlignment.Center
             cell!.addSubview(haveMasteredLabel)
@@ -305,6 +317,24 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         var wordLabel = cell!.viewWithTag(wordLabelTag) as UILabel
         wordLabel.text = self.words[indexPath.row]["word"] as? String
+        
+        var appearCountLabel = cell!.viewWithTag(appearCountLabelTag) as UILabel
+        var appearCount = self.words[indexPath.row]["appearTimes"] as Int
+        appearCountLabel.text = "\(appearCount)"
+        
+        var wrongLabel = cell!.viewWithTag(wrongLabelTag) as UILabel
+        var wrongCount = appearCount - (self.words[indexPath.row]["rightTimes"] as Int)
+        wrongLabel.text = "\(wrongCount)"
+        
+        var haveMasteredLabel = cell!.viewWithTag(haveMasteredLabelTag) as UILabel
+        var wordStatus = self.words[indexPath.row]["wordStatus"] as Int
+        if (wordStatus == 6) {
+            haveMasteredLabel.text = "√"
+            haveMasteredLabel.textColor = Color.green
+        } else {
+            haveMasteredLabel.text = "X"
+            haveMasteredLabel.textColor = Color.red
+        }
         
         return cell!
     }

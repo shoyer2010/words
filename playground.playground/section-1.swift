@@ -19,3 +19,24 @@ var string = 50 + (arc4random() % (100 - 50 + 1))
 
 
 Int(arc4random() % 2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -17,6 +17,8 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     var professionalDictionaryList: NSMutableArray!
     var specialDictionaryList: NSMutableArray!
     
+    var downloadProgress: NSMutableDictionary! = NSMutableDictionary()
+    
     var selectedDictionaryId: String!
     
     override func viewDidLoad() {
@@ -169,7 +171,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             
             var countLabel = cell!.viewWithTag(self.countLabelTag) as UILabel
             var count = dictionary["count"] as Int
-            if (dictionary["custom"] as Bool) {
+            if (dictionary["custom"] as Bool && Util.isFileExist(filename)) {
                 count = self.wordCountOfLocalDictionary(DictionaryUtil.customDictionaryId())
             }
             if (Util.isFileExist(filename)) {
@@ -183,10 +185,17 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             
             
             var sizeLabel = cell!.viewWithTag(self.sizeLabelTag) as UILabel
+            var progress = self.downloadProgress.valueForKey(dictionaryId) as? Float
+            
             if (Util.isFileExist(filename)) {
                 sizeLabel.text = Util.fileSizeString(filename)
             } else {
                 sizeLabel.text = "未下载"
+            }
+            
+            if (progress != nil) {
+                var string = NSString(format: "%.1f", progress! * 100)
+                sizeLabel.text = string + "%"
             }
             
             var dictionaryNameLabel = cell!.viewWithTag(self.dictionaryNameLabelTag) as UILabel
@@ -280,10 +289,15 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func dictionaryDownload(filePath: AnyObject, progress: Float) {
+    func dictionaryDownload(filePath: AnyObject, progress: Float, params: NSMutableDictionary) {
+        var dictionaryId = params.objectForKey("id") as String
         if (progress >= 1.0) {
-            self.commonTableView.reloadData()
+            self.downloadProgress.setValue(nil, forKey: dictionaryId)
+        } else {
+            self.downloadProgress.setValue(progress, forKey: dictionaryId)
         }
+        
+        self.commonTableView.reloadData()
     }
     
     func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
@@ -312,8 +326,18 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     func syncLearningRecordToServer() {
         var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
         if (user != nil) {
+            
+            var lastSyncTime = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SYNC_TIME) as? Int
+            if (lastSyncTime == nil) {
+                NSUserDefaults.standardUserDefaults().setObject(time(nil) as Int, forKey: CacheKey.SYNC_TIME)
+            }
+            
+            lastSyncTime = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SYNC_TIME) as? Int
+            
+            var syncTime = user!["syncTime"] as Int
             var userId = user!["id"] as String
-            if (Util.isFileExist(userId + ".db")) { // TODO: set the duration between two sync opearations
+            var currentTime = time(nil) as Int
+            if (Util.isFileExist(userId + ".db") && currentTime - lastSyncTime! >= syncTime) {
                 var params: NSMutableDictionary = NSMutableDictionary()
                 params.setValue(1, forKey: "sync")
                 var file: NSData = NSData(contentsOfFile: Util.getFilePath(userId + ".db"))!
@@ -388,6 +412,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         
         if (Util.isFileExist(customDictionayId + ".db")) {
             var db = Database(Util.getFilePath(customDictionayId + ".db"))
+            db.prepare("CREATE TABLE IF NOT EXISTS operationLogs(wordId, wordStatus)").run()
             
             for row in db.prepare("SELECT wordId, wordStatus FROM operationLogs WHERE wordStatus=?", Constant.DELETE) {
                 var params = NSMutableDictionary()

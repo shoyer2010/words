@@ -11,7 +11,7 @@ import UIKit
 
 class AccountController: UIViewController,APIDataDelegate {
     
-    var holyWaterLabel: UILabel!
+    var serviceToLabel: UILabel!
     var usernameLabel: UILabel!
     var upgradeButton: UIButton!
     var passwordLabel: UILabel!
@@ -38,25 +38,25 @@ class AccountController: UIViewController,APIDataDelegate {
         upgradeButton.addTarget(self, action: "goToRegisterPage:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(upgradeButton)
         
-        holyWaterLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
-        holyWaterLabel.text = "圣水： 0"
-        self.view.addSubview(holyWaterLabel)
+        serviceToLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
+        serviceToLabel.text = "服务到"
+        self.view.addSubview(serviceToLabel)
         
-        var holyWaterInfoButton = UIButton(frame: CGRect(x: holyWaterLabel.frame.origin.x + 100, y: 80, width: 20, height: 20))
-        holyWaterInfoButton.setTitle("i", forState: UIControlState.Normal)
-        holyWaterInfoButton.backgroundColor = Color.red
-        holyWaterInfoButton.addTarget(self, action: "showHolyWaterInfo:", forControlEvents: UIControlEvents.TouchUpInside)
-        holyWaterInfoButton.layer.cornerRadius = 10
+        var serviceToInfoButton = UIButton(frame: CGRect(x: serviceToLabel.frame.origin.x + 170, y: 80, width: 20, height: 20))
+        serviceToInfoButton.setTitle("i", forState: UIControlState.Normal)
+        serviceToInfoButton.backgroundColor = Color.red
+        serviceToInfoButton.addTarget(self, action: "showserviceToInfo:", forControlEvents: UIControlEvents.TouchUpInside)
+        serviceToInfoButton.layer.cornerRadius = 10
         
         
-        self.view.addSubview(holyWaterInfoButton)
+        self.view.addSubview(serviceToInfoButton)
         
-        var getHolyWaterButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 75, width: 70, height: 26))
-        getHolyWaterButton.backgroundColor = Color.gray
-        getHolyWaterButton.layer.cornerRadius = 13
-        getHolyWaterButton.setTitle("获取", forState: UIControlState.Normal)
-        getHolyWaterButton.addTarget(self, action: "goToBuyHolyWaterPage:", forControlEvents: UIControlEvents.TouchUpInside)
-        self.view.addSubview(getHolyWaterButton)
+        var getserviceToButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 75, width: 70, height: 26))
+        getserviceToButton.backgroundColor = Color.gray
+        getserviceToButton.layer.cornerRadius = 13
+        getserviceToButton.setTitle("获取", forState: UIControlState.Normal)
+        getserviceToButton.addTarget(self, action: "goToBuyserviceToPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(getserviceToButton)
         
         
         passwordLabel = UILabel(frame: CGRect(x: 15, y: 125, width: 200, height: 30))
@@ -119,6 +119,23 @@ class AccountController: UIViewController,APIDataDelegate {
     func onLoginSuccess(notification: NSNotification) {
         var user: AnyObject! = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
         self.setToView(user!)
+        self.postActiveTime()
+    }
+    
+    func postActiveTime() {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var userId = user!["id"] as NSString
+        
+        var seconds: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.ACTIVE_TIME) as? Int
+        if (seconds != nil && seconds! > 0) {
+            var params = NSMutableDictionary()
+            params.setValue(seconds, forKey: "seconds") // TODO: 需要rsa加密
+            API.instance.post("/user/activeTime", delegate: self, params: params)
+        }
+    }
+    
+    func activeTime(data: AnyObject) {
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.ACTIVE_TIME)
     }
     
     func setToView(user: AnyObject) {
@@ -129,8 +146,11 @@ class AccountController: UIViewController,APIDataDelegate {
         self.passwordButton.hidden = isTrial
         self.logoutButton.hidden = isTrial
         
-        var holyWater = user["holyWater"] as Int
-        self.holyWaterLabel.text = "圣水： \(holyWater)"
+        var serviceTo = user["serviceTo"] as? Int
+        if serviceTo == nil {
+            serviceTo = 0
+        }
+        self.serviceToLabel.text = "服务到： \(DateUtil.standardDate(serviceTo!))"
     }
     
     func goToRegisterPage(sender: UIButton) {
@@ -145,16 +165,16 @@ class AccountController: UIViewController,APIDataDelegate {
         self.view.addSubview(changePasswordController.view)
     }
     
-    func goToBuyHolyWaterPage(sender: UIButton) {
-        var buyHolyWaterController = BuyHolyWaterController()
-        self.addChildViewController(buyHolyWaterController)
-        self.view.addSubview(buyHolyWaterController.view)
+    func goToBuyserviceToPage(sender: UIButton) {
+        var buyServiceController = BuyServiceController()
+        self.addChildViewController(buyServiceController)
+        self.view.addSubview(buyServiceController.view)
     }
     
-    func showHolyWaterInfo(sender: UIButton) {
-        var holyWaterInfoController = HolyWaterInfoController()
-        self.addChildViewController(holyWaterInfoController)
-        self.view.addSubview(holyWaterInfoController.view)
+    func showserviceToInfo(sender: UIButton) {
+        var serviceInfoController = ServiceInfoController()
+        self.addChildViewController(serviceInfoController)
+        self.view.addSubview(serviceInfoController.view)
     }
     
     func goToLoginPage(sender: UIButton) {

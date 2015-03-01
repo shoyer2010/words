@@ -10,9 +10,12 @@ import Foundation
 import UIkit
 
 class StatisticsController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(1)
         
         self.view.backgroundColor = Color.appBackground
@@ -25,7 +28,7 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         tableViewWrap.layer.shadowRadius = Layer.shadowRadius
         tableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
-        var tableView = UITableView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
+        tableView = UITableView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
         tableView.delegate = self
         tableView.dataSource = self
         tableView.layer.cornerRadius = Layer.cornerRadius
@@ -116,11 +119,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         var learnLabel = UILabel(frame: CGRect(x: 60, y: 0, width: (tableView.frame.width - 60) * 0.33, height: 30))
         switch (indexPath.row) {
         case 0:
-            learnLabel.text = "23"
+            learnLabel.text = "\(DictionaryUtil.getWordCountHaveLearned(DateUtil.startOfThisDay()))"
         case 1:
-            learnLabel.text = "324"
+            learnLabel.text = "\(DictionaryUtil.getWordCountHaveLearned(DateUtil.startOfThisWeek()))"
         case 2:
-            learnLabel.text = "2323"
+            learnLabel.text = "\(DictionaryUtil.getWordCountHaveLearned(DateUtil.startOfThisMonth()))"
         default:
             break
         }
@@ -132,11 +135,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         var relearnLabel = UILabel(frame: CGRect(x: 60 + (tableView.frame.width - 60) * 0.33, y: 0, width: (tableView.frame.width - 60) * 0.33, height: 30))
         switch (indexPath.row) {
         case 0:
-            relearnLabel.text = "43"
+            relearnLabel.text = "\(DictionaryUtil.getWordCountHaveReviewed(DateUtil.startOfThisDay()))"
         case 1:
-            relearnLabel.text = "545"
+            relearnLabel.text = "\(DictionaryUtil.getWordCountHaveReviewed(DateUtil.startOfThisWeek()))"
         case 2:
-            relearnLabel.text = "5656"
+            relearnLabel.text = "\(DictionaryUtil.getWordCountHaveReviewed(DateUtil.startOfThisMonth()))"
         default:
             break
         }
@@ -148,11 +151,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         var masterLabel = UILabel(frame: CGRect(x: 60 + (tableView.frame.width - 60) * 0.66, y: 0, width: (tableView.frame.width - 60) * 0.33, height: 30))
         switch (indexPath.row) {
         case 0:
-            masterLabel.text = "12"
+            masterLabel.text = "\(DictionaryUtil.getWordCountHaveMastered(DateUtil.startOfThisDay()))"
         case 1:
-            masterLabel.text = "343"
+            masterLabel.text = "\(DictionaryUtil.getWordCountHaveMastered(DateUtil.startOfThisWeek()))"
         case 2:
-            masterLabel.text = "565"
+            masterLabel.text = "\(DictionaryUtil.getWordCountHaveMastered(DateUtil.startOfThisMonth()))"
         default:
             break
         }
@@ -162,5 +165,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         cell.addSubview(masterLabel)
 
         return cell
+    }
+    
+    func onPageChange(notification: NSNotification) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.Statistics) {
+            self.tableView.reloadData()
+        }
     }
 }

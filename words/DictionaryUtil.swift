@@ -65,4 +65,47 @@ class DictionaryUtil {
         
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_CHANGED, object: self, userInfo: nil)
     }
+    
+    class func getWordCountHaveMastered(fromTime: Int) -> Int {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var count = 0
+        if (user != nil) {
+            var userId = user!["id"] as String
+            var db = Database(Util.getFilePath(userId + ".db"))
+            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus=6", fromTime) {
+                count = row[0] as Int
+            }
+        }
+        
+        return count
+    }
+    
+    class func getWordCountHaveReviewed(fromTime: Int) -> Int {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        
+        var count = 0
+        if (user != nil) {
+            var userId = user!["id"] as String
+            var db = Database(Util.getFilePath(userId + ".db"))
+            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus IN(2,3,4,5)", fromTime) {
+                count = row[0] as Int
+            }
+        }
+        
+        return count
+    }
+    
+    class func getWordCountHaveLearned(fromTime: Int) -> Int {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var count = 0
+        if (user != nil) {
+            var userId = user!["id"] as String
+            var db = Database(Util.getFilePath(userId + ".db"))
+            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus!=6", fromTime) {
+                count = row[0] as Int
+            }
+        }
+        
+        return count
+    }
 }

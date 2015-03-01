@@ -36,6 +36,8 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
             shouldNotifyValue = true
         }
         shouldNotify.setOn(shouldNotifyValue!, animated: true)
+        NSUserDefaults.standardUserDefaults().setObject(shouldNotifyValue!, forKey: CacheKey.SHOULD_NOTIFY)
+        NSUserDefaults.standardUserDefaults().synchronize()
         self.view.addSubview(shouldNotify)
         
         var wordShouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 85, width: 200, height: 20))
@@ -50,6 +52,8 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
             shouldAutoVoiceValue = true
         }
         wordShouldAutoVoice.setOn(shouldAutoVoiceValue!, animated: true)
+        NSUserDefaults.standardUserDefaults().setObject(shouldAutoVoiceValue!, forKey: CacheKey.WORD_AUTO_VOICE)
+        NSUserDefaults.standardUserDefaults().synchronize()
         self.view.addSubview(wordShouldAutoVoice)
         
         var sentenceShouldAutoVoiceLabel = UILabel(frame: CGRect(x: 15, y: 145, width: 200, height: 20))
@@ -64,6 +68,8 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
             sentenceShouldAutoVoiceValue = true
         }
         sentenceShouldAutoVoice.setOn(sentenceShouldAutoVoiceValue!, animated: true)
+        NSUserDefaults.standardUserDefaults().setObject(shouldAutoVoiceValue!, forKey: CacheKey.SENTENCE_AUTO_VOICE)
+        NSUserDefaults.standardUserDefaults().synchronize()
         self.view.addSubview(sentenceShouldAutoVoice)
         
         cachedLabel = UILabel(frame: CGRect(x: 15, y: 200, width: 150, height: 20))

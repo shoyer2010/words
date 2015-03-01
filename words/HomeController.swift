@@ -10,9 +10,13 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     var englishLabel: UILabel!
     var chineseLabel: UILabel!
     
+    var needToLearnLabel: UILabel!
+    
     var dictionaryLabel: UILabel!
     
     var rankLabel: UILabel!
+    
+    var todayRecommendByWord: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +24,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLearningDictionaryChange:", name: EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onDictionaryDeleted:", name: EventKey.ON_DICTIONARY_DELETED, object: nil)
-        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
 
         self.initView()
         self.setNeedsStatusBarAppearanceUpdate()
@@ -75,9 +79,15 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeBody.backgroundColor = Color.appBackground
         
         var todayRecommend = UILabel(frame: CGRect(x: 15, y: 10, width: homeBody.frame.width - 30, height: 30))
-        todayRecommend.font = UIFont(name: todayRecommend.font.fontName, size: CGFloat(16))
+        todayRecommend.font = UIFont(name: todayRecommend.font.fontName, size: CGFloat(17))
         todayRecommend.text = "今日推荐"
         homeBody.addSubview(todayRecommend)
+        
+        todayRecommendByWord = UILabel(frame: CGRect(x: todayRecommend.frame.origin.x + 75, y: 17, width: homeBody.frame.width - 30, height: 20))
+        todayRecommendByWord.font = UIFont(name: Fonts.kaiti, size: CGFloat(12))
+        todayRecommendByWord.text = "" //"根据单词test推荐"
+        todayRecommendByWord.textColor = Color.lightGray
+        homeBody.addSubview(todayRecommendByWord)
         
         var recommendView = UIView(frame: CGRect(x: 15, y: 40, width: viewHomePage.frame.width - 30, height: 102))
         recommendView.backgroundColor = Color.blockBackground
@@ -101,10 +111,11 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         needToLearnIcon.backgroundColor = UIColor(patternImage: UIImage(named: "needToLearnIcon.png")!)
         homeBody.addSubview(needToLearnIcon)
         
-        var needToLearnLabel = UILabel(frame: CGRect(x: 90, y: 180, width: 250, height: 24))
+        needToLearnLabel = UILabel(frame: CGRect(x: 90, y: 180, width: 250, height: 24))
         needToLearnLabel.userInteractionEnabled = true
         needToLearnLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onNeedToLearnLabelTapped:"))
         needToLearnLabel.text = "45个单词需要复习"
+        self.setTheNeedToReviewLablel()
         homeBody.addSubview(needToLearnLabel)
         
         var rankIcon = UIView(frame: CGRect(x: 60, y: 220, width: 24, height: 24))
@@ -235,6 +246,57 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.setActiveRank()
     }
     
+    func onPageChange(notification: NSNotification) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.Home) {
+            self.setTheNeedToReviewLablel()
+        }
+    }
+    
+    func setTheNeedToReviewLablel() {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        
+        if (user == nil) {
+            self.needToLearnLabel.text = "没有单词需要复习"
+            return
+        }
+        
+        var userId = user!["id"] as String
+        
+        if (!Util.isFileExist(Util.getFilePath(userId + ".db"))) {
+            self.needToLearnLabel.text = "没有单词需要复习"
+            return
+        }
+        
+        var db = Database(Util.getFilePath(userId + ".db"))
+        
+        var customDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String
+        var learningDictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
+        
+        var count = 0
+        for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE wordStatus=5 AND dictionaryId IN(?, ?) AND lastAppearTime<=?", customDictionaryId, learningDictionaryId, time(nil) - DateUtil.DAYS_60) {
+            count = count + (row[0] as Int)
+        }
+        
+        for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE wordStatus=4 AND dictionaryId IN(?, ?) AND lastAppearTime<=?", customDictionaryId, learningDictionaryId, time(nil) - DateUtil.DAYS_30) {
+            count = count + (row[0] as Int)
+        }
+        
+        for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE wordStatus=3 AND dictionaryId IN(?, ?) AND lastAppearTime<=?", customDictionaryId, learningDictionaryId, time(nil) - DateUtil.DAYS_10) {
+            count = count + (row[0] as Int)
+        }
+        
+        for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE wordStatus=2 AND dictionaryId IN(?, ?) AND lastAppearTime<=?", customDictionaryId, learningDictionaryId, time(nil) - DateUtil.DAYS_1) {
+            count = count + (row[0] as Int)
+        }
+        
+        if (count == 0) {
+            self.needToLearnLabel.text = "没有单词需要复习"
+            return
+        }
+        
+        self.needToLearnLabel.text = "\(count) 个单词需要复习"
+    }
+    
     func onLearningDictionaryChange(nofification: NSNotification) {
         self.setLearingDictionaryLabel()
     }
@@ -245,8 +307,12 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     
     func setTodayRecommend() {
         var user: NSDictionary? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER) as? NSDictionary
-        
         if (user != nil) {
+            var byWord = user!.valueForKeyPath("recommendArticle.byWord") as NSString
+            if (byWord.length > 0) {
+                todayRecommendByWord.text = "根据单词\(byWord)推荐"
+            }
+            
             englishLabel.text = user!.valueForKeyPath("recommendArticle.titleEnglish") as? String
             englishLabel.numberOfLines = 2
             englishLabel.font = UIFont(name: "Cochin", size: CGFloat(16))

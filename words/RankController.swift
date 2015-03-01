@@ -31,14 +31,30 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         indicator.color = Color.red
         self.view.addSubview(indicator)
         
-        var segment = UISegmentedControl(frame: CGRect(x: self.view.frame.width / 2 - 55, y: 15, width: 110, height: 26))
-        segment.backgroundColor = UIColor.whiteColor()
-        segment.tintColor = Color.red
-        segment.insertSegmentWithTitle("活跃度", atIndex: 0, animated: false)
-        segment.insertSegmentWithTitle("单词量", atIndex: 1, animated: false)
-        segment.addTarget(self, action: "onSegmentTapped:", forControlEvents: UIControlEvents.ValueChanged)
-        segment.selectedSegmentIndex = 0
-        self.view.addSubview(segment)
+//        var segment = UISegmentedControl(frame: CGRect(x: self.view.frame.width / 2 - 55, y: 15, width: 110, height: 26))
+//        segment.backgroundColor = UIColor.whiteColor()
+//        segment.tintColor = Color.red
+//        segment.insertSegmentWithTitle("活跃榜", atIndex: 0, animated: false)
+////        segment.insertSegmentWithTitle("单词量", atIndex: 1, animated: false)
+//        segment.addTarget(self, action: "onSegmentTapped:", forControlEvents: UIControlEvents.ValueChanged)
+//        segment.selectedSegmentIndex = 0
+//        self.view.addSubview(segment)
+        
+        var rankLabelWrap = UIView(frame: CGRect(x: 15, y: 15, width: self.view.frame.width - 30, height: 28))
+        rankLabelWrap.layer.shadowOpacity = Layer.shadowOpacity
+        rankLabelWrap.layer.shadowOffset = Layer.shadowOffset
+        rankLabelWrap.layer.shadowColor = Layer.shadowColor
+        rankLabelWrap.layer.shadowRadius = Layer.shadowRadius
+        rankLabelWrap.layer.cornerRadius = Layer.cornerRadius
+        rankLabelWrap.backgroundColor = Color.red
+        
+        var rankLabel = UILabel(frame: CGRect(x: 0, y: 0, width: rankLabelWrap.frame.width, height: rankLabelWrap.frame.height))
+        rankLabel.text = "活跃度排行榜"
+        rankLabel.textColor = Color.white
+        rankLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(16))
+        rankLabel.textAlignment = NSTextAlignment.Center
+        rankLabelWrap.addSubview(rankLabel)
+        self.view.addSubview(rankLabelWrap)
         
         var rankTableViewWrap = UIView(frame: CGRect(x: 15, y: 55, width: self.view.frame.width - 30, height: self.view.frame.height - 85))
         rankTableViewWrap.backgroundColor = Color.blockBackground
@@ -216,11 +232,11 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             self.startLoading()
         }
         
-        if (self.wordRankData == nil) {
-            var params = NSMutableDictionary()
-            API.instance.get("/rank/masteredWords", delegate: self, params: params)
-            self.startLoading()
-        }
+//        if (self.wordRankData == nil) {
+//            var params = NSMutableDictionary()
+//            API.instance.get("/rank/masteredWords", delegate: self, params: params)
+//            self.startLoading()
+//        }
     }
     
     func rankActive(data: AnyObject) {

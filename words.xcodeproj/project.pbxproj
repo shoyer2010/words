@@ -61,6 +61,9 @@
 		A4D0FF771A9BA8E600A28CBD /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */; };
 		A4D0FF791A9C967100A28CBD /* TapPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF781A9C967100A28CBD /* TapPointView.swift */; };
 		A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFA71AA0E302008E064C /* DateUtil.swift */; };
+		A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAB1AA2F505008E064C /* Crypto.m */; };
+		A4D5EFAF1AA2FF27008E064C /* RSA.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAE1AA2FF27008E064C /* RSA.m */; };
+		A4D5EFB11AA302A9008E064C /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFB01AA302A9008E064C /* PublicKey.swift */; };
 		A4DFB85C1A9472F90086105C /* RegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85B1A9472F90086105C /* RegularExpression.swift */; };
 		A4DFB85E1A9480120086105C /* WordDetailDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */; };
 		A4DFB8601A9487F50086105C /* SearchWordResultDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85F1A9487F50086105C /* SearchWordResultDelegate.swift */; };
@@ -159,6 +162,11 @@
 		A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
 		A4D0FF781A9C967100A28CBD /* TapPointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapPointView.swift; sourceTree = "<group>"; };
 		A4D5EFA71AA0E302008E064C /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
+		A4D5EFAA1AA2F4CF008E064C /* Crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Crypto.h; sourceTree = "<group>"; };
+		A4D5EFAB1AA2F505008E064C /* Crypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Crypto.m; sourceTree = "<group>"; };
+		A4D5EFAD1AA2FF09008E064C /* RSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSA.h; sourceTree = "<group>"; };
+		A4D5EFAE1AA2FF27008E064C /* RSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSA.m; sourceTree = "<group>"; };
+		A4D5EFB01AA302A9008E064C /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
 		A4DFB85B1A9472F90086105C /* RegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegularExpression.swift; sourceTree = "<group>"; };
 		A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordDetailDelegate.swift; sourceTree = "<group>"; };
 		A4DFB85F1A9487F50086105C /* SearchWordResultDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchWordResultDelegate.swift; sourceTree = "<group>"; };
@@ -204,6 +212,7 @@
 				A4EBCE9C1A9795F6004AB958 /* Server.swift */,
 				A482C83D1A98D226008D313A /* CacheKey.swift */,
 				A44D1FDC1A9B1B72007F3F1E /* EventKey.swift */,
+				A4D5EFB01AA302A9008E064C /* PublicKey.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -211,6 +220,7 @@
 		A42703651A7F39CB005159AC /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				A4D5EFA91AA2F4B5008E064C /* Crypto */,
 				A42703661A7F39DD005159AC /* Util.swift */,
 				A4DFB85B1A9472F90086105C /* RegularExpression.swift */,
 				A4D0FF741A9B9A2500A28CBD /* Word.swift */,
@@ -341,6 +351,17 @@
 				A4A8B61E1A7A563300C59E63 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A4D5EFA91AA2F4B5008E064C /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				A4D5EFAA1AA2F4CF008E064C /* Crypto.h */,
+				A4D5EFAB1AA2F505008E064C /* Crypto.m */,
+				A4D5EFAD1AA2FF09008E064C /* RSA.h */,
+				A4D5EFAE1AA2FF27008E064C /* RSA.m */,
+			);
+			name = Crypto;
 			sourceTree = "<group>";
 		};
 		A4E9F2231A9E5109008FB300 /* FXBlurView */ = {
@@ -474,6 +495,7 @@
 				A427038E1A809D46005159AC /* FavouriteArticleController.swift in Sources */,
 				A4D09DDF1A99FEF500360AEB /* DictionaryInfoDelegate.swift in Sources */,
 				A4A8B62A1A7A58E300C59E63 /* HomeController.swift in Sources */,
+				A4D5EFB11AA302A9008E064C /* PublicKey.swift in Sources */,
 				A4D0FF791A9C967100A28CBD /* TapPointView.swift in Sources */,
 				A44D1FD31A9A2EF7007F3F1E /* Query.swift in Sources */,
 				A42703881A7FB7BE005159AC /* AccountController.swift in Sources */,
@@ -482,6 +504,7 @@
 				A44D1FCF1A9A2EF7007F3F1E /* Database.swift in Sources */,
 				A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */,
 				A44D1FD71A9A2EF7007F3F1E /* Statement.swift in Sources */,
+				A4D5EFAF1AA2FF27008E064C /* RSA.m in Sources */,
 				A44D1FD81A9A2EF7007F3F1E /* Value.swift in Sources */,
 				A4B9B1361A87B71A004B7A20 /* DictionaryInfoController.swift in Sources */,
 				A44D1FDD1A9B1B72007F3F1E /* EventKey.swift in Sources */,
@@ -502,6 +525,7 @@
 				A4DFB85C1A9472F90086105C /* RegularExpression.swift in Sources */,
 				A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */,
 				A44D1FD51A9A2EF7007F3F1E /* SQLite-Bridging.c in Sources */,
+				A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */,
 				A4230E491A99C71000B31ECA /* SuccessView.swift in Sources */,
 				A42703861A7FB729005159AC /* SettingsController.swift in Sources */,
 				A427037A1A7F7924005159AC /* ApplicationController.swift in Sources */,

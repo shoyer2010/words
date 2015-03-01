@@ -41,6 +41,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var blurViewForWord: FXBlurView!
     var timer: NSTimer!
     
+    var wrongCounter: Int! = 0
+    
     
     // 0 no word to show. 
     // 1 no button, and four options to choose.
@@ -360,6 +362,22 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         })
     }
     
+    func postWrongWordsToServer() {
+        var db = Database(Util.getFilePath(self.getUserId() + ".db"))
+        
+        var string = ""
+        for row in db.prepare("SELECT wordId, appearTimes-rightTimes as wrongTimes FROM learningProgress WHERE dictionaryId=? ORDER BY lastAppearTime DESC, wrongTimes DESC LIMIT 5", self.selectedDictionaryId) {
+            string += row[0] as String + "|"
+        }
+        
+        var params = NSMutableDictionary()
+        params.setValue(string, forKey: "words")
+        API.instance.post("/word/wrongWords", delegate: self, params: params)
+    }
+    
+    func wordWrongWords(data: AnyObject) {
+    }
+    
     func updateWordStatus(type: Int) { // 1, right, 2, wrong
         
         var wordStatus = (self.word!["wordStatus"] as Int)
@@ -372,6 +390,20 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         if (type == 2) {
             newStatus = 1
             lastAppearTime = currentTimestamp
+            self.wrongCounter = self.wrongCounter + 1
+        }
+        
+        
+        var lastPostTime = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WRONG_WORD_POST_TIME) as? Int
+        if (lastPostTime == nil) {
+            NSUserDefaults.standardUserDefaults().setObject(time(nil), forKey: CacheKey.WRONG_WORD_POST_TIME)
+            NSUserDefaults.standardUserDefaults().synchronize()
+        }
+        
+        lastPostTime = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WRONG_WORD_POST_TIME) as? Int
+        
+        if self.wrongCounter > 50 || (time(nil) as Int) - lastPostTime! >= 86400 {
+            self.postWrongWordsToServer()
         }
         
         if (type == 1 && (wordStatus == 1 || wordStatus == 0)) {
@@ -431,8 +463,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.sentences.setArray(data as NSArray)
         self.setToSentencesView()
         
-        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as Bool
-        if (shouldAutoVoice) {
+        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as? Bool
+        if (shouldAutoVoice != nil && shouldAutoVoice!) {
             self.playSentence()
         }
     }
@@ -1081,8 +1113,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         wordPhoneticButton.frame = CGRect(x: viewLearnWordPage.frame.width / 2 - (wordPhoneticButton.frame.width + wordPhoneticSymbolLabel.frame.width) / 2, y: wordPhoneticButton.frame.origin.y, width: wordPhoneticButton.frame.width, height: wordPhoneticButton.frame.height)
         wordPhoneticSymbolLabel.frame = CGRect(x: wordPhoneticButton.frame.origin.x + wordPhoneticButton.frame.width, y: wordPhoneticSymbolLabel.frame.origin.y, width: wordPhoneticSymbolLabel.frame.width, height: wordPhoneticSymbolLabel.frame.height)
         
-        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as Bool
-        if (shouldAutoVoice && self.pageMode != 4) {
+        var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as? Bool
+        if (shouldAutoVoice != nil && shouldAutoVoice! && self.pageMode != 4) {
             self.playVoice()
         }
     }

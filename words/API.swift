@@ -128,7 +128,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/syncDictionary":
                 self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
             case "/dictionary/download":
-                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }
@@ -168,11 +168,13 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/syncDictionary":
                 self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0)
             case "/dictionary/download":
-                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0)
+                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0, params: self.params!)
             case "/dictionary/customWord":
                 self.delegate!.dictionaryCustomWord!(data!, params: self.params!)
             case "/word/search":
                 self.delegate!.wordSearch!(data!)
+            case "/word/wrongWords":
+                self.delegate!.wordWrongWords!(data!)
             case "/article/detail":
                 self.delegate!.articleDetail!(data!)
             case "/article/favourite":

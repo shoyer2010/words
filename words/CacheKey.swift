@@ -18,4 +18,7 @@ struct CacheKey {
     static let WORD_AUTO_VOICE = "word_auto_voice"
     static let SENTENCE_AUTO_VOICE = "sentence_auto_voice"
     static let SHOULD_NOTIFY = "should_notify"
+    static let ACTIVE_TIME = "active_time"
+    static let SYNC_TIME = "sync_time"
+    static let WRONG_WORD_POST_TIME = "wrong_word_post_time"
 }

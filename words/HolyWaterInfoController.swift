@@ -2,7 +2,7 @@
 import Foundation
 import UIKit
 
-class HolyWaterInfoController: UIViewController, APIDataDelegate {
+class ServiceInfoController: UIViewController, APIDataDelegate {
     var subView: UIView!
     var subViewHeight: CGFloat = 150
     

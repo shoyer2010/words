@@ -12,6 +12,8 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     var dictionary: AnyObject?
     var words: NSMutableArray = NSMutableArray()
     
+    var indicator: UIActivityIndicatorView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -29,10 +31,70 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.subView.frame.width / 2 - 30, y: self.subView.frame.height / 2 - 30, width: 60, height: 60))
+        indicator.color = Color.red
+        self.subView.addSubview(indicator)
+        
+        self.startLoading()
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
             self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
+                
+                var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
+                tableViewWrap.backgroundColor = Color.blockBackground
+                tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
+                tableViewWrap.layer.shadowOffset = Layer.shadowOffset
+                tableViewWrap.layer.shadowColor = Layer.shadowColor
+                tableViewWrap.layer.shadowRadius = Layer.shadowRadius
+                tableViewWrap.layer.cornerRadius = Layer.cornerRadius
+                
+                var tableHeader = UIView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: 30))
+                tableHeader.backgroundColor = Color.red.colorWithAlphaComponent(0.95)
+                
+                var wordLabel = UILabel(frame: CGRect(x:  10, y: 0, width: 100, height: 30))
+                wordLabel.text = "单词"
+                wordLabel.textColor = Color.white
+                wordLabel.textAlignment = NSTextAlignment.Left
+                wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
+                tableHeader.addSubview(wordLabel)
+                
+                var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
+                appearCountLabel.text = "出现(次)"
+                appearCountLabel.textColor = Color.white
+                appearCountLabel.textAlignment = NSTextAlignment.Center
+                appearCountLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
+                tableHeader.addSubview(appearCountLabel)
+                
+                var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.33, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
+                wrongCountLabel.text = "错误(次)"
+                wrongCountLabel.textColor = Color.white
+                wrongCountLabel.textAlignment = NSTextAlignment.Center
+                wrongCountLabel.font = UIFont(name: wrongCountLabel.font.fontName, size: CGFloat(12))
+                tableHeader.addSubview(wrongCountLabel)
+                
+                var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.66, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
+                haveMasteredLabel.text = "已掌握"
+                haveMasteredLabel.textColor = Color.white
+                haveMasteredLabel.textAlignment = NSTextAlignment.Center
+                haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(12))
+                tableHeader.addSubview(haveMasteredLabel)
+                tableViewWrap.addSubview(tableHeader)
+                
+                self.tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
+                self.tableView.delegate = self
+                self.tableView.dataSource = self
+                self.tableView.layer.cornerRadius = Layer.cornerRadius
+                self.tableView.layer.masksToBounds = true
+                self.tableView.separatorInset = UIEdgeInsetsZero
+                self.tableView.layoutMargins = UIEdgeInsetsZero
+                tableViewWrap.addSubview(self.tableView)
+                
+                tableViewWrap.bringSubviewToFront(tableHeader)
+                
+                self.subView.addSubview(tableViewWrap)
+                
+                self.endLoading()
         }
         
         self.dictionary = DictionaryUtil.getDictionaryInfo(self.delegate.setDictionaryId())
@@ -46,63 +108,20 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         var userId = user!["id"] as String
         var dbUser = Database(Util.getFilePath(userId + ".db"))
         for row in db.prepare(sql) {
+            var word = NSMutableDictionary()
+            word.setValue(row[0] as String, forKey: "id")
+            word.setValue(row[1] as String, forKey: "word")
+            
             for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
-                self.words.addObject(["id": row[0] as String, "word": row[1] as String, "wordStatus": row2[0] as Int, "appearTimes": row2[1] as Int, "rightTimes": row2[2] as Int])
+                word.setValue(row2[0] as Int, forKey: "wordStatus")
+                word.setValue(row2[1] as Int, forKey: "appearTimes")
+                word.setValue(row2[2] as Int, forKey: "rightTimes")
             }
+            
+            self.words.addObject(word)
         }
         
-        var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
-        tableViewWrap.backgroundColor = Color.blockBackground
-        tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
-        tableViewWrap.layer.shadowOffset = Layer.shadowOffset
-        tableViewWrap.layer.shadowColor = Layer.shadowColor
-        tableViewWrap.layer.shadowRadius = Layer.shadowRadius
-        tableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
-        var tableHeader = UIView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: 30))
-        tableHeader.backgroundColor = Color.red.colorWithAlphaComponent(0.95)
-        
-        var wordLabel = UILabel(frame: CGRect(x:  10, y: 0, width: 100, height: 30))
-        wordLabel.text = "单词"
-        wordLabel.textColor = Color.white
-        wordLabel.textAlignment = NSTextAlignment.Left
-        wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
-        tableHeader.addSubview(wordLabel)
-        
-        var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-        appearCountLabel.text = "出现(次)"
-        appearCountLabel.textColor = Color.white
-        appearCountLabel.textAlignment = NSTextAlignment.Center
-        appearCountLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
-        tableHeader.addSubview(appearCountLabel)
-        
-        var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.33, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-        wrongCountLabel.text = "错误(次)"
-        wrongCountLabel.textColor = Color.white
-        wrongCountLabel.textAlignment = NSTextAlignment.Center
-        wrongCountLabel.font = UIFont(name: wrongCountLabel.font.fontName, size: CGFloat(12))
-        tableHeader.addSubview(wrongCountLabel)
-        
-        var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.66, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-        haveMasteredLabel.text = "已掌握"
-        haveMasteredLabel.textColor = Color.white
-        haveMasteredLabel.textAlignment = NSTextAlignment.Center
-        haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(12))
-        tableHeader.addSubview(haveMasteredLabel)
-        tableViewWrap.addSubview(tableHeader)
-        
-        tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.layer.cornerRadius = Layer.cornerRadius
-        tableView.layer.masksToBounds = true
-        tableView.separatorInset = UIEdgeInsetsZero
-        tableView.layoutMargins = UIEdgeInsetsZero
-        tableViewWrap.addSubview(tableView)
-        
-        tableViewWrap.bringSubviewToFront(tableHeader)
-        
-        self.subView.addSubview(tableViewWrap)
         
         var learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 100, y: self.subView.frame.height - 40, width: 60, height: 30))
         learnButton.backgroundColor = Color.gray
@@ -205,8 +224,6 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             self.closeView()
         }
     }
-    
-    
     
     func onLearnButtonTapped(sender: UIButton) {
         if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
@@ -319,16 +336,28 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         wordLabel.text = self.words[indexPath.row]["word"] as? String
         
         var appearCountLabel = cell!.viewWithTag(appearCountLabelTag) as UILabel
-        var appearCount = self.words[indexPath.row]["appearTimes"] as Int
-        appearCountLabel.text = "\(appearCount)"
+        var appearCount = self.words[indexPath.row]["appearTimes"] as? Int
+        if (appearCount != nil) {
+            appearCountLabel.text = "\(appearCount!)"
+        } else {
+            appearCountLabel.text = "-"
+        }
         
         var wrongLabel = cell!.viewWithTag(wrongLabelTag) as UILabel
-        var wrongCount = appearCount - (self.words[indexPath.row]["rightTimes"] as Int)
-        wrongLabel.text = "\(wrongCount)"
+        var rightTimes = self.words[indexPath.row]["rightTimes"] as? Int
+        if (rightTimes != nil) {
+            wrongLabel.text = "\(appearCount! - rightTimes!)"
+        } else {
+            wrongLabel.text = "-"
+        }
+        
         
         var haveMasteredLabel = cell!.viewWithTag(haveMasteredLabelTag) as UILabel
-        var wordStatus = self.words[indexPath.row]["wordStatus"] as Int
-        if (wordStatus == 6) {
+        var wordStatus = self.words[indexPath.row]["wordStatus"] as? Int
+        if (wordStatus == nil) {
+            haveMasteredLabel.text = "-"
+            haveMasteredLabel.textColor = Color.gray
+        } else if (wordStatus == 6) {
             haveMasteredLabel.text = "√"
             haveMasteredLabel.textColor = Color.green
         } else {
@@ -337,6 +366,15 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         }
         
         return cell!
+    }
+    
+    func startLoading() {
+        self.subView.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
     }
 
 }

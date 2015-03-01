@@ -19,13 +19,15 @@
     
     optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
     
-    optional func dictionaryDownload(filePath: AnyObject, progress: Float)
+    optional func dictionaryDownload(filePath: AnyObject, progress: Float, params: NSMutableDictionary)
     
     optional func dictionaryCustomWord(AnyObject, params: NSMutableDictionary)
     
     
     // 单词
     optional func wordSearch(AnyObject)
+    
+    optional func wordWrongWords(AnyObject)
     
     // 例句
     optional func sentenceGetByWordId(AnyObject)

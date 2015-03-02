@@ -12,6 +12,8 @@
 	<dict>
 		<key>16F87ADFBD3A46459F1DD9F15FEB4BB140408694</key>
 		<string>git.coolhey.cn:wenhongjun/wordsclient.git</string>
+		<key>3AE8ED2E684071AF4FB151FA51BF266B82FF45BD</key>
+		<string>github.com:stephencelis/SQLite.swift.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>words.xcodeproj</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>16F87ADFBD3A46459F1DD9F15FEB4BB140408694</key>
 		<string>../..</string>
+		<key>3AE8ED2E684071AF4FB151FA51BF266B82FF45BD</key>
+		<string>../../../SQLite.swift</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>git.coolhey.cn:wenhongjun/wordsclient.git</string>
@@ -28,6 +32,14 @@
 	<string>16F87ADFBD3A46459F1DD9F15FEB4BB140408694</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3AE8ED2E684071AF4FB151FA51BF266B82FF45BD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SQLite.swift</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

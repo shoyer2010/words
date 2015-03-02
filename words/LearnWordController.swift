@@ -7,7 +7,6 @@
 //
 import Foundation
 import UIKit
-import SQLite
 import AVFoundation
 
 class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate {

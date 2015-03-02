@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SQLite
 
 class Word {
     class func addToCustomDictionary(word: AnyObject) {

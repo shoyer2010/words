@@ -1,5 +1,4 @@
 import UIKit
-import SQLite
 
 class DictionaryController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIDataDelegate, DictionaryInfoDelegate {
 

@@ -1,7 +1,6 @@
 
 import Foundation
 import UIKit
-import SQLite
 
 class DictionaryInfoController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, APIDataDelegate {
     var subView: UIView!

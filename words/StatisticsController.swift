@@ -35,7 +35,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         tableView.layer.masksToBounds = true
         tableView.scrollEnabled = false
         tableView.separatorInset = UIEdgeInsetsZero
-        tableView.layoutMargins = UIEdgeInsetsZero
+        
+        if (tableView.respondsToSelector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsetsZero
+        }
+        
         tableView.userInteractionEnabled = false
         
         var paragraphStyle = NSMutableParagraphStyle()
@@ -95,7 +99,11 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell = UITableViewCell(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 30))
         cell.separatorInset = UIEdgeInsetsZero
-        cell.layoutMargins = UIEdgeInsetsZero
+        
+        if (cell.respondsToSelector("setLayoutMargins:")) {
+            cell.layoutMargins = UIEdgeInsetsZero
+        }
+        
         
         var todayLabel = UILabel(frame: CGRect(x: 25, y: 3, width: 24, height: 24))
         todayLabel.backgroundColor = Color.listIconBackground

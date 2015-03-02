@@ -57,9 +57,15 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         commonTableView.dataSource = self
         commonTableView.delegate = self
         commonTableView.layer.cornerRadius = Layer.cornerRadius
-        commonTableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
-        commonTableView.separatorInset = UIEdgeInsetsZero
-        commonTableView.layoutMargins = UIEdgeInsetsZero
+        if (commonTableView.respondsToSelector("setSeparatorInset:")) {
+            commonTableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
+            commonTableView.separatorInset = UIEdgeInsetsZero
+        }
+        
+        if (commonTableView.respondsToSelector("setLayoutMargins:")) {
+            commonTableView.layoutMargins = UIEdgeInsetsZero
+        }
+        
         tableViewWrap.addSubview(commonTableView)
         self.view.addSubview(tableViewWrap)
         
@@ -119,7 +125,11 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "dictionaryCell")
             cell!.separatorInset = UIEdgeInsetsZero
-            cell!.layoutMargins = UIEdgeInsetsZero
+            
+            if (cell!.respondsToSelector("setLayoutMargins:")) {
+                cell!.layoutMargins = UIEdgeInsetsZero
+            }
+            
             cell!.selectionStyle = UITableViewCellSelectionStyle.None
             var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
             selectedView.tag = 999

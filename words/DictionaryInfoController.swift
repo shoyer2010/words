@@ -59,22 +59,29 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
                 wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
                 tableHeader.addSubview(wordLabel)
                 
-                var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-                appearCountLabel.text = "出现(次)"
+                var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+                appearCountLabel.text = "出现"
                 appearCountLabel.textColor = Color.white
                 appearCountLabel.textAlignment = NSTextAlignment.Center
                 appearCountLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
                 tableHeader.addSubview(appearCountLabel)
                 
-                var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.33, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-                wrongCountLabel.text = "错误(次)"
+                var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.25, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+                wrongCountLabel.text = "错误"
                 wrongCountLabel.textColor = Color.white
                 wrongCountLabel.textAlignment = NSTextAlignment.Center
                 wrongCountLabel.font = UIFont(name: wrongCountLabel.font.fontName, size: CGFloat(12))
                 tableHeader.addSubview(wrongCountLabel)
                 
-                var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.66, y: 0, width: (tableHeader.frame.width - 100) * 0.33, height: 30))
-                haveMasteredLabel.text = "已掌握"
+                var timeCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.5, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+                timeCountLabel.text = "反应(秒)"
+                timeCountLabel.textColor = Color.white
+                timeCountLabel.textAlignment = NSTextAlignment.Center
+                timeCountLabel.font = UIFont(name: timeCountLabel.font.fontName, size: CGFloat(12))
+                tableHeader.addSubview(timeCountLabel)
+                
+                var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.75, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+                haveMasteredLabel.text = "掌握"
                 haveMasteredLabel.textColor = Color.white
                 haveMasteredLabel.textAlignment = NSTextAlignment.Center
                 haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(12))
@@ -87,7 +94,11 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
                 self.tableView.layer.cornerRadius = Layer.cornerRadius
                 self.tableView.layer.masksToBounds = true
                 self.tableView.separatorInset = UIEdgeInsetsZero
-                self.tableView.layoutMargins = UIEdgeInsetsZero
+                
+                if (self.tableView.respondsToSelector("setLayoutMargins:")) {
+                    self.tableView.layoutMargins = UIEdgeInsetsZero
+                }
+                
                 tableViewWrap.addSubview(self.tableView)
                 
                 tableViewWrap.bringSubviewToFront(tableHeader)
@@ -112,10 +123,11 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             word.setValue(row[0] as String, forKey: "id")
             word.setValue(row[1] as String, forKey: "word")
             
-            for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
+            for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes, rightSeconds FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
                 word.setValue(row2[0] as Int, forKey: "wordStatus")
                 word.setValue(row2[1] as Int, forKey: "appearTimes")
                 word.setValue(row2[2] as Int, forKey: "rightTimes")
+                word.setValue(((row2[3] as String) as NSString).floatValue, forKey: "rightSeconds")
             }
             
             self.words.addObject(word)
@@ -291,13 +303,17 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         var wordLabelTag = 1001
         var appearCountLabelTag = 1002
         var wrongLabelTag = 1003
-        var haveMasteredLabelTag = 1004
+        var timeLabellTag = 1004
+        var haveMasteredLabelTag = 1005
         
         var cell: UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("cell") as? UITableViewCell
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "cell")
             cell!.separatorInset = UIEdgeInsetsZero
-            cell!.layoutMargins = UIEdgeInsetsZero
+            
+            if (cell!.respondsToSelector("setLayoutMargins:")) {
+                cell!.layoutMargins = UIEdgeInsetsZero
+            }
             
             var wordLabel = UILabel(frame: CGRect(x: 10, y: 3, width: 100, height: 24))
             wordLabel.tag = wordLabelTag
@@ -307,7 +323,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
             cell!.contentView.addSubview(wordLabel)
             
-            var appearCountLabel = UILabel(frame: CGRect(x: 100, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            var appearCountLabel = UILabel(frame: CGRect(x: 100, y: 0, width: (tableView.frame.width - 100) * 0.25, height: 30))
             appearCountLabel.tag = appearCountLabelTag
             appearCountLabel.text = "23"
             appearCountLabel.textColor = Color.gray
@@ -315,7 +331,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             appearCountLabel.textAlignment = NSTextAlignment.Center
             cell!.addSubview(appearCountLabel)
             
-            var wrongLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.33, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            var wrongLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.25, y: 0, width: (tableView.frame.width - 100) * 0.25, height: 30))
             wrongLabel.tag = wrongLabelTag
             wrongLabel.text = "12"
             wrongLabel.textColor = Color.gray
@@ -323,7 +339,17 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             wrongLabel.textAlignment = NSTextAlignment.Center
             cell!.addSubview(wrongLabel)
             
-            var haveMasteredLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.66, y: 0, width: (tableView.frame.width - 100) * 0.33, height: 30))
+            var timeLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.5, y: 0, width: (tableView.frame.width - 100) * 0.25, height: 30))
+            timeLabel.tag = timeLabellTag
+            timeLabel.text = "12.12"
+            timeLabel.textColor = Color.gray
+            timeLabel.font = UIFont(name: timeLabel.font.fontName, size: CGFloat(14))
+            timeLabel.textAlignment = NSTextAlignment.Center
+            cell!.addSubview(timeLabel)
+            
+
+            
+            var haveMasteredLabel = UILabel(frame: CGRect(x: 100 + (tableView.frame.width - 100) * 0.75, y: 0, width: (tableView.frame.width - 100) * 0.25, height: 30))
             haveMasteredLabel.tag = haveMasteredLabelTag
             haveMasteredLabel.text = "√"
             haveMasteredLabel.textColor = Color.green
@@ -349,6 +375,15 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             wrongLabel.text = "\(appearCount! - rightTimes!)"
         } else {
             wrongLabel.text = "-"
+        }
+        
+        var timeLabel = cell!.viewWithTag(timeLabellTag) as UILabel
+        var rightSeconds = self.words[indexPath.row]["rightSeconds"] as? Float
+        if (rightSeconds != nil && rightSeconds > 0 && rightTimes > 0) {
+            var averageTime = rightSeconds! / Float(rightTimes!)
+            timeLabel.text = NSString(format: "%.2f", averageTime)
+        } else {
+            timeLabel.text = "-"
         }
         
         

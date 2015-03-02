@@ -58,6 +58,16 @@ NSString(format: "%.5f", pow(Float(seconds), 0.5))
 //NSLog(@"encrypted: %@", ret);
 
 
+var dfa = 23.323
+var cdf = "\(dfa)" as NSString
+cdf.floatValue
+
+Int(3.9)
+
+
+
+
+
 
 
 

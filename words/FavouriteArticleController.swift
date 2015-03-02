@@ -64,7 +64,11 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         tableView.delegate = self
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
         tableView.separatorInset = UIEdgeInsetsZero
-        tableView.layoutMargins = UIEdgeInsetsZero
+        
+        if (tableView.respondsToSelector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsetsZero
+        }
+        
         tableView.separatorStyle = UITableViewCellSeparatorStyle.None
         self.contentView.addSubview(tableView)
         self.endLoading()
@@ -150,7 +154,11 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "cell")
             cell!.separatorInset = UIEdgeInsetsZero
-            cell!.layoutMargins = UIEdgeInsetsZero
+            
+            if (cell!.respondsToSelector("setLayoutMargins:")) {
+                cell!.layoutMargins = UIEdgeInsetsZero
+            }
+            
             cell!.backgroundColor = UIColor.clearColor()
             cell!.selectionStyle = UITableViewCellSelectionStyle.None
             var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 66))

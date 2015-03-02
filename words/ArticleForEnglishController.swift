@@ -28,7 +28,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         
         self.view.backgroundColor = Color.red
         
-        indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 30, y: self.view.frame.height / 2 - 30, width: 60, height: 60))
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 15, y: self.view.frame.height / 2 - 15, width: 30, height: 30))
         indicator.color = Color.red
         self.view.addSubview(indicator)
 

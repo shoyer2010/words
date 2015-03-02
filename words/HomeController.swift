@@ -262,7 +262,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         
         var userId = user!["id"] as String
         
-        if (!Util.isFileExist(Util.getFilePath(userId + ".db"))) {
+        if (!Util.isFileExist(userId + ".db")) {
             self.needToLearnLabel.text = "没有单词需要复习"
             return
         }

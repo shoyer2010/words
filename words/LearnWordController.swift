@@ -32,6 +32,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var knowButton: UIButton!
     var nextButton: UIButton!
     var removeButton: UIButton!
+    var statusButton: UIButton!
+    var infoView: UILabel!
     
     var wordView: UIView!
     var tableViewWrap: UIView!
@@ -42,6 +44,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var timer: NSTimer!
     
     var wrongCounter: Int! = 0
+    
+    var rightSecondsCounter: NSTimeInterval!
     
     
     // 0 no word to show. 
@@ -98,13 +102,40 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         viewLearnWordPage.backgroundColor = Color.appBackground
         viewLearnWordPage.frame = CGRectMake(0, viewLearnWordSentenceHeight, learnWordScrollView.frame.width, learnWordScrollView.frame.height)
         
-        removeButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width - 45, y: 32, width: 30, height: 30))
+        
+        removeButton = UIButton(frame: CGRect(x: 15, y: 32, width: 30, height: 30))
         removeButton.backgroundColor = UIColor.purpleColor()
         removeButton.layer.cornerRadius = 15
         removeButton.layer.masksToBounds = true
         removeButton.tintColor = UIColor.whiteColor()
         removeButton.setTitle("删", forState: UIControlState.Normal)
+        removeButton.addTarget(self, action: "onRemoveButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         viewLearnWordPage.addSubview(removeButton)
+        
+        statusButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width - 45, y: 32, width: 30, height: 30))
+        statusButton.backgroundColor = UIColor.purpleColor()
+        statusButton.layer.cornerRadius = 15
+        statusButton.layer.masksToBounds = true
+        statusButton.tintColor = UIColor.whiteColor()
+        statusButton.setTitle("i", forState: UIControlState.Normal)
+        statusButton.addTarget(self, action: "onStatusButtonTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        statusButton.addTarget(self, action: "onStatusButtonTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside)
+        viewLearnWordPage.addSubview(statusButton)
+        
+        infoView = UILabel(frame: CGRect(x: removeButton.frame.origin.x + removeButton.frame.width + 15, y: 32, width: viewLearnWordPage.frame.width - 120, height: 90))
+        infoView.text = "  已经出现： 4 次\n  正确回答： 5 次 \n  错误： 5 次 \n  平均反应(只算正确)：23 秒 \n  系统安排复习时间点：1天后"
+        infoView.textColor = Color.lightGray
+        infoView.font = UIFont(name: Fonts.kaiti, size: 14)
+        infoView.numberOfLines = 5
+        infoView.hidden = true
+        infoView.alpha = 0.95
+        infoView.backgroundColor = Color.blockBackground
+        infoView.layer.cornerRadius = Layer.cornerRadius
+        infoView.layer.borderColor = Color.lightGray.CGColor
+        infoView.layer.borderWidth = 1
+        infoView.layer.masksToBounds = true
+        viewLearnWordPage.addSubview(infoView)
+        
         
         wordView = UIView(frame: CGRect(x: 0, y: viewLearnWordPage.frame.height * 0.17, width: viewLearnWordPage.frame.width, height: 90))
         wordView.backgroundColor = Color.appBackground
@@ -168,7 +199,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableView.layer.masksToBounds = true
         tableView.scrollEnabled = false
         tableView.separatorInset = UIEdgeInsetsZero
-        tableView.layoutMargins = UIEdgeInsetsZero
+        
+        if (tableView.respondsToSelector("setLayoutMargins:")) {
+            tableView.layoutMargins = UIEdgeInsetsZero
+        }
         
         chineseView = UILabel(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
         chineseView.text = ""
@@ -282,7 +316,11 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell = UITableViewCell(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         cell.separatorInset = UIEdgeInsetsZero
-        cell.layoutMargins = UIEdgeInsetsZero
+        
+        if (cell.respondsToSelector("setLayoutMargins:")) {
+            cell.layoutMargins = UIEdgeInsetsZero
+        }
+        
         cell.selectionStyle = UITableViewCellSelectionStyle.None
         var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         selectedView.tag = 999
@@ -362,6 +400,30 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         })
     }
     
+    
+    func onStatusButtonTouchDown(sender: UIButton) {
+        self.infoView.hidden = false
+        self.viewLearnWordPage.bringSubviewToFront(self.infoView)
+    }
+    
+    func onStatusButtonTouchUp(sender: UIButton) {
+        self.infoView.hidden = true
+    }
+    
+    func onRemoveButtonTapped(recognizer: UIGestureRecognizer) {
+        DictionaryUtil.deleteWordFromDictionary(self.selectedDictionaryId!, wordId: self.word!["id"] as String, delegate: self)
+        self.setNextWord()
+    }
+    
+    func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {
+        var wordId = params["id"] as String
+        var type = params["type"] as Int
+        
+        var customDictionayId = DictionaryUtil.customDictionaryId()
+        var db = Database(Util.getFilePath(customDictionayId + ".db"))
+        db.prepare("DELETE FROM operationLogs WHERE wordId=? and wordStatus=?", wordId, type).run()
+    }
+    
     func postWrongWordsToServer() {
         var db = Database(Util.getFilePath(self.getUserId() + ".db"))
         
@@ -432,11 +494,15 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
         
         var rightTimes = self.word!["rightTimes"] as Int
+        var rightSeconds = self.word!["rightSeconds"] as Float
+        
         if (type == 1) {
             rightTimes = rightTimes + 1
+            var time = Float(NSDate().timeIntervalSince1970 - self.rightSecondsCounter)
+            rightSeconds = rightSeconds + time
         }
         
-        db.prepare("UPDATE learningProgress SET wordStatus=?, lastAppearTime=?, rightTimes=?  WHERE dictionaryId=? and wordId=?", newStatus, lastAppearTime, rightTimes, self.selectedDictionaryId, self.word!["id"] as String).run()
+        db.prepare("UPDATE learningProgress SET wordStatus=?, lastAppearTime=?, rightTimes=?, rightSeconds=?  WHERE dictionaryId=? and wordId=?", newStatus, lastAppearTime, rightTimes, NSString(format: "%.2f", rightSeconds) as String, self.selectedDictionaryId, self.word!["id"] as String).run()
     }
     
     func frameOfView() -> CGRect {
@@ -877,13 +943,14 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             }
             
             var db = Database(Util.getFilePath(self.getUserId() + ".db"))
-            for row in db.prepare("SELECT wordStatus, lastAppearTime, rightTimes, appearTimes FROM learningProgress WHERE dictionaryId=? and wordId=?", self.selectedDictionaryId!, wordId) {
+            for row in db.prepare("SELECT wordStatus, lastAppearTime, rightTimes, appearTimes, rightSeconds FROM learningProgress WHERE dictionaryId=? and wordId=?", self.selectedDictionaryId!, wordId) {
                 
                 var wordStatus: Int = row[0] as Int
                 var lastAppearTime: Int = row[1] as Int
                 var rightTimes: Int = row[2] as Int
                 var appearTimes: Int = row[3] as Int
-                self.word = ["id": id, "word": wordString, "phoneticSymbolUS": phoneticSymbolUS, "usPronunciation": usPronunciation, "phoneticSymbolUK": phoneticSymbolUK, "ukPronunciation": ukPronunciation, "chinese": chinese, "wordStatus": wordStatus, "lastAppearTime": lastAppearTime, "rightTimes": rightTimes]
+                var rightSeconds: Float = ((row[4] as String) as NSString).floatValue
+                self.word = ["id": id, "word": wordString, "phoneticSymbolUS": phoneticSymbolUS, "usPronunciation": usPronunciation, "phoneticSymbolUK": phoneticSymbolUK, "ukPronunciation": ukPronunciation, "chinese": chinese, "wordStatus": wordStatus, "lastAppearTime": lastAppearTime, "rightTimes": rightTimes, "rightSeconds": rightSeconds, "appearTimes": appearTimes]
                 
                 switch (wordStatus) {
                 case 0:
@@ -891,13 +958,20 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 case 1:
                     self.pageMode = Util.getRandomInt(from: 1, to: 2) == 1 ? 1: 3
                 case 2:
-                    self.pageMode = Util.getRandomInt(from: 3, to: 4)
+                    var random = Util.getRandomInt(from: 1, to: 3)
+                    if random == 1 {
+                        self.pageMode = 1
+                    } else if (random == 2) {
+                        self.pageMode = 3
+                    } else {
+                        self.pageMode = 4
+                    }
                 case 3:
-                    self.pageMode = 3
+                    self.pageMode = Util.getRandomInt(from: 3, to: 4)
                 case 4:
-                    self.pageMode = 3
+                    self.pageMode = Util.getRandomInt(from: 1, to: 2) == 1 ? 1: 3
                 case 5:
-                    self.pageMode = 4
+                    self.pageMode = 3
                 default:
                     self.pageMode = Util.getRandomInt(from: 3, to: 4)
                 }
@@ -978,6 +1052,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             }
         }
         
+        self.rightSecondsCounter = NSTimeInterval(0)
         self.stopTimer()
         self.optionSelectedRow = nil
         self.currentSentenceIndex = 0
@@ -1016,6 +1091,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func setToView() {
         // hide all the view
         wordLabel.hidden = true
+        statusButton.hidden = true
         removeButton.hidden = true
         tableViewWrap.hidden = true
         wordPhoneticButton.hidden = true
@@ -1028,6 +1104,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         blurViewForWord.hidden = true
         
         removeButton.hidden = (self.pageMode == 0 || self.pageMode == 5)
+        statusButton.hidden = (self.pageMode == 0 || self.pageMode == 5)
         tableViewWrap.hidden = (self.pageMode == 0)
         
         if (self.pageMode == 0) {
@@ -1050,6 +1127,17 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             wordLabel.textColor = Color.gray
             wordLabel.font = UIFont.systemFontOfSize(40)
             wordLabel.hidden = false
+            
+            var appearTimes = self.word!["appearTimes"] as Int
+            var rightTimes = self.word!["rightTimes"] as Int
+            var rightSeconds = self.word!["rightSeconds"] as? Float
+            var text = "-"
+            if (rightSeconds != nil && rightSeconds > 0 && rightTimes > 0) {
+                var averageTime = rightSeconds! / Float(rightTimes)
+                text = NSString(format: "%.2f", averageTime)
+            }
+            
+            infoView.text = "  已经出现： \(appearTimes) 次\n  正确回答： \(rightTimes) 次 \n  错误： \(appearTimes - rightTimes) 次 \n  平均反应(只算正确)：\(text) 秒 \n  系统安排复习时间点：\(self.getTheNextReviewString())"
         }
         
         if (self.pageMode != 0) {
@@ -1087,6 +1175,45 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableView.hidden = (self.pageMode == 0 || self.pageMode == 2 || self.pageMode == 3 || self.pageMode == 4)
         
         self.tableView.reloadData()
+        self.rightSecondsCounter = NSDate().timeIntervalSince1970
+    }
+    
+    func getTheNextReviewString() -> String {
+        var string = "-"
+        if self.word == nil {
+            return string
+        }
+        
+        var days = 0
+        if self.word!["wordStatus"] as Int == 5 {
+            days = (self.word!["lastAppearTime"] as Int + DateUtil.DAYS_60 - time(nil)) / 86400
+        }
+        
+        if self.word!["wordStatus"] as Int == 4 {
+            days = (self.word!["lastAppearTime"] as Int + DateUtil.DAYS_30 - time(nil)) / 86400
+        }
+        
+        if self.word!["wordStatus"] as Int == 3 {
+            days = (self.word!["lastAppearTime"] as Int + DateUtil.DAYS_10 - time(nil)) / 86400
+        }
+        
+        if self.word!["wordStatus"] as Int == 2 {
+            days = (self.word!["lastAppearTime"] as Int + DateUtil.DAYS_1 - time(nil)) / 86400
+        }
+        
+        if (days < 1) {
+            string = "今天"
+        }
+        
+        if (days >= 1 && days <= 2) {
+            string = "明天"
+        }
+        
+        if (days > 2) {
+            string = "\(Int(days))天后"
+        }
+        
+        return string
     }
     
     func setWordPhonetic() {

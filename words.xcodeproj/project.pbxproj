@@ -665,7 +665,7 @@
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
 				);
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
@@ -684,7 +684,7 @@
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
 				);
 				INFOPLIST_FILE = words/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";

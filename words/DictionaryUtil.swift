@@ -37,7 +37,7 @@ class DictionaryUtil {
         var dbSource = Database(Util.getFilePath(dictionaryId + ".db"))
         
         for row in dbSource.prepare("SELECT id FROM words") {
-            dbTo.prepare("INSERT INTO learningProgress(dictionaryId, wordId, wordStatus, lastAppearTime, appearTimes, rightTimes) VALUES(?, ?, ?, ?, ?, ?)", dictionaryId, row[0] as String, 0, 0, 0, 0).run()
+            dbTo.prepare("INSERT INTO learningProgress(dictionaryId, wordId, wordStatus, lastAppearTime, appearTimes, rightTimes, rightSeconds) VALUES(?, ?, ?, ?, ?, ?, ?)", dictionaryId, row[0] as String, 0, 0, 0, 0, "0").run()
         }
     }
     
@@ -71,9 +71,11 @@ class DictionaryUtil {
         var count = 0
         if (user != nil) {
             var userId = user!["id"] as String
-            var db = Database(Util.getFilePath(userId + ".db"))
-            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus=6", fromTime) {
-                count = row[0] as Int
+            if (Util.isFileExist(userId + ".db")) {
+                var db = Database(Util.getFilePath(userId + ".db"))
+                for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus=6", fromTime) {
+                    count = row[0] as Int
+                }
             }
         }
         
@@ -86,9 +88,11 @@ class DictionaryUtil {
         var count = 0
         if (user != nil) {
             var userId = user!["id"] as String
-            var db = Database(Util.getFilePath(userId + ".db"))
-            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus IN(2,3,4,5)", fromTime) {
-                count = row[0] as Int
+            if (Util.isFileExist(userId + ".db")) {
+                var db = Database(Util.getFilePath(userId + ".db"))
+                for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus IN(2,3,4,5)", fromTime) {
+                    count = row[0] as Int
+                }
             }
         }
         
@@ -100,9 +104,11 @@ class DictionaryUtil {
         var count = 0
         if (user != nil) {
             var userId = user!["id"] as String
-            var db = Database(Util.getFilePath(userId + ".db"))
-            for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus!=6", fromTime) {
-                count = row[0] as Int
+            if (Util.isFileExist(userId + ".db")) {
+                var db = Database(Util.getFilePath(userId + ".db"))
+                for row in db.prepare("SELECT count(rowid) FROM learningProgress WHERE lastAppearTime>=? AND wordStatus!=6", fromTime) {
+                    count = row[0] as Int
+                }
             }
         }
         

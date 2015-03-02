@@ -102,10 +102,12 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     }
     
     func onTapFavouriteIcon(sender: UIView) {
-        var data: AnyObject = self.delegate!.setData()
-        var params = NSMutableDictionary()
-        params.setValue(data["id"] as? String, forKey: "id")
-        API.instance.post("/article/favourite", delegate: self, params: params)
+        var data: AnyObject? = self.delegate!.setData()
+        if (data != nil) {
+            var params = NSMutableDictionary()
+            params.setValue(data!["id"] as? String, forKey: "id")
+            API.instance.post("/article/favourite", delegate: self, params: params)
+        }
     }
     
     func articleFavourite(data: AnyObject) {

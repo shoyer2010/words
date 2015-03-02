@@ -51,11 +51,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var shouldNotifyValue = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SHOULD_NOTIFY) as? Bool
         if (shouldNotifyValue != nil && shouldNotifyValue!) {
             var localNotification = UILocalNotification()
-            localNotification.fireDate = NSDate(timeIntervalSince1970: NSTimeInterval(DateUtil.startOfThisDay() + 45000)) // 12:30提醒
+            localNotification.fireDate = NSDate(timeIntervalSince1970: NSTimeInterval(DateUtil.startOfThisDay() + 45000)) // 12:30提醒  慢了8个时间晚上8:30
             localNotification.repeatInterval = NSCalendarUnit.DayCalendarUnit
             localNotification.timeZone = NSTimeZone.defaultTimeZone()
             localNotification.alertBody = randomTips[Util.getRandomInt(from: 0, to: randomTips.count - 1)]
-            localNotification.alertAction = "复习"
+            localNotification.alertAction = "复习单词"
             localNotification.soundName = UILocalNotificationDefaultSoundName
             
             UIApplication.sharedApplication().scheduleLocalNotification(localNotification)

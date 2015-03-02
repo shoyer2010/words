@@ -237,10 +237,12 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
     
     func onTapFavouriteIcon(sender: UIView) {
-        var data: AnyObject = self.data
-        var params = NSMutableDictionary()
-        params.setValue(data["id"] as? String, forKey: "id")
-        API.instance.post("/article/favourite", delegate: self, params: params)
+        if (self.data != nil) {
+            var data: AnyObject = self.data
+            var params = NSMutableDictionary()
+            params.setValue(data["id"] as? String, forKey: "id")
+            API.instance.post("/article/favourite", delegate: self, params: params)
+        }
     }
 
     func articleFavourite(data: AnyObject) {

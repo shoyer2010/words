@@ -33,6 +33,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     }
     
     func request(api: String, method: String = "GET", params: NSMutableDictionary = NSMutableDictionary(), file: NSData? = nil) -> Void {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         self.api = api
         self.params = params
         
@@ -96,6 +97,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     }
     
     func connection(connection: NSURLConnection, didFailWithError error: NSError) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         println("http request failed!!!!!");
         println(error)
         // TODO: check if the network works.
@@ -136,6 +138,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     }
     
     func connectionDidFinishLoading(connection: NSURLConnection) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         println(self.api! + " Response: \(self.responseCode)")
 
         var data: AnyObject?

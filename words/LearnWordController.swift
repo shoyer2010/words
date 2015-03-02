@@ -47,6 +47,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     
     var rightSecondsCounter: NSTimeInterval!
     
+    var indicator: UIActivityIndicatorView!
+    
+    var viewLearnWordSentence: UIView!
+    
     
     // 0 no word to show. 
     // 1 no button, and four options to choose.
@@ -76,13 +80,12 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         learnWordScrollView.bounces = false
 
         learnWordScrollView.contentSize = CGSize(width: learnWordScrollView.frame.width, height: learnWordScrollView.frame.height + viewLearnWordSentenceHeight)
-        
         self.view.addSubview(learnWordScrollView)
 
 
         
         // page up
-        var viewLearnWordSentence = UIView(frame: CGRect(x: 0, y: 0, width: learnWordScrollView.frame.width, height: viewLearnWordSentenceHeight))
+        viewLearnWordSentence = UIView(frame: CGRect(x: 0, y: 0, width: learnWordScrollView.frame.width, height: viewLearnWordSentenceHeight))
         viewLearnWordSentence.backgroundColor = Color.blockBackground
         self.sentencesScrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: viewLearnWordSentence.frame.width, height: viewLearnWordSentence.frame.height))
         self.sentencesScrollView.delegate = self
@@ -90,6 +93,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.sentencesScrollView.bounces = false
         self.sentencesScrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onSentencesScrollViewTapped:"))
         self.sentencesScrollView.showsHorizontalScrollIndicator = false
+        
+        indicator = UIActivityIndicatorView(frame: CGRect(x: viewLearnWordSentence.frame.width / 2 - 15, y: viewLearnWordSentence.frame.height / 2 - 15, width: 30, height: 30))
+        indicator.color = Color.red
+        viewLearnWordSentence.addSubview(indicator)
         
         self.scrollIndicator = UIView()
         self.scrollIndicator.backgroundColor = Color.red
@@ -123,7 +130,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         viewLearnWordPage.addSubview(statusButton)
         
         infoView = UILabel(frame: CGRect(x: removeButton.frame.origin.x + removeButton.frame.width + 15, y: 32, width: viewLearnWordPage.frame.width - 120, height: 90))
-        infoView.text = "  已经出现： 4 次\n  正确回答： 5 次 \n  错误： 5 次 \n  平均反应(只算正确)：23 秒 \n  系统安排复习时间点：1天后"
+        infoView.text = "  已经出现： 4 次\n  正确回答： 5 次 \n  错误： 5 次 \n  平均反应(只算正确)：23 秒 \n  词圣安排复习时间点：1天后"
         infoView.textColor = Color.lightGray
         infoView.font = UIFont(name: Fonts.kaiti, size: 14)
         infoView.numberOfLines = 5
@@ -272,6 +279,15 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         learnWordScrollView.addSubview(viewLearnWordPage)
 
         learnWordScrollView.contentOffset = CGPoint(x: 0, y: viewLearnWordSentenceHeight)
+    }
+    
+    func startLoading() {
+        self.viewLearnWordSentence.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
@@ -519,6 +535,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     
     func loadSentences() {
         if (self.sentences.count == 0 && self.word != nil) {
+            self.startLoading()
             var params = NSMutableDictionary()
             params.setValue(self.word!["id"] as String, forKey: "id")
             API.instance.get("/sentence/getByWordId", delegate: self, params: params)
@@ -526,6 +543,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func sentenceGetByWordId(data: AnyObject) {
+        self.endLoading()
         self.sentences.setArray(data as NSArray)
         self.setToSentencesView()
         
@@ -1137,7 +1155,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 text = NSString(format: "%.2f", averageTime)
             }
             
-            infoView.text = "  已经出现： \(appearTimes) 次\n  正确回答： \(rightTimes) 次 \n  错误： \(appearTimes - rightTimes) 次 \n  平均反应(只算正确)：\(text) 秒 \n  系统安排复习时间点：\(self.getTheNextReviewString())"
+            infoView.text = "  已经出现： \(appearTimes) 次\n  正确回答： \(rightTimes) 次 \n  错误： \(appearTimes - rightTimes) 次 \n  平均反应(只算正确)：\(text) 秒 \n  词圣安排复习时间点：\(self.getTheNextReviewString())"
         }
         
         if (self.pageMode != 0) {
@@ -1251,27 +1269,74 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             return
         }
         
-        var type = self.wordPhoneticType()
-        if (type == "us" && (self.word!["usPronunciation"]? as? String) != nil) {
-            player = AVAudioPlayer(data: NSData(contentsOfURL: Util.getVoiceURL(self.word!["usPronunciation"] as String)), error: nil)
-        }
-        
-        if (type == "uk" && self.word!["ukPronunciation"]? as? String != nil) {
-            player = AVAudioPlayer(data: NSData(contentsOfURL: Util.getVoiceURL(self.word!["ukPronunciation"] as String)), error: nil)
-        }
-        
-        if (player != nil) {
-            player.play()
-        }
+        dispatch_async(dispatch_get_global_queue(0, 0), { () -> Void in
+            self.player = nil
+            var type = self.wordPhoneticType()
+            var word = self.word!["word"] as String
+            if (type == "us" && (self.word!["usPronunciation"]? as? String) != nil) {
+                var filename = Util.getCacheFilePath("us_\(word).mp3")
+                var data = NSData(contentsOfFile: filename)
+                
+                if (data == nil) {
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                    data = NSData(contentsOfURL: Util.getVoiceURL(self.word!["usPronunciation"] as String))
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                }
+                
+                if (data != nil) {
+                    self.player = AVAudioPlayer(data: data, error: nil)
+                    data!.writeToFile(filename, atomically: true)
+                }
+            }
+            
+            if (type == "uk" && self.word!["ukPronunciation"]? as? String != nil) {
+                var filename = Util.getCacheFilePath("uk_\(word).mp3")
+                var data = NSData(contentsOfFile: filename)
+                
+                if (data == nil) {
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                    data = NSData(contentsOfURL: Util.getVoiceURL(self.word!["ukPronunciation"] as String))
+                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                }
+                
+                if (data != nil) {
+                    self.player = AVAudioPlayer(data: data, error: nil)
+                    data!.writeToFile(filename, atomically: true)
+                }
+            }
+            
+            if (self.player != nil) {
+                self.player.play()
+            }
+
+        })
     }
     
     func playSentence() {
-        if (self.sentences.count > 0) {
-            var url = self.sentences![self.currentSentenceIndex]["voice"] as? String
-            if (url != nil) {
-                player = AVAudioPlayer(data: NSData(contentsOfURL: Util.getVoiceURL(url!)), error: nil)
-                player.play()
+        dispatch_async(dispatch_get_global_queue(0, 0), { () -> Void in
+            if (self.sentences.count > 0) {
+                var url = self.sentences![self.currentSentenceIndex]["voice"] as? String
+                if (url != nil) {
+                    var filename = Util.getCacheFilePath(self.sentences![self.currentSentenceIndex]["id"] as String + ".mp3")
+                    var data = NSData(contentsOfFile: filename)
+                    
+                    if (data == nil) {
+                        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                        data = NSData(contentsOfURL: Util.getVoiceURL(url!))
+                        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                    }
+                    
+                    if (data != nil) {
+                        self.player = AVAudioPlayer(data: data, error: nil)
+                        self.player.play()
+                        data!.writeToFile(filename, atomically: true)
+                    }
+                }
             }
-        }
+        })
+    }
+    
+    func error(error: Error, api: String) {
+        self.endLoading()
     }
 }

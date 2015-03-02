@@ -16,10 +16,14 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     var upgradeUrl: NSURL!
     var appUrl: NSURL!
     
+    var alertViewForClearCache: UIAlertView!
+    var alertViewForVersionCheck: UIAlertView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(3)
         self.view.backgroundColor = Color.appBackground
@@ -135,16 +139,17 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
         NSUserDefaults.standardUserDefaults().synchronize()
     }
     
-    func clearCache(sender: UIButton) {
-        var path = Util.getCachePath()
-        var files: NSArray? = NSFileManager.defaultManager().subpathsAtPath(path)
-        if (files != nil) {
-            for filename in files! {
-                NSFileManager.defaultManager().removeItemAtPath(path + "/" + (filename as String), error: nil)
-            }
+    func onPageChange(notification: NSNotification) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.Settings) {
+            cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
         }
-        
-        cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
+    }
+    
+    func clearCache(sender: UIButton) {
+        alertViewForClearCache = UIAlertView(title: "清理缓存", message: "缓存中存的不是太重要的文件，但还是有用的，比如单词和例句的发音之类的，清理后，下次使用的时候如果发现没有，会重新下载，不清理，能省流量，离线无网络照样能使用，Are we clear？", delegate: self, cancelButtonTitle: "不清理，省流量")
+        alertViewForClearCache.addButtonWithTitle("释放空间")
+        alertViewForClearCache.delegate = self
+        alertViewForClearCache.show()
     }
     
     func getCacheFileSize() -> NSString {
@@ -185,15 +190,36 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
             self.upgradeButton.hidden = false
             self.upgradeUrl = NSURL(string: data["url"] as String)
             if (data["force"] as Bool) {
-                var alertView = UIAlertView(title: "好消息！", message: "亲，我们不建议您继续使用此版本，好吧，这不是建议，请升级至最新版本", delegate: self, cancelButtonTitle: "被迫升级")
-                alertView.show()
+                alertViewForVersionCheck = UIAlertView(title: "好消息！", message: "亲，我们不建议您继续使用此版本，好吧，这不是建议，请升级至最新版本", delegate: self, cancelButtonTitle: "被迫升级")
+                alertViewForVersionCheck.show()
             }
         }
     }
     
     func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
-        if (buttonIndex == 0) {
-            UIApplication.sharedApplication().openURL(self.upgradeUrl)
+        
+        if (alertView == alertViewForVersionCheck?) {
+            if (buttonIndex == 0) {
+                UIApplication.sharedApplication().openURL(self.upgradeUrl)
+            }
+        }
+        
+        if (alertView == self.alertViewForClearCache?) {
+            if (buttonIndex == 0) {
+                return
+            }
+            
+            if (buttonIndex == 1) {
+                var path = Util.getCachePath()
+                var files: NSArray? = NSFileManager.defaultManager().subpathsAtPath(path)
+                if (files != nil) {
+                    for filename in files! {
+                        NSFileManager.defaultManager().removeItemAtPath(path + "/" + (filename as String), error: nil)
+                    }
+                }
+                
+                cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
+            }
         }
     }
     

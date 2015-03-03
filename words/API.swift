@@ -80,7 +80,12 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             }
         }
         
-        self.connection = NSURLConnection(request: request, delegate: self, startImmediately: true)!
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+            self.connection = NSURLConnection(request: request, delegate: self, startImmediately: false)!
+            self.connection!.scheduleInRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+            self.connection!.start()
+        })
+        
         println(self.api! + " request--------------------------------------")
         println("API: \(self.connection?.originalRequest.HTTPMethod) \(self.connection?.originalRequest.URL)")
         println(self.api! + " params: " + queryString)

@@ -14,12 +14,21 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     var articleView: UIScrollView!
     var titleView: UILabel!
     var contentView: UILabel!
+    var articleId: String?
+    
+    var indicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onArticleChange:", name: EventKey.ON_ARTICLE_CHANGE, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
+        
         self.view.backgroundColor = Color.red
+        
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 15, y: self.view.frame.height / 2 - 15, width: 30, height: 30))
+        indicator.color = Color.red
+        self.view.addSubview(indicator)
         
         var topBar = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 35))
         topBar.backgroundColor = Color.red
@@ -59,11 +68,33 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         self.view.addSubview(articleView)
     }
     
+    func onPageChange(notification: NSNotification) {
+        if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.ArticleForChinese) {
+            self.setToView(self.delegate!.setData())
+            self.endLoading()
+        }
+    }
+    
     func onArticleChange(notification: NSNotification) {
-        self.setToView(self.delegate!.setData())
+        self.clearData()
+    }
+    
+    func clearData() {
+        titleView.text = ""
+        contentView.text = ""
+        self.startLoading()
     }
     
     func setToView(data: AnyObject) {
+        var id = data["id"] as String
+        if (self.articleId == id) {
+            return
+        } else {
+            self.articleId = id
+        }
+        
+        
+        
         titleView.text = data["titleChinese"] as? String
         var paragraphStyleForTitle = NSMutableParagraphStyle()
         paragraphStyleForTitle.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -98,7 +129,6 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         
         articleView.contentSize = CGSize(width: articleView.frame.width, height: 20 + titleView.frame.height + 40 + contentView.frame.height)
         articleView.contentOffset = CGPoint(x: 0, y: 0)
-
     }
     
     func onTapFavouriteIcon(sender: UIView) {
@@ -116,6 +146,15 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         SuccessView(view: view, message: "成功收藏", completion: {() in
             view.removeFromSuperview()
         })
+    }
+    
+    func startLoading() {
+        self.view.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
     }
     
     func error(error: Error, api: String) {

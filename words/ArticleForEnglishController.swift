@@ -31,8 +31,6 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 15, y: self.view.frame.height / 2 - 15, width: 30, height: 30))
         indicator.color = Color.red
         self.view.addSubview(indicator)
-
-
         
         var topBar = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 35))
         topBar.backgroundColor = Color.red
@@ -156,7 +154,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     
     func onPageChange(notification: NSNotification) {
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.ArticleForEnglish) {
-            loadData()
+            self.loadData()
         }
     }
     
@@ -171,10 +169,8 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
     
     func articleDetail(data:AnyObject) {
-        println(data)
         self.data = data
-        self.setToView(self.data)
-        
+        self.setToView(self.data) // TODO: 这里需要优化， 当大段文本加载的时候会性能差的机子会卡住UI
         var info = NSMutableDictionary()
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_ARTICLE_CHANGE, object: self)
         self.endLoading()

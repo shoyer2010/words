@@ -60,7 +60,9 @@ class ApplicationController: UIViewController, UIScrollViewDelegate, APIDataDele
 
     
     func scrollToPage(page: Int = 2) {
-        self.scrollView.setContentOffset(CGPoint(x: self.view.frame.width * CGFloat(page), y: 0), animated: true)
+        dispatch_async(dispatch_get_global_queue(0, 0), { () -> Void in
+            self.scrollView.setContentOffset(CGPoint(x: self.view.frame.width * CGFloat(page), y: 0), animated: true)
+        })
         
         switch (page) {
         case 0:

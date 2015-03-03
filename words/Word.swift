@@ -30,6 +30,6 @@ class Word {
         
         statement.run(id, wordString, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese)
         
-        DictionaryUtil.importDataToLearingProcess(DictionaryUtil.customDictionaryId())
+        DictionaryUtil.importDataToLearingProcess(DictionaryUtil.customDictionaryId()) // TODO: 这里应该优化，身学习记录库单条写入
     }
 }

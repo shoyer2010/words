@@ -285,9 +285,13 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func downloadDictionary() {
-        var params: NSMutableDictionary = NSMutableDictionary()
-        params.setValue(self.selectedDictionaryId, forKey: "id")
-        API.instance.get("/dictionary/download", delegate: self,  params: params)
+        var progress = self.downloadProgress.valueForKey(self.selectedDictionaryId) as? Float
+        if (progress == nil) {
+            var params: NSMutableDictionary = NSMutableDictionary()
+            params.setValue(self.selectedDictionaryId, forKey: "id")
+            API.instance.get("/dictionary/download", delegate: self,  params: params)
+            self.downloadProgress.setValue(0, forKey: self.selectedDictionaryId)
+        }
     }
     
     func downloadCustomDictionary() {

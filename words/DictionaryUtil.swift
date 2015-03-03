@@ -29,16 +29,38 @@ class DictionaryUtil {
         return dictionary
     }
     
-    class func importDataToLearingProcess(dictionaryId: String) {
+    class func importDataToLearingProcess(dictionaryId: String, progressCallback: ((progress: Float) -> Bool)? = nil) {
         var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
         var userId = user!["id"] as String
         
         var dbTo = Database(Util.getFilePath(userId + ".db"))
         var dbSource = Database(Util.getFilePath(dictionaryId + ".db"))
         
-        for row in dbSource.prepare("SELECT id FROM words") {
-            dbTo.prepare("INSERT INTO learningProgress(dictionaryId, wordId, wordStatus, lastAppearTime, appearTimes, rightTimes, rightSeconds) VALUES(?, ?, ?, ?, ?, ?, ?)", dictionaryId, row[0] as String, 0, 0, 0, 0, "0").run()
+        var total = 0
+        for row in dbSource.prepare("SELECT count(rowid) FROM words") {
+            total = row[0] as Int
         }
+        
+        if (total == 0) {
+            progressCallback?(progress: 1.0)
+        }
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { () -> Void in
+            var i = 1
+            for row in dbSource.prepare("SELECT id FROM words") {
+                dbTo.prepare("INSERT INTO learningProgress(dictionaryId, wordId, wordStatus, lastAppearTime, appearTimes, rightTimes, rightSeconds) VALUES(?, ?, ?, ?, ?, ?, ?)", dictionaryId, row[0] as String, 0, 0, 0, 0, "0").run()
+                
+                var progress = Float(i) / Float(total)
+                
+                if (progressCallback != nil) {
+                    if(progressCallback!(progress: progress)) {
+                        break
+                    }
+                }
+                
+                i++
+            }
+        })
     }
     
     class func deleteWordFromDictionary(dictionaryId: String, wordId: String, delegate: APIDataDelegate) {

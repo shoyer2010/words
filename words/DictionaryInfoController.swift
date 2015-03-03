@@ -5,13 +5,18 @@ import UIKit
 class DictionaryInfoController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, APIDataDelegate {
     var subView: UIView!
     var tableView: UITableView!
+    var learnButton: UIButton!
     var editButton: UIButton!
+    var deleteButton: UIButton!
     var subViewHeight: CGFloat = 0
     var delegate: DictionaryInfoDelegate!
     var dictionary: AnyObject?
     var words: NSMutableArray = NSMutableArray()
     
-    var indicator: UIActivityIndicatorView!
+    var progressView: UAProgressView!
+    
+    var queue: dispatch_queue_t?
+    var showing: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,114 +35,96 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
-        indicator = UIActivityIndicatorView(frame: CGRect(x: self.subView.frame.width / 2 - 30, y: self.subView.frame.height / 2 - 30, width: 60, height: 60))
-        indicator.color = Color.red
-        self.subView.addSubview(indicator)
+        progressView = UAProgressView()
+        progressView.frame = CGRect(x: self.subView.frame.width / 2 - 35, y: self.subView.frame.height / 2 - 50, width: 70, height: 70)
+        progressView.lineWidth = 2
+        progressView.tintColor = Color.red
         
-        self.startLoading()
-        UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
-            self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
-            self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
-            }) { (isDone: Bool) -> Void in
-                
-                var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
-                tableViewWrap.backgroundColor = Color.blockBackground
-                tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
-                tableViewWrap.layer.shadowOffset = Layer.shadowOffset
-                tableViewWrap.layer.shadowColor = Layer.shadowColor
-                tableViewWrap.layer.shadowRadius = Layer.shadowRadius
-                tableViewWrap.layer.cornerRadius = Layer.cornerRadius
-                
-                var tableHeader = UIView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: 30))
-                tableHeader.backgroundColor = Color.red.colorWithAlphaComponent(0.95)
-                
-                var wordLabel = UILabel(frame: CGRect(x:  10, y: 0, width: 100, height: 30))
-                wordLabel.text = "单词"
-                wordLabel.textColor = Color.white
-                wordLabel.textAlignment = NSTextAlignment.Left
-                wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
-                tableHeader.addSubview(wordLabel)
-                
-                var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
-                appearCountLabel.text = "出现"
-                appearCountLabel.textColor = Color.white
-                appearCountLabel.textAlignment = NSTextAlignment.Center
-                appearCountLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
-                tableHeader.addSubview(appearCountLabel)
-                
-                var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.25, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
-                wrongCountLabel.text = "错误"
-                wrongCountLabel.textColor = Color.white
-                wrongCountLabel.textAlignment = NSTextAlignment.Center
-                wrongCountLabel.font = UIFont(name: wrongCountLabel.font.fontName, size: CGFloat(12))
-                tableHeader.addSubview(wrongCountLabel)
-                
-                var timeCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.5, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
-                timeCountLabel.text = "反应(秒)"
-                timeCountLabel.textColor = Color.white
-                timeCountLabel.textAlignment = NSTextAlignment.Center
-                timeCountLabel.font = UIFont(name: timeCountLabel.font.fontName, size: CGFloat(12))
-                tableHeader.addSubview(timeCountLabel)
-                
-                var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.75, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
-                haveMasteredLabel.text = "掌握"
-                haveMasteredLabel.textColor = Color.white
-                haveMasteredLabel.textAlignment = NSTextAlignment.Center
-                haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(12))
-                tableHeader.addSubview(haveMasteredLabel)
-                tableViewWrap.addSubview(tableHeader)
-                
-                self.tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
-                self.tableView.delegate = self
-                self.tableView.dataSource = self
-                self.tableView.layer.cornerRadius = Layer.cornerRadius
-                self.tableView.layer.masksToBounds = true
-                self.tableView.separatorInset = UIEdgeInsetsZero
-                
-                if (self.tableView.respondsToSelector("setLayoutMargins:")) {
-                    self.tableView.layoutMargins = UIEdgeInsetsZero
-                }
-                
-                tableViewWrap.addSubview(self.tableView)
-                
-                tableViewWrap.bringSubviewToFront(tableHeader)
-                
-                self.subView.addSubview(tableViewWrap)
-                
-                self.endLoading()
+        var percentView = UILabel(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        percentView.text = ""
+        percentView.textAlignment = NSTextAlignment.Center
+        percentView.font = UIFont.systemFontOfSize(14)
+        percentView.textColor = Color.white
+        percentView.backgroundColor = Color.red
+        percentView.layer.cornerRadius = 20
+        percentView.layer.opacity = 0.9
+        percentView.layer.masksToBounds = true
+        progressView.centralView = percentView
+        self.view.addSubview(progressView)
+        
+        var tableViewWrap = UIView(frame: CGRect(x: 15, y: 20, width: self.view.frame.width - 30, height: self.subView.frame.height - 70))
+        tableViewWrap.backgroundColor = Color.blockBackground
+        tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
+        tableViewWrap.layer.shadowOffset = Layer.shadowOffset
+        tableViewWrap.layer.shadowColor = Layer.shadowColor
+        tableViewWrap.layer.shadowRadius = Layer.shadowRadius
+        tableViewWrap.layer.cornerRadius = Layer.cornerRadius
+        
+        var tableHeader = UIView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: 30))
+        tableHeader.backgroundColor = Color.red.colorWithAlphaComponent(0.95)
+        
+        var wordLabel = UILabel(frame: CGRect(x:  10, y: 0, width: 100, height: 30))
+        wordLabel.text = "单词"
+        wordLabel.textColor = Color.white
+        wordLabel.textAlignment = NSTextAlignment.Left
+        wordLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
+        tableHeader.addSubview(wordLabel)
+        
+        var appearCountLabel = UILabel(frame: CGRect(x:  100, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+        appearCountLabel.text = "出现"
+        appearCountLabel.textColor = Color.white
+        appearCountLabel.textAlignment = NSTextAlignment.Center
+        appearCountLabel.font = UIFont(name: wordLabel.font.fontName, size: CGFloat(12))
+        tableHeader.addSubview(appearCountLabel)
+        
+        var wrongCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.25, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+        wrongCountLabel.text = "错误"
+        wrongCountLabel.textColor = Color.white
+        wrongCountLabel.textAlignment = NSTextAlignment.Center
+        wrongCountLabel.font = UIFont(name: wrongCountLabel.font.fontName, size: CGFloat(12))
+        tableHeader.addSubview(wrongCountLabel)
+        
+        var timeCountLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.5, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+        timeCountLabel.text = "反应(秒)"
+        timeCountLabel.textColor = Color.white
+        timeCountLabel.textAlignment = NSTextAlignment.Center
+        timeCountLabel.font = UIFont(name: timeCountLabel.font.fontName, size: CGFloat(12))
+        tableHeader.addSubview(timeCountLabel)
+        
+        var haveMasteredLabel = UILabel(frame: CGRect(x:  100 + (tableHeader.frame.width - 100) * 0.75, y: 0, width: (tableHeader.frame.width - 100) * 0.25, height: 30))
+        haveMasteredLabel.text = "掌握"
+        haveMasteredLabel.textColor = Color.white
+        haveMasteredLabel.textAlignment = NSTextAlignment.Center
+        haveMasteredLabel.font = UIFont(name: haveMasteredLabel.font.fontName, size: CGFloat(12))
+        tableHeader.addSubview(haveMasteredLabel)
+        tableViewWrap.addSubview(tableHeader)
+        
+        self.tableView = UITableView(frame: CGRect(x: 6, y: 36, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 42))
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        self.tableView.layer.cornerRadius = Layer.cornerRadius
+        self.tableView.layer.masksToBounds = true
+        self.tableView.separatorInset = UIEdgeInsetsZero
+        
+        if (self.tableView.respondsToSelector("setLayoutMargins:")) {
+            self.tableView.layoutMargins = UIEdgeInsetsZero
         }
         
-        self.dictionary = DictionaryUtil.getDictionaryInfo(self.delegate.setDictionaryId())
-        var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
-        var sql = "SELECT id, word FROM words"
-        if (self.dictionary!["custom"] as Bool) {
-            sql = "SELECT id, word FROM words ORDER BY rowid desc"
-        }
+        tableViewWrap.addSubview(self.tableView)
         
-        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
-        var userId = user!["id"] as String
-        var dbUser = Database(Util.getFilePath(userId + ".db"))
-        for row in db.prepare(sql) {
-            var word = NSMutableDictionary()
-            word.setValue(row[0] as String, forKey: "id")
-            word.setValue(row[1] as String, forKey: "word")
-            
-            for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes, rightSeconds FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
-                word.setValue(row2[0] as Int, forKey: "wordStatus")
-                word.setValue(row2[1] as Int, forKey: "appearTimes")
-                word.setValue(row2[2] as Int, forKey: "rightTimes")
-                word.setValue(((row2[3] as String) as NSString).floatValue, forKey: "rightSeconds")
-            }
-            
-            self.words.addObject(word)
-        }
+        tableViewWrap.bringSubviewToFront(tableHeader)
         
+        self.subView.addSubview(tableViewWrap)
         
-        
-        var learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 100, y: self.subView.frame.height - 40, width: 60, height: 30))
+        learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 100, y: self.subView.frame.height - 40, width: 60, height: 30))
         learnButton.backgroundColor = Color.gray
+        learnButton.userInteractionEnabled = false
+        learnButton.alpha = 0.5
         learnButton.addTarget(self, action: "onLearnButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(learnButton)
+        
+        
+        self.dictionary = DictionaryUtil.getDictionaryInfo(self.delegate.setDictionaryId())
         
         if (self.dictionary != nil && self.dictionary!["custom"] as Bool) {
             if ((NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String ) != nil) {
@@ -158,32 +145,40 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         editButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
         editButton.setTitle("编辑", forState: UIControlState.Normal)
+        editButton.userInteractionEnabled = false
+        editButton.alpha = 0.5
         editButton.backgroundColor = Color.gray
         editButton.addTarget(self, action: "onEditButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(editButton)
         
-        var deleteButton = UIButton(frame: CGRect(x: editButton.frame.origin.x + editButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
+        deleteButton = UIButton(frame: CGRect(x: editButton.frame.origin.x + editButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
         deleteButton.setTitle("删除", forState: UIControlState.Normal)
         deleteButton.backgroundColor = Color.red
+        deleteButton.userInteractionEnabled = false
+        deleteButton.alpha = 0.5
         deleteButton.addTarget(self, action: "onDeleteButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(deleteButton)
-        
-        
         
         if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
             deleteButton.userInteractionEnabled = false
             deleteButton.layer.opacity = 0.5
-        } else {
-            deleteButton.userInteractionEnabled = true
-            deleteButton.layer.opacity = 1
+        }
+        
+        UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+            self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
+            self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
+            }) { (isDone: Bool) -> Void in
+                self.prepareWords()
         }
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {
+        self.progressView.hidden = true
         self.closeView()
     }
     
     func closeView() {
+        self.showing = false
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
             self.subView.transform = CGAffineTransformMakeTranslation(0, -self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
@@ -240,9 +235,32 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         if (self.dictionary != nil && (self.dictionary!["custom"] as Bool)) {
             if ((NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String ) != nil) {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY)
+                NSUserDefaults.standardUserDefaults().synchronize()
+                NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
+                self.closeView()
             } else{
-                NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_CUSTOM_DICTIONARY)
-                DictionaryUtil.importDataToLearingProcess(self.delegate.setDictionaryId())
+                self.progressView.hidden = false
+                self.learnButton.alpha = 0.5
+                self.learnButton.userInteractionEnabled = false
+                self.deleteButton.alpha = 0.5
+                self.deleteButton.userInteractionEnabled = false
+                self.editButton.alpha = 0.5
+                self.editButton.userInteractionEnabled = false
+                DictionaryUtil.importDataToLearingProcess(self.delegate.setDictionaryId(), progressCallback: {(progress) -> Bool in
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.progressView.setProgress(CGFloat(progress), animated: true)
+                        (self.progressView.centralView as UILabel).text = "\(Int(progress * 100))%"
+                        if (progress >= 1) {
+                            NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_CUSTOM_DICTIONARY)
+                            NSUserDefaults.standardUserDefaults().synchronize()
+                            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
+                            self.closeView()
+                        }
+                    })
+                    
+                    
+                    return !self.showing
+                })
             }
         }
         
@@ -250,15 +268,33 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             var dictionaryId = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_DICTIONARY) as? String
             if (dictionaryId != nil && dictionaryId! == self.dictionary!["id"] as String) {
                 NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+                NSUserDefaults.standardUserDefaults().synchronize()
+                NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
+                self.closeView()
             } else{
-                NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_DICTIONARY)
-                DictionaryUtil.importDataToLearingProcess(self.delegate.setDictionaryId())
+                self.progressView.hidden = false
+                self.learnButton.alpha = 0.5
+                self.learnButton.userInteractionEnabled = false
+                self.deleteButton.alpha = 0.5
+                self.deleteButton.userInteractionEnabled = false
+                self.editButton.alpha = 0.5
+                self.editButton.userInteractionEnabled = false
+                DictionaryUtil.importDataToLearingProcess(self.delegate.setDictionaryId(), progressCallback: {(progress) -> Bool in
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.progressView.setProgress(CGFloat(progress), animated: true)
+                        (self.progressView.centralView as UILabel).text = "\(Int(progress * 100))%"
+                        if (progress >= 1) {
+                            NSUserDefaults.standardUserDefaults().setObject(self.delegate.setDictionaryId(), forKey: CacheKey.LEARNING_DICTIONARY)
+                            NSUserDefaults.standardUserDefaults().synchronize()
+                            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
+                            self.closeView()
+                        }
+                    })
+                    
+                    return !self.showing
+                })
             }
         }
-
-        NSUserDefaults.standardUserDefaults().synchronize()
-        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LEARNING_DICTIONARY_CHANGED, object: self, userInfo: nil)
-        self.closeView()
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -402,13 +438,69 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         return cell!
     }
     
-    func startLoading() {
-        self.subView.bringSubviewToFront(self.indicator)
-        self.indicator.startAnimating()
-    }
-    
-    func endLoading() {
-        self.indicator.stopAnimating()
+    func prepareWords() {
+        self.dictionary = DictionaryUtil.getDictionaryInfo(self.delegate.setDictionaryId())
+        var db = Database(Util.getFilePath(self.delegate.setDictionaryId() + ".db"))
+        
+        var totalCount = 0
+        for row in db.prepare("SELECT count(rowid) FROM words") {
+            totalCount = row[0] as Int
+        }
+        
+        var sql = "SELECT id, word FROM words"
+        if (self.dictionary!["custom"] as Bool) {
+            sql = "SELECT id, word FROM words ORDER BY rowid desc"
+        }
+        
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var userId = user!["id"] as String
+        var dbUser = Database(Util.getFilePath(userId + ".db"))
+        var i = 1
+        
+        self.queue = dispatch_queue_create("queueForDictionaryInfo", DISPATCH_QUEUE_CONCURRENT)
+        dispatch_async(self.queue!, { () -> Void in
+            self.view.bringSubviewToFront(self.progressView)
+            
+            for row in db.prepare(sql) {
+                var word = NSMutableDictionary()
+                word.setValue(row[0] as String, forKey: "id")
+                word.setValue(row[1] as String, forKey: "word")
+                
+                for row2 in dbUser.prepare("SELECT wordStatus, appearTimes, rightTimes, rightSeconds FROM learningProgress WHERE dictionaryId=? AND wordId=?", self.delegate.setDictionaryId(), row[0] as String) {
+                    word.setValue(row2[0] as Int, forKey: "wordStatus")
+                    word.setValue(row2[1] as Int, forKey: "appearTimes")
+                    word.setValue(row2[2] as Int, forKey: "rightTimes")
+                    word.setValue(((row2[3] as String) as NSString).floatValue, forKey: "rightSeconds")
+                }
+                
+                self.words.addObject(word)
+                
+                var progress = Float(i) / Float(totalCount)
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.progressView.setProgress(CGFloat(progress), animated: true)
+                    (self.progressView.centralView as UILabel).text = "\(Int(progress * 100))%"
+                })
+                i++
+                
+                if (!self.showing) {
+                    break
+                }
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                self.progressView.hidden = true
+                self.tableView.reloadData()
+                self.editButton.alpha = 1
+                self.editButton.userInteractionEnabled = true
+                self.learnButton.alpha = 1
+                self.learnButton.userInteractionEnabled = true
+                
+                if (self.dictionary != nil && !(self.dictionary!["custom"] as Bool)) {
+                    self.deleteButton.userInteractionEnabled = true
+                    self.deleteButton.alpha = 1
+                }
+            })
+        })
     }
 
 }

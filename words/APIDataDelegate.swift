@@ -17,7 +17,7 @@
     // 字典
     optional func dictionaryList(AnyObject)
     
-    optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float)
+    optional func dictionarySyncDictionary(filePath: AnyObject, progress: Float, params: NSMutableDictionary)
     
     optional func dictionaryDownload(filePath: AnyObject, progress: Float, params: NSMutableDictionary)
     

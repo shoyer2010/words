@@ -11,6 +11,13 @@ import UIKit
 
 class Util {
     
+    class func isWiFi() -> Bool {
+        var reachablity = Reachability.reachabilityForLocalWiFi()
+        var status = reachablity.currentReachabilityStatus()
+        
+        return status.value == ReachableViaWiFi.value
+    }
+    
     class func createImageWithColor(color: UIColor, width: CGFloat, height: CGFloat) -> UIImage {
     
         let rect: CGRect = CGRectMake(0, 0, width, height)

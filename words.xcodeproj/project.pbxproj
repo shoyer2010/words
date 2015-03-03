@@ -74,6 +74,8 @@
 		A4E9F22A1A9F0E5F008FB300 /* UAProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E9F2291A9F0E5F008FB300 /* UAProgressView.m */; };
 		A4E9F22C1AA06DA1008FB300 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E9F22B1AA06DA1008FB300 /* Constant.swift */; };
 		A4EBCE9D1A9795F6004AB958 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EBCE9C1A9795F6004AB958 /* Server.swift */; };
+		A4FE61331AA57FFB000198A6 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */; };
+		A4FE61371AA5823C000198A6 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A4FE61361AA5823C000198A6 /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -179,6 +181,9 @@
 		A4E9F2291A9F0E5F008FB300 /* UAProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAProgressView.m; sourceTree = "<group>"; };
 		A4E9F22B1AA06DA1008FB300 /* Constant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		A4EBCE9C1A9795F6004AB958 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		A4FE61351AA5823C000198A6 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		A4FE61361AA5823C000198A6 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +191,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4FE61331AA57FFB000198A6 /* SystemConfiguration.framework in Frameworks */,
 				A44D1FC01A9A2E4D007F3F1E /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,6 +271,7 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */,
 				A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */,
 				A44D1FBF1A9A2E4D007F3F1E /* libsqlite3.dylib */,
 				A48C26951A988EEC00CCAF74 /* playground.playground */,
@@ -286,6 +293,7 @@
 		A4A8B6061A7A563300C59E63 /* words */ = {
 			isa = PBXGroup;
 			children = (
+				A4FE61341AA58220000198A6 /* Reachablity */,
 				A44D1FC11A9A2EF7007F3F1E /* SQLite */,
 				A4A8B6071A7A563300C59E63 /* Supporting Files */,
 				A4A8B6101A7A563300C59E63 /* Images.xcassets */,
@@ -380,6 +388,15 @@
 				A4E9F2291A9F0E5F008FB300 /* UAProgressView.m */,
 			);
 			name = UAProgressView;
+			sourceTree = "<group>";
+		};
+		A4FE61341AA58220000198A6 /* Reachablity */ = {
+			isa = PBXGroup;
+			children = (
+				A4FE61351AA5823C000198A6 /* Reachability.h */,
+				A4FE61361AA5823C000198A6 /* Reachability.m */,
+			);
+			name = Reachablity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -534,6 +551,7 @@
 				A4D0FF751A9B9A2500A28CBD /* Word.swift in Sources */,
 				A42703641A7E7A42005159AC /* Color.swift in Sources */,
 				A4DFB85E1A9480120086105C /* WordDetailDelegate.swift in Sources */,
+				A4FE61371AA5823C000198A6 /* Reachability.m in Sources */,
 				A42703801A7FA462005159AC /* LearnWordController.swift in Sources */,
 				A482C83E1A98D226008D313A /* CacheKey.swift in Sources */,
 				A4A8B6321A7B663A00C59E63 /* Error.swift in Sources */,

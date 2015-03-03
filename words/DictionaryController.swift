@@ -309,9 +309,6 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         self.commonTableView.reloadData()
     }
     
-    func dictionarySyncDictionary(filePath: AnyObject, progress: Float) {
-    }
-    
     func onLoginSuccess(notification: NSNotification) {
         self.loadData()
         self.downloadCustomDictionary()
@@ -346,12 +343,21 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             var syncTime = user!["syncTime"] as Int
             var userId = user!["id"] as String
             var currentTime = time(nil) as Int
-            if (Util.isFileExist(userId + ".db") && currentTime - lastSyncTime! >= syncTime) {
+            if (Util.isFileExist(userId + ".db") && currentTime - lastSyncTime! >= syncTime && Util.isWiFi()) {
                 var params: NSMutableDictionary = NSMutableDictionary()
                 params.setValue(1, forKey: "sync")
                 var file: NSData = NSData(contentsOfFile: Util.getFilePath(userId + ".db"))!
                 API.instance.post("/dictionary/syncDictionary", delegate: self,  params: params, file: file)
             }
+        }
+    }
+    
+    func dictionarySyncDictionary(filePath: AnyObject, progress: Float, params: NSMutableArray) {
+        var type = params.valueForKey("sync") as Int
+        
+        if (type == 1) {
+            NSUserDefaults.standardUserDefaults().setObject(time(nil) as Int, forKey: CacheKey.SYNC_TIME)
+            NSUserDefaults.standardUserDefaults().synchronize()
         }
     }
     

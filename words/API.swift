@@ -98,10 +98,19 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     func connection(connection: NSURLConnection, didFailWithError error: NSError) {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-        println("http request failed!!!!!");
-        println(error)
-        // TODO: check if the network works.
-        self.delegate!.error?(Error(message: "服务器正在维护，请稍候再试", code: 500), api: self.api!)
+        println("http request failed!!!!! \(error.code) \(error.localizedDescription)");
+        
+        var message = "网络请求失败:\(error.code) \(error.localizedDescription)"
+        switch error.code {
+        case -1004:
+            message = "服务器正在自我修复，请稍候再试^_-"
+        case -1009:
+            message = "网络不畅通，词圣无法与服务器约会了^_^"
+        default:
+            break
+        }
+        
+        self.delegate!.error?(Error(message: message, code: error.code), api: self.api!)
     }
     
     func connection(connection: NSURLConnection, didReceiveResponse response: NSHTTPURLResponse) {
@@ -128,7 +137,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             self.attachmentReceivedSize += data.length
             switch(self.api!) {
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!))
+                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
             case "/dictionary/download":
                 self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
             default:
@@ -169,7 +178,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/list":
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0)
+                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0, params: self.params!)
             case "/dictionary/download":
                 self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0, params: self.params!)
             case "/dictionary/customWord":

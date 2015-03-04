@@ -9,5 +9,5 @@
 import Foundation
 
 protocol ArticleForChineseDelegate {
-    func setData() -> AnyObject
+    func setData() -> AnyObject?
 }

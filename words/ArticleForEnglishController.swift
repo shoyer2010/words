@@ -228,8 +228,12 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         return self.matchWord!
     }
     
-    func setData() -> AnyObject {
-        return self.data
+    func setData() -> AnyObject? {
+        if (self.data != nil) {
+            return self.data
+        } else {
+            return nil
+        }
     }
     
     func onTapFavouriteIcon(sender: UIView) {

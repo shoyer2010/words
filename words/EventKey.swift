@@ -15,4 +15,5 @@ struct EventKey {
     static let ON_DICTIONARY_DELETED = "onDictionaryDeleted"
     static let ON_DICTIONARY_CHANGED = "onDictionaryChanged"
     static let ON_LEARNING_DICTIONARY_CHANGED = "onLearingDictionaryChanged"
+    static let SHOULD_LOGIN = "shouldLogin"
 }

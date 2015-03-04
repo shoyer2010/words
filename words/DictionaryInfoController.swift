@@ -23,6 +23,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         // Do any additional setup after loading the view, typically from a nib.
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
+        self.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         var tapViewHeight = CGFloat(120)
         self.subViewHeight = self.view.frame.height - tapViewHeight
         

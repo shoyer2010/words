@@ -21,4 +21,5 @@ struct CacheKey {
     static let ACTIVE_TIME = "active_time"
     static let SYNC_TIME = "sync_time"
     static let WRONG_WORD_POST_TIME = "wrong_word_post_time"
+    static let LAST_LOGIN_AT = "last_login_at"
 }

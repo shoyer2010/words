@@ -140,7 +140,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
             learingRow.backgroundColor = Color.red
             cell!.addSubview(learingRow)
             
-            var dictionaryNameLabel = UILabel(frame: CGRect(x: 6, y: 6, width: tableView.frame.width * 0.6, height: 16))
+            var dictionaryNameLabel = UILabel(frame: CGRect(x: 6, y: 6, width: tableView.frame.width - 65, height: 16))
             dictionaryNameLabel.tag = self.dictionaryNameLabelTag
             dictionaryNameLabel.text = "大学英语4级"
             dictionaryNameLabel.textAlignment = NSTextAlignment.Left

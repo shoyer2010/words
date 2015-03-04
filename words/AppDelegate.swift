@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var localNotification = UILocalNotification()
             localNotification.fireDate = NSDate(timeIntervalSince1970: NSTimeInterval(DateUtil.startOfThisDay() + 45000)) // 12:30提醒  慢了8个时间晚上8:30
             localNotification.repeatInterval = NSCalendarUnit.DayCalendarUnit
-            localNotification.timeZone = NSTimeZone.defaultTimeZone()
+            localNotification.timeZone = NSTimeZone.localTimeZone()
             localNotification.alertBody = randomTips[Util.getRandomInt(from: 0, to: randomTips.count - 1)]
             localNotification.alertAction = "复习单词"
             localNotification.soundName = UILocalNotificationDefaultSoundName
@@ -88,6 +88,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        
+        var lastLoginAt: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LAST_LOGIN_AT) as? Int
+        
+        if (lastLoginAt != nil && time(nil) - lastLoginAt! > 5 * 86400){ // make sure login in 5 days.
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.SHOULD_LOGIN, object: self, userInfo: nil)
+        }
     }
 
     func applicationDidBecomeActive(application: UIApplication) {

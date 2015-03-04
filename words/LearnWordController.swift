@@ -1020,7 +1020,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 }
                 
                 var tempString = string as NSString
-                self.randomChineseArray.addObject(tempString.substringToIndex(tempString.length - 1))
+                
+                if (tempString.length >= 1) {
+                    self.randomChineseArray.addObject(tempString.substringToIndex(tempString.length - 1))
+                }
             }
         }
         
@@ -1036,7 +1039,6 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             "删除图层 ; 删除层 ; 删除色层 ; 命令",
             "回忆；回忆起来的事；能记得的情况",
             "幸福",
-            
             "最美好的",
             "国家的， 人民的",
             "世界",
@@ -1093,8 +1095,12 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 self.chineseString! += "\(value)，"
             }
             
-            var tempString = self.chineseString! as NSString
-            self.chineseString = tempString.substringToIndex(tempString.length - 1)
+            if (self.chineseString != "") {
+                var tempString = self.chineseString! as NSString
+                self.chineseString = tempString.substringToIndex(tempString.length - 1)
+            } else {
+                self.chineseString = "此单词中文暂缺"
+            }
         }
     }
     

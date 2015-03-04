@@ -107,6 +107,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         
         var message = "网络请求失败:\(error.code) \(error.localizedDescription)"
         switch error.code {
+        case -1001:
+            message = "网络请求超时"
         case -1004:
             message = "服务器正在自我修复，请稍候再试^_-"
         case -1009:
@@ -122,7 +124,6 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
 //        println("start response done!")
         self.responseCode = response.statusCode
         
-//        println(response)
         self.attachmentReceivedSize = 0
         if (response.allHeaderFields["Content-Disposition"] != nil) {
             self.attachmentFilename = NSString(string: response.allHeaderFields["Content-Disposition"] as String).componentsSeparatedByString("=")[1] as? String
@@ -168,7 +169,9 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
 
         println(dataString)
         
-        if (self.responseCode == 200) {
+        if (self.responseCode == 200 && ((data!["code"] as? Int) == 0 || data as? NSString == self.attachmentSavePath!)) {
+            var data: AnyObject? = data!["data"] == nil ? data: data!["data"]
+            
             switch(self.api!) {
             case "/user/trial":
                 self.delegate!.userTrial?(data!)
@@ -212,8 +215,9 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.error?(Error(message: "No API matched"), api: self.api!)
             }
         } else {
-            if (data?["message"] as? String != nil) {
-                self.delegate!.error?(Error(message: data!["message"] as String, code: self.responseCode!), api: self.api!)
+            var code = data!["code"] as Int
+            if (self.responseCode == 200 && code != 0) {
+                self.delegate!.error?(Error(message: data!["message"] as String, code: code), api: self.api!)
             } else {
                 self.delegate!.error?(Error(message: dataString!, code: self.responseCode!), api: self.api!)
             }

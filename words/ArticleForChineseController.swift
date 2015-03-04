@@ -85,8 +85,12 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         self.startLoading()
     }
     
-    func setToView(data: AnyObject) {
-        var id = data["id"] as String
+    func setToView(data: AnyObject?) {
+        if (data == nil) {
+            return
+        }
+        
+        var id = data!["id"] as String
         if (self.articleId == id) {
             return
         } else {
@@ -95,15 +99,15 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         
         
         
-        titleView.text = data["titleChinese"] as? String
+        titleView.text = data!["titleChinese"] as? String
         var paragraphStyleForTitle = NSMutableParagraphStyle()
         paragraphStyleForTitle.lineBreakMode = NSLineBreakMode.ByWordWrapping
         paragraphStyleForTitle.alignment = NSTextAlignment.Justified
         paragraphStyleForTitle.paragraphSpacing = 1
-        paragraphStyleForTitle.lineSpacing = 1
+        paragraphStyleForTitle.lineSpacing = 8
         var attributesForTitle = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForTitle,
-            NSFontAttributeName: UIFont(name: Fonts.kaiti, size: CGFloat(20))!,
+            NSFontAttributeName: UIFont(name: Fonts.kaiti, size: CGFloat(21))!,
             NSForegroundColorAttributeName: Color.black,
             NSStrokeWidthAttributeName: NSNumber(float: -2.5)
             ])
@@ -111,7 +115,7 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         titleView.sizeToFit()
         titleView.frame = CGRect(x: 15, y: 20, width: articleView.frame.width - 30, height: titleView.frame.height)
         
-        contentView.text = data["chinese"] as? String
+        contentView.text = data!["chinese"] as? String
         var paragraphStyleForContent = NSMutableParagraphStyle()
         paragraphStyleForContent.lineBreakMode = NSLineBreakMode.ByWordWrapping
         paragraphStyleForContent.alignment = NSTextAlignment.Justified
@@ -119,7 +123,7 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         paragraphStyleForContent.lineSpacing = 5
         var attributesForContent = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyleForContent,
-            NSFontAttributeName: UIFont(name: Fonts.kaiti, size: CGFloat(16))!,
+            NSFontAttributeName: UIFont(name: Fonts.kaiti, size: CGFloat(17))!,
             NSForegroundColorAttributeName: Color.gray,
             NSStrokeWidthAttributeName: NSNumber(float: -1.5)
             ])

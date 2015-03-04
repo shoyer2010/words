@@ -23,6 +23,7 @@ class AccountController: UIViewController,APIDataDelegate {
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onRegisterSuccess:", name: EventKey.ON_REGISTER_SUCCESS, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onLoginSuccess:", name: EventKey.ON_LOGIN_SUCCESS, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "shouldLogin:", name: EventKey.SHOULD_LOGIN, object: nil)
         
         self.view.frame = (self.parentViewController as HomeController).getFrameOfSubTabItem(4)
         self.view.backgroundColor = Color.appBackground
@@ -106,6 +107,7 @@ class AccountController: UIViewController,APIDataDelegate {
         user.setDictionary(data as NSDictionary)
         user.setValue(oldUser?["password"], forKey: "password")
         NSUserDefaults.standardUserDefaults().setObject(user as AnyObject, forKey: CacheKey.USER)
+        NSUserDefaults.standardUserDefaults().setObject(time(nil), forKey: CacheKey.LAST_LOGIN_AT)
         NSUserDefaults.standardUserDefaults().synchronize()
         self.setToView(data)
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_LOGIN_SUCCESS, object: self, userInfo: nil)
@@ -114,6 +116,14 @@ class AccountController: UIViewController,APIDataDelegate {
     func onRegisterSuccess(notification: NSNotification) {
         var user: AnyObject! = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
         self.setToView(user!)
+    }
+    
+    func shouldLogin(notification: NSNotification) {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        if (user != nil) {
+            self.setToView(user!)
+            self.login(user!)
+        }
     }
     
     func onLoginSuccess(notification: NSNotification) {

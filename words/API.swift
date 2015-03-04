@@ -143,9 +143,9 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             self.attachmentReceivedSize += data.length
             switch(self.api!) {
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
+                self.delegate!.dictionarySyncDictionary!(Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
             case "/dictionary/download":
-                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
+                self.delegate!.dictionaryDownload!(Float(self.attachmentReceivedSize) / Float(self.attachmentSize!), params: self.params!)
             default:
                 self.delegate!.error?(Error(message: "Not matched API"), api: self.api!)
             }
@@ -161,7 +161,7 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
         if (self.attachmentFilename != nil && self.attachmentSize > 0) {
             self.responseData.writeToFile(self.attachmentSavePath!, atomically: true)
             println("save file to: " + self.attachmentSavePath!)
-            data = self.attachmentSavePath!
+            data = ["code": 0]
         } else {
             data = NSJSONSerialization.JSONObjectWithData(self.responseData, options: NSJSONReadingOptions.MutableContainers, error:nil) // TODO: need error handle
             dataString = NSString(data: self.responseData, encoding: NSUTF8StringEncoding)!
@@ -169,8 +169,12 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
 
         println(dataString)
         
-        if (self.responseCode == 200 && ((data!["code"] as? Int) == 0 || data as? NSString == self.attachmentSavePath!)) {
-            var data: AnyObject? = data!["data"] == nil ? data: data!["data"]
+        if (self.responseCode == 200 && (data!["code"] as Int) == 0) {
+            var data: AnyObject? = data!["data"]
+            
+            if (data == nil) {
+                data = []
+            }
             
             switch(self.api!) {
             case "/user/trial":
@@ -186,9 +190,9 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
             case "/dictionary/list":
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":
-                self.delegate!.dictionarySyncDictionary!(self.attachmentSavePath!, progress: 1.0, params: self.params!)
+                self.delegate!.dictionarySyncDictionary!(1.0, params: self.params!)
             case "/dictionary/download":
-                self.delegate!.dictionaryDownload!(self.attachmentSavePath!, progress: 1.0, params: self.params!)
+                self.delegate!.dictionaryDownload!(1.0, params: self.params!)
             case "/dictionary/customWord":
                 self.delegate!.dictionaryCustomWord!(data!, params: self.params!)
             case "/word/search":

@@ -302,7 +302,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func dictionaryDownload(filePath: AnyObject, progress: Float, params: NSMutableDictionary) {
+    func dictionaryDownload(progress: Float, params: NSMutableDictionary) {
         var dictionaryId = params.objectForKey("id") as String
         if (progress >= 1.0) {
             self.downloadProgress.setValue(nil, forKey: dictionaryId)
@@ -356,7 +356,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func dictionarySyncDictionary(filePath: AnyObject, progress: Float, params: NSMutableArray) {
+    func dictionarySyncDictionary(progress: Float, params: NSMutableArray) {
         var type = params.valueForKey("sync") as Int
         
         if (type == 1) {

@@ -64,10 +64,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIApplication.sharedApplication().cancelAllLocalNotifications()
         }
         
-        
 //        MobClick.setLogEnabled(true)
-        MobClick.startWithAppkey("54f81ab1fd98c5bfc10003f5", reportPolicy: SENDWIFIONLY, channelId: "AppStore")
+        MobClick.startWithAppkey(Settings.UMENG_APP_KEY, reportPolicy: SENDWIFIONLY, channelId: "AppStore")
         MobClick.setAppVersion(Util.getVersion())
+        
+        UMSocialData.setAppKey(Settings.UMENG_APP_KEY)
+        
+        
+        UMSocialWechatHandler.setWXAppId(Settings.WEI_XIN_APP_ID, appSecret: Settings.WEI_XIN_APP_SECRET, url: Settings.WEI_XIN_URL)
+//        [UMSocialData defaultData].extConfig.wechatSessionData.url = @"http://baidu.com"; TODO: app 下载地址
+        // [UMSocialData defaultData].extConfig.wechatTimelineData.url = @"http://baidu.com";
+        // [UMSocialData defaultData].extConfig.wechatSessionData.title = @"微信好友title";
+        //[UMSocialData defaultData].extConfig.wechatTimelineData.title = @"微信朋友圈title";
+        // [UMSocialData defaultData].extConfig.wxMessageType = UMSocialWXMessageTypeApp;
+        
+        
+        UMSocialSinaHandler.openSSOWithRedirectURL(nil)
         
         return true
     }
@@ -109,6 +121,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 //        println("app exited")
+    }
+    
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        return UMSocialSnsService.handleOpenURL(url)
+    }
+    
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+        return UMSocialSnsService.handleOpenURL(url)
     }
 }
 

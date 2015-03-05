@@ -9,8 +9,9 @@
 import Foundation
 import UIkit
 
-class StatisticsController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class StatisticsController: UIViewController, UITableViewDataSource, UITableViewDelegate, UMSocialUIDelegate {
     var tableView: UITableView!
+    var shareButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +85,12 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         tableHeader.addSubview(haveMasteredLabel)
         tableView.tableHeaderView = tableHeader
         tableViewWrap.addSubview(tableView)
+        
+        shareButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
+        shareButton.setTitle("分享晒晒", forState: UIControlState.Normal)
+        shareButton.backgroundColor = Color.gray
+        shareButton.addTarget(self, action: "onShareButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(shareButton)
         
         self.view.addSubview(tableViewWrap)
     }
@@ -180,4 +187,18 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
             self.tableView.reloadData()
         }
     }
+    
+    func onShareButtonTapped(sender: UIButton) {
+        UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: "自从有了词圣，妈妈再也不用担心我背单词了，快来试试吧", shareImage: nil, shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToEmail, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
+    }
+    
+    func didFinishGetUMSocialDataInViewController(response: UMSocialResponseEntity!) {
+        
+        if (response.responseCode.value == UMSResponseCodeSuccess.value) {
+            println("分享成功")
+        } else {
+            println(response)
+        }
+    }
+    
 }

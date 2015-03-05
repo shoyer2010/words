@@ -167,30 +167,35 @@ class AccountController: UIViewController,APIDataDelegate {
         var registerController = RegisterController()
         self.addChildViewController(registerController)
         self.view.addSubview(registerController.view)
+        MobClick.event("goToRegisterPage")
     }
     
     func goToChangePasswordPage(sender: UIButton) {
         var changePasswordController = ChangePasswordController()
         self.addChildViewController(changePasswordController)
         self.view.addSubview(changePasswordController.view)
+        MobClick.event("goToChangePasswordPage")
     }
     
     func goToBuyserviceToPage(sender: UIButton) {
         var buyServiceController = BuyServiceController()
         self.addChildViewController(buyServiceController)
         self.view.addSubview(buyServiceController.view)
+        MobClick.event("goToBuyserviceToPage")
     }
     
     func showserviceToInfo(sender: UIButton) {
         var serviceInfoController = ServiceInfoController()
         self.addChildViewController(serviceInfoController)
         self.view.addSubview(serviceInfoController.view)
+        MobClick.event("showserviceToInfo")
     }
     
     func goToLoginPage(sender: UIButton) {
         var loginController = LoginController()
         self.addChildViewController(loginController)
         self.view.addSubview(loginController.view)
+        MobClick.event("goToLoginPage")
     }
     
     func error(error: Error, api: String) {

@@ -459,6 +459,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.addChildViewController(favouriteArticleController)
         self.view.addSubview(favouriteArticleController.view)
         self.searchBar.resignFirstResponder()
+        MobClick.event("onTapArticleIcon")
     }
     
     
@@ -467,6 +468,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.addChildViewController(helpController)
         self.view.addSubview(helpController.view)
         self.searchBar.resignFirstResponder()
+        MobClick.event("onTapHelpIcon")
     }
     
     func onRecommendTapped(recognizer: UITapGestureRecognizer) {

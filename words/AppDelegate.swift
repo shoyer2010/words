@@ -64,6 +64,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UIApplication.sharedApplication().cancelAllLocalNotifications()
         }
         
+        
+//        MobClick.setLogEnabled(true)
+        MobClick.startWithAppkey("54f81ab1fd98c5bfc10003f5", reportPolicy: SENDWIFIONLY, channelId: "AppStore")
+        MobClick.setAppVersion(Util.getVersion())
+        
         return true
     }
 

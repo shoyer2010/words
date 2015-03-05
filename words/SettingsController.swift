@@ -127,16 +127,19 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     func onShouldAutoVoice(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.WORD_AUTO_VOICE)
         NSUserDefaults.standardUserDefaults().synchronize()
+        MobClick.event("onShouldAutoVoice", attributes: ["on": sender.on])
     }
     
     func onSentenceShouldAutoVoice(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SENTENCE_AUTO_VOICE)
         NSUserDefaults.standardUserDefaults().synchronize()
+        MobClick.event("onSentenceShouldAutoVoice", attributes: ["on": sender.on])
     }
     
     func onShouldNotify(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SHOULD_NOTIFY)
         NSUserDefaults.standardUserDefaults().synchronize()
+        MobClick.event("onShouldNotify", attributes: ["on": sender.on])
     }
     
     func onPageChange(notification: NSNotification) {
@@ -150,6 +153,7 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
         alertViewForClearCache.addButtonWithTitle("释放空间")
         alertViewForClearCache.delegate = self
         alertViewForClearCache.show()
+        MobClick.event("clearCache")
     }
     
     func getCacheFileSize() -> NSString {
@@ -167,10 +171,12 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     
     func upgradeApp(sender: UIButton) {
         UIApplication.sharedApplication().openURL(self.upgradeUrl)
+        MobClick.event("upgradeApp")
     }
     
     func goToAppstore(sender: UIButton) {
         UIApplication.sharedApplication().openURL(self.appUrl)
+        MobClick.event("goToAppstore")
     }
     
     func onLoginSuccess(notification: NSNotification) {

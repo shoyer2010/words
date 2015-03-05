@@ -60,6 +60,8 @@
 		A4D0FF751A9B9A2500A28CBD /* Word.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF741A9B9A2500A28CBD /* Word.swift */; };
 		A4D0FF771A9BA8E600A28CBD /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */; };
 		A4D0FF791A9C967100A28CBD /* TapPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D0FF781A9C967100A28CBD /* TapPointView.swift */; };
+		A4D3E4731AA76B25003883EF /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4D3E4711AA76B25003883EF /* libMobClickLibrary.a */; };
+		A4D3E4751AA76B48003883EF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A4D3E4741AA76B48003883EF /* libz.dylib */; };
 		A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFA71AA0E302008E064C /* DateUtil.swift */; };
 		A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAB1AA2F505008E064C /* Crypto.m */; };
 		A4D5EFAF1AA2FF27008E064C /* RSA.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAE1AA2FF27008E064C /* RSA.m */; };
@@ -163,6 +165,9 @@
 		A4D0FF741A9B9A2500A28CBD /* Word.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Word.swift; sourceTree = "<group>"; };
 		A4D0FF761A9BA8E600A28CBD /* DictionaryUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
 		A4D0FF781A9C967100A28CBD /* TapPointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapPointView.swift; sourceTree = "<group>"; };
+		A4D3E4711AA76B25003883EF /* libMobClickLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMobClickLibrary.a; sourceTree = "<group>"; };
+		A4D3E4721AA76B25003883EF /* MobClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobClick.h; sourceTree = "<group>"; };
+		A4D3E4741AA76B48003883EF /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		A4D5EFA71AA0E302008E064C /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		A4D5EFAA1AA2F4CF008E064C /* Crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Crypto.h; sourceTree = "<group>"; };
 		A4D5EFAB1AA2F505008E064C /* Crypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Crypto.m; sourceTree = "<group>"; };
@@ -191,7 +196,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4D3E4751AA76B48003883EF /* libz.dylib in Frameworks */,
 				A4FE61331AA57FFB000198A6 /* SystemConfiguration.framework in Frameworks */,
+				A4D3E4731AA76B25003883EF /* libMobClickLibrary.a in Frameworks */,
 				A44D1FC01A9A2E4D007F3F1E /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -271,6 +278,7 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A4D3E4741AA76B48003883EF /* libz.dylib */,
 				A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */,
 				A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */,
 				A44D1FBF1A9A2E4D007F3F1E /* libsqlite3.dylib */,
@@ -293,6 +301,7 @@
 		A4A8B6061A7A563300C59E63 /* words */ = {
 			isa = PBXGroup;
 			children = (
+				A4D3E4701AA76AE9003883EF /* Umeng */,
 				A4FE61341AA58220000198A6 /* Reachablity */,
 				A44D1FC11A9A2EF7007F3F1E /* SQLite */,
 				A4A8B6071A7A563300C59E63 /* Supporting Files */,
@@ -359,6 +368,15 @@
 				A4A8B61E1A7A563300C59E63 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A4D3E4701AA76AE9003883EF /* Umeng */ = {
+			isa = PBXGroup;
+			children = (
+				A4D3E4711AA76B25003883EF /* libMobClickLibrary.a */,
+				A4D3E4721AA76B25003883EF /* MobClick.h */,
+			);
+			name = Umeng;
 			sourceTree = "<group>";
 		};
 		A4D5EFA91AA2F4B5008E064C /* Crypto */ = {
@@ -463,6 +481,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = A4A8B5FB1A7A563300C59E63;
 			productRefGroup = A4A8B6051A7A563300C59E63 /* Products */;
@@ -682,10 +701,24 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
+					"$(PROJECT_DIR)/ShareSDK/Connection",
+					"$(PROJECT_DIR)/ShareSDK/Core",
+					"$(PROJECT_DIR)/ShareSDK/Extend/QQConnectSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/RenRenSDK",
+					"$(PROJECT_DIR)/ShareSDK",
+					"$(PROJECT_DIR)/ShareSDK/UI",
 				);
 				INFOPLIST_FILE = words/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/TencentWeiboSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
+					"$(PROJECT_DIR)/words",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 				SDKROOT = iphoneos;
@@ -702,10 +735,24 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
+					"$(PROJECT_DIR)/ShareSDK/Connection",
+					"$(PROJECT_DIR)/ShareSDK/Core",
+					"$(PROJECT_DIR)/ShareSDK/Extend/QQConnectSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/RenRenSDK",
+					"$(PROJECT_DIR)/ShareSDK",
+					"$(PROJECT_DIR)/ShareSDK/UI",
 				);
 				INFOPLIST_FILE = words/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/TencentWeiboSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
+					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
+					"$(PROJECT_DIR)/words",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 				SDKROOT = iphoneos;

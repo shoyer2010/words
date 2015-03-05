@@ -453,6 +453,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func wordWrongWords(data: AnyObject) {
+        NSUserDefaults.standardUserDefaults().setObject(time(nil), forKey: CacheKey.WRONG_WORD_POST_TIME)
     }
     
     func updateWordStatus(type: Int) { // 1, right, 2, wrong

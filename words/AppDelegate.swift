@@ -124,11 +124,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        
+        if (url.host != nil && RegularExpression("safepay").test(url.host!)) {
+            self.parse(url, application: application)
+            return true
+        }
+        
         return UMSocialSnsService.handleOpenURL(url)
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+        if (url.host != nil && RegularExpression("safepay").test(url.host!)) {
+            self.parse(url, application: application)
+            return true
+        }
+        
         return UMSocialSnsService.handleOpenURL(url)
+    }
+    
+    func parse(url: NSURL, application: UIApplication) {
+        var result:AlixPayResult? = self.handleOpenURL(url)
+        if (result != nil) {
+            println(result)
+            if (result!.statusCode == 9000) {
+                Util.handlePayResult(result!, url: url)
+            } else {
+                NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+            }
+        } else {
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+        }
+    }
+    
+    func handleOpenURL(url: NSURL) -> AlixPayResult? {
+        var result: AlixPayResult?
+        if (RegularExpression("safepay").test(url.host!)) {
+            result = self.resultFromURL(url)
+        }
+        
+        return result
+    }
+    
+    func resultFromURL(url: NSURL) -> AlixPayResult {
+        var qurey: NSString = url.query!.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+        return AlixPayResult(string: qurey)
     }
 }
 

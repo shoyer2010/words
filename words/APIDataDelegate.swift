@@ -12,6 +12,9 @@
     
     optional func activeTime(AnyObject)
     
+    optional func userServiceList(AnyObject)
+    
+    optional func userOrder(AnyObject)
     
     
     // 字典

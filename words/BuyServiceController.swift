@@ -4,11 +4,23 @@ import UIKit
 
 class BuyServiceController: UIViewController, APIDataDelegate {
     var subView: UIView!
-    var subViewHeight: CGFloat = 150
+    var subViewHeight: CGFloat = 180
+    var indicator: UIActivityIndicatorView!
+    var item01: UIButton!
+    var item02: UIButton!
+    var item03: UIButton!
+    var buyButton: UIButton!
+    var data: NSArray = NSArray()
+    var selectedIndex: Int! = -1
+    var orderId: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPayFailed:", name: EventKey.ON_PAY_FAILED, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPaySuccess:", name: EventKey.ON_PAY_SUCCESS, object: nil)
         
         self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapView:"))
@@ -19,40 +31,51 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.subView.frame.width / 2 - 15, y: self.subView.frame.height / 2 - 30, width: 30, height: 30))
+        indicator.color = Color.gray
+        self.subView.addSubview(indicator)
+        
         UIView.animateWithDuration(0.3, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
             self.subView.transform = CGAffineTransformMakeTranslation(0, self.subViewHeight)
             self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.5)
             }) { (isDone: Bool) -> Void in
+                self.loadData()
         }
-        var item01 = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 110, y: 20, width: 60, height: 60))
+        
+        item01 = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 120, y: 30, width: 60, height: 60))
         item01.backgroundColor = Color.red
-        item01.setTitle("10元500滴", forState: UIControlState.Normal)
-        item01.titleLabel?.font = UIFont.systemFontOfSize(10)
+        item01.titleLabel?.font = UIFont.systemFontOfSize(11)
+        item01.tag = 1001
+        item01.addTarget(self, action: "onItemTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(item01)
         
-        var item02 = UIButton(frame: CGRect(x: item01.frame.origin.x + item01.frame.width + 20, y: 20, width: 60, height: 60))
+        item02 = UIButton(frame: CGRect(x: item01.frame.origin.x + item01.frame.width + 30, y: 30, width: 60, height: 60))
         item02.backgroundColor = Color.red
-        item02.setTitle("20元1500滴", forState: UIControlState.Normal)
-        item02.titleLabel?.font = UIFont.systemFontOfSize(10)
+        item02.titleLabel?.font = UIFont.systemFontOfSize(11)
+        item02.tag = 1002
+        item02.addTarget(self, action: "onItemTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(item02)
         
-        var item03 = UIButton(frame: CGRect(x: item02.frame.origin.x + item02.frame.width + 20, y: 20, width: 60, height: 60))
+        item03 = UIButton(frame: CGRect(x: item02.frame.origin.x + item02.frame.width + 30, y: 30, width: 60, height: 60))
         item03.backgroundColor = Color.red
-        item03.setTitle("30元3000滴", forState: UIControlState.Normal)
-        item03.titleLabel?.font = UIFont.systemFontOfSize(10)
+        item03.titleLabel?.font = UIFont.systemFontOfSize(11)
+        item03.tag = 1003
+        item03.addTarget(self, action: "onItemTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(item03)
 
         
         
-        var buyButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
+        buyButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 120, width: 90, height: 30))
         buyButton.backgroundColor = Color.gray
-        buyButton.setTitle("购买", forState: UIControlState.Normal)
+        buyButton.setTitle("购 买", forState: UIControlState.Normal)
         buyButton.addTarget(self, action: "onBuyButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        buyButton.userInteractionEnabled = false
+        buyButton.alpha = 0.5
         self.subView.addSubview(buyButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: buyButton.frame.origin.x + buyButton.frame.width + 20, y: 100, width: 60, height: 23))
+        var cancelButton = UIButton(frame: CGRect(x: buyButton.frame.origin.x + buyButton.frame.width + 20, y: 120, width: 90, height: 30))
         cancelButton.backgroundColor = Color.red
-        cancelButton.setTitle("取消", forState: UIControlState.Normal)
+        cancelButton.setTitle("取 消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
     }
@@ -62,7 +85,73 @@ class BuyServiceController: UIViewController, APIDataDelegate {
     }
     
     func onBuyButtonTapped(sender: UIButton) {
-//        AlixLibService.payOrder("tsets", andScheme: "fsfadf", seletor: Selector("dfasf"), target: self)
+        if (self.selectedIndex < 0) {
+            ErrorView(view: self.view, message: "请选择你想购买多久")
+            return
+        }
+        
+        
+        
+        self.getOrder()
+    }
+    
+    func getOrder() {
+        var service: AnyObject = self.data[self.selectedIndex]
+        var params = NSMutableDictionary()
+        params.setValue(service["id"] as Int, forKey: "serviceId")
+        API.instance.post("/user/order", delegate: self, params: params)
+    }
+    
+    func getSign(orderInfo: NSString) -> NSString {
+        var singer: DataSigner = CreateRSADataSigner(Key.PRIVATE)
+        return singer.signString(orderInfo)
+    }
+    
+    func onPayResult(result: AlixPayResult) {
+        if (result.statusCode == 9000) {
+            Util.handlePayResult(result)
+        } else {
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+        }
+    }
+    
+    func userOrder(data: AnyObject) {
+        self.orderId = data["id"] as? String
+        
+        var orderInfo = self.getAlipayOrder()
+        var sign = self.getSign(orderInfo)
+        
+        AlixLibService.payOrder("\(orderInfo)&sign=\"\(sign)\"&sign_type=\"RSA\"", andScheme: Constant.ALIPAY_APP_SCHEME, seletor: "onPayResult:", target: self)
+    }
+    
+    func getAlipayOrder() -> NSString {
+        var service: AnyObject = self.data[self.selectedIndex]
+        
+        var order: AlixPayOrder = AlixPayOrder()
+        order.partner = Settings.ALI_PARTNER_ID
+        order.seller = Settings.ALI_SELLER
+        order.tradeNO = self.orderId
+        
+        var price = service["price"] as Int
+        var description = service["name"] as String
+        order.productName = "\(price)元\(description)词圣服务"
+        order.productDescription = "增加词圣服务时间，轻松背单词，快乐学英语"
+        order.amount = "0.01" // TODO: set the real data
+        
+        var orderInfo = ""
+        orderInfo += "service=\"mobile.securitypay.pay\""
+        orderInfo += "&partner=\"\(order.partner)\""
+        orderInfo += "&_input_charset=\"utf-8\""
+        orderInfo += "&notify_url=\"\(order.notifyURL)\""
+        orderInfo += "&app_id=\"words_holy\""
+        orderInfo += "&out_trade_no=\"\(order.tradeNO)\""
+        orderInfo += "&subject=\"\(order.productName)\""
+        orderInfo += "&payment_type=\"1\""
+        orderInfo += "&seller_id=\"\(order.seller)\""
+        orderInfo += "&total_fee=\"\(order.amount)\""
+        orderInfo += "&body=\"\(order.productDescription)\""
+        
+        return orderInfo as NSString
     }
     
     func onCancelTapped(sender: UIButton) {
@@ -76,6 +165,63 @@ class BuyServiceController: UIViewController, APIDataDelegate {
             }) { (isDone: Bool) -> Void in
                 self.view.removeFromSuperview()
                 self.removeFromParentViewController()
+        }
+    }
+    
+    func startLoading() {
+        self.subView.bringSubviewToFront(self.indicator)
+        self.indicator.startAnimating()
+    }
+    
+    func endLoading() {
+        self.indicator.stopAnimating()
+    }
+    
+    func loadData() {
+        var parmas = NSMutableDictionary()
+        API.instance.get("/user/serviceList", delegate: self, params: parmas)
+        self.startLoading()
+    }
+    
+    func userServiceList(data: AnyObject) {
+        self.endLoading()
+        self.data = data as NSArray
+        
+        var item01Price = self.data[0]["price"] as Int
+        var item01Name = self.data[0]["name"] as String
+        item01.setTitle("\(item01Price)元\(item01Name)", forState: UIControlState.Normal)
+        
+        var item02Price = self.data[1]["price"] as Int
+        var item02Name = self.data[1]["name"] as String
+        item02.setTitle("\(item02Price)元\(item02Name)", forState: UIControlState.Normal)
+        
+        var item03Price = self.data[2]["price"] as Int
+        var item03Name = self.data[2]["name"] as String
+        item03.setTitle("\(item03Price)元\(item03Name)", forState: UIControlState.Normal)
+        
+        buyButton.userInteractionEnabled = true
+        buyButton.alpha = 1.0
+    }
+    
+    func resetAllItem() {
+        item01.backgroundColor = Color.red
+        item02.backgroundColor = Color.red
+        item03.backgroundColor = Color.red
+    }
+    
+    func onItemTapped(sender: UIButton) {
+        self.resetAllItem()
+        sender.backgroundColor = Color.gray
+        self.selectedIndex = sender.tag - 1001
+    }
+    
+    func onPayFailed(notification: NSNotification) {
+        ErrorView(view: self.view, message: "抱歉，支付失败")
+    }
+    
+    func onPaySuccess(notification: NSNotification) {
+        SuccessView(view: self.view, message: "恭喜，支付成功") { () -> Void in
+            // 请求服务器，刷新服务时间
         }
     }
 }

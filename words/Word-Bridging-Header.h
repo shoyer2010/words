@@ -31,3 +31,9 @@
 #import "UMSocialWechatHandler.h"
 
 #import "UMSocialSinaHandler.h"
+
+#import "AlixLibService.h"
+#import "AlixPayOrder.h"
+#import "AlixPayResult.h"
+#import "DataSigner.h"
+#import "DataVerifier.h"

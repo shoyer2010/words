@@ -15,4 +15,7 @@ struct Settings {
     static let WEI_XIN_APP_ID = "dfasf"
     static let WEI_XIN_APP_SECRET = "dfasf"
     static let WEI_XIN_URL = "http://www.baidu.com"
+    
+    static let ALI_PARTNER_ID = "2088511041102809"
+    static let ALI_SELLER = "loveher360@163.com"
 }

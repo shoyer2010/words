@@ -192,5 +192,20 @@ class Util {
     class func getRandomInt(from: Int = 0, to: Int = 10000) -> Int {
         return from + (Int(arc4random() % (to - from + 1)))
     }
+    
+    class func handlePayResult(result: AlixPayResult, url: NSURL? = nil) {
+        if (result.statusCode != 9000) {
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+            return
+        }
+        
+        var verifer: DataVerifier = CreateRSADataVerifier(Key.ALI_PUBLICK)
+        
+        if (verifer.verifyString(result.resultString, withSign: result.signString)) {
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_SUCCESS, object: self, userInfo: nil)
+        } else {
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+        }
+    }
 }
 

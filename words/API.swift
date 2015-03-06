@@ -187,6 +187,10 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.changePassword?(data!)
             case "/user/activeTime":
                 self.delegate!.activeTime?(data!)
+            case "/user/serviceList":
+                self.delegate!.userServiceList?(data!)
+            case "/user/order":
+                self.delegate!.userOrder?(data!)
             case "/dictionary/list":
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
+		A41FAEE91AA9C4CA0052105C /* RSA.m in Sources */ = {isa = PBXBuildFile; fileRef = A41FAEE81AA9C4CA0052105C /* RSA.m */; };
 		A4230E491A99C71000B31ECA /* SuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4230E481A99C71000B31ECA /* SuccessView.swift */; };
 		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
 		A42703671A7F39DD005159AC /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703661A7F39DD005159AC /* Util.swift */; };
@@ -121,6 +122,8 @@
 
 /* Begin PBXFileReference section */
 		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		A41FAEE71AA9C4640052105C /* RSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSA.h; sourceTree = "<group>"; };
+		A41FAEE81AA9C4CA0052105C /* RSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSA.m; sourceTree = "<group>"; };
 		A4230E481A99C71000B31ECA /* SuccessView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuccessView.swift; sourceTree = "<group>"; };
 		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A42703661A7F39DD005159AC /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -225,7 +228,6 @@
 		A4D5EFA71AA0E302008E064C /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		A4D5EFAA1AA2F4CF008E064C /* Crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Crypto.h; sourceTree = "<group>"; };
 		A4D5EFAB1AA2F505008E064C /* Crypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Crypto.m; sourceTree = "<group>"; };
-		A4D5EFAD1AA2FF09008E064C /* RSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSA.h; sourceTree = "<group>"; };
 		A4D5EFB01AA302A9008E064C /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
 		A4DFB85B1A9472F90086105C /* RegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegularExpression.swift; sourceTree = "<group>"; };
 		A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordDetailDelegate.swift; sourceTree = "<group>"; };
@@ -326,6 +328,8 @@
 		A46417731AA9BAC3007AD254 /* RSA */ = {
 			isa = PBXGroup;
 			children = (
+				A41FAEE71AA9C4640052105C /* RSA.h */,
+				A41FAEE81AA9C4CA0052105C /* RSA.m */,
 			);
 			name = RSA;
 			sourceTree = "<group>";
@@ -539,20 +543,6 @@
 			path = Wechat;
 			sourceTree = "<group>";
 		};
-		A4D3E4D51AA8C3F7003883EF /* json */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = json;
-			sourceTree = "<group>";
-		};
-		A4D3E4E51AA8C3F7003883EF /* RSA */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = RSA;
-			sourceTree = "<group>";
-		};
 		A4D5EFA91AA2F4B5008E064C /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
@@ -746,6 +736,7 @@
 				A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */,
 				A4230E491A99C71000B31ECA /* SuccessView.swift in Sources */,
 				A42703861A7FB729005159AC /* SettingsController.swift in Sources */,
+				A41FAEE91AA9C4CA0052105C /* RSA.m in Sources */,
 				A427037A1A7F7924005159AC /* ApplicationController.swift in Sources */,
 				A42703931A812AB0005159AC /* PageCode.swift in Sources */,
 				A4A8B62C1A7A59CB00C59E63 /* RankController.swift in Sources */,

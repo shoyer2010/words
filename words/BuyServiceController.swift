@@ -47,6 +47,7 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         var buyButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
         buyButton.backgroundColor = Color.gray
         buyButton.setTitle("购买", forState: UIControlState.Normal)
+        buyButton.addTarget(self, action: "onBuyButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(buyButton)
         
         var cancelButton = UIButton(frame: CGRect(x: buyButton.frame.origin.x + buyButton.frame.width + 20, y: 100, width: 60, height: 23))
@@ -60,8 +61,8 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         self.closeView()
     }
     
-    func onButtonTapped(sender: UIButton) {
-        self.closeView()
+    func onBuyButtonTapped(sender: UIButton) {
+//        AlixLibService.payOrder("tsets", andScheme: "fsfadf", seletor: Selector("dfasf"), target: self)
     }
     
     func onCancelTapped(sender: UIButton) {

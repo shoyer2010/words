@@ -38,7 +38,7 @@
 		A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */; };
 		A4541F901A84B01E00EAA761 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F8F1A84B01E00EAA761 /* Layer.swift */; };
 		A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F911A850CF500EAA761 /* ChangePasswordController.swift */; };
-		A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */; };
+		A4541F941A851BE300EAA761 /* BuyServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F931A851BE300EAA761 /* BuyServiceController.swift */; };
 		A4541F961A85D16A00EAA761 /* HolyWaterInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */; };
 		A4541F981A85D35500EAA761 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F971A85D35500EAA761 /* RegisterController.swift */; };
 		A4541F9A1A85DD0F00EAA761 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F991A85DD0F00EAA761 /* LoginController.swift */; };
@@ -82,7 +82,6 @@
 		A4D3E4C81AA88DD5003883EF /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4D3E4B51AA88DD5003883EF /* libWeChatSDK.a */; };
 		A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFA71AA0E302008E064C /* DateUtil.swift */; };
 		A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAB1AA2F505008E064C /* Crypto.m */; };
-		A4D5EFAF1AA2FF27008E064C /* RSA.m in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFAE1AA2FF27008E064C /* RSA.m */; };
 		A4D5EFB11AA302A9008E064C /* PublicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D5EFB01AA302A9008E064C /* PublicKey.swift */; };
 		A4DFB85C1A9472F90086105C /* RegularExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85B1A9472F90086105C /* RegularExpression.swift */; };
 		A4DFB85E1A9480120086105C /* WordDetailDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */; };
@@ -156,10 +155,11 @@
 		A4541F881A849A3400EAA761 /* 方正楷体简体.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正楷体简体.ttf"; sourceTree = "<group>"; };
 		A4541F8F1A84B01E00EAA761 /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
 		A4541F911A850CF500EAA761 /* ChangePasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordController.swift; sourceTree = "<group>"; };
-		A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyHolyWaterController.swift; sourceTree = "<group>"; };
+		A4541F931A851BE300EAA761 /* BuyServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyServiceController.swift; sourceTree = "<group>"; };
 		A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HolyWaterInfoController.swift; sourceTree = "<group>"; };
 		A4541F971A85D35500EAA761 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		A4541F991A85DD0F00EAA761 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		A46417711AA9BA98007AD254 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A482C83D1A98D226008D313A /* CacheKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheKey.swift; sourceTree = "<group>"; };
 		A482C8401A98E1F4008D313A /* ErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		A48C26951A988EEC00CCAF74 /* playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = playground.playground; sourceTree = "<group>"; };
@@ -226,7 +226,6 @@
 		A4D5EFAA1AA2F4CF008E064C /* Crypto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Crypto.h; sourceTree = "<group>"; };
 		A4D5EFAB1AA2F505008E064C /* Crypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Crypto.m; sourceTree = "<group>"; };
 		A4D5EFAD1AA2FF09008E064C /* RSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSA.h; sourceTree = "<group>"; };
-		A4D5EFAE1AA2FF27008E064C /* RSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSA.m; sourceTree = "<group>"; };
 		A4D5EFB01AA302A9008E064C /* PublicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicKey.swift; sourceTree = "<group>"; };
 		A4DFB85B1A9472F90086105C /* RegularExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegularExpression.swift; sourceTree = "<group>"; };
 		A4DFB85D1A9480120086105C /* WordDetailDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordDetailDelegate.swift; sourceTree = "<group>"; };
@@ -324,6 +323,13 @@
 			path = SQLite;
 			sourceTree = "<group>";
 		};
+		A46417731AA9BAC3007AD254 /* RSA */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = RSA;
+			sourceTree = "<group>";
+		};
 		A482C83F1A98E1AB008D313A /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +345,7 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A46417711AA9BA98007AD254 /* Security.framework */,
 				A4D3E4741AA76B48003883EF /* libz.dylib */,
 				A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */,
 				A44D1FDB1A9A2FEE007F3F1E /* Word-Bridging-Header.h */,
@@ -362,6 +369,7 @@
 		A4A8B6061A7A563300C59E63 /* words */ = {
 			isa = PBXGroup;
 			children = (
+				A46417731AA9BAC3007AD254 /* RSA */,
 				A4D3E4A21AA88DD5003883EF /* UMSocial_Sdk_Extra_Frameworks */,
 				A4D3E47A1AA86838003883EF /* UMSocial_Sdk_4.2.1 */,
 				A4D3E4701AA76AE9003883EF /* Umeng */,
@@ -392,7 +400,7 @@
 				A427038B1A809891005159AC /* HelpController.swift */,
 				A427038D1A809D46005159AC /* FavouriteArticleController.swift */,
 				A4541F911A850CF500EAA761 /* ChangePasswordController.swift */,
-				A4541F931A851BE300EAA761 /* BuyHolyWaterController.swift */,
+				A4541F931A851BE300EAA761 /* BuyServiceController.swift */,
 				A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */,
 				A4541F971A85D35500EAA761 /* RegisterController.swift */,
 				A4541F991A85DD0F00EAA761 /* LoginController.swift */,
@@ -531,13 +539,25 @@
 			path = Wechat;
 			sourceTree = "<group>";
 		};
+		A4D3E4D51AA8C3F7003883EF /* json */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = json;
+			sourceTree = "<group>";
+		};
+		A4D3E4E51AA8C3F7003883EF /* RSA */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = RSA;
+			sourceTree = "<group>";
+		};
 		A4D5EFA91AA2F4B5008E064C /* Crypto */ = {
 			isa = PBXGroup;
 			children = (
 				A4D5EFAA1AA2F4CF008E064C /* Crypto.h */,
 				A4D5EFAB1AA2F505008E064C /* Crypto.m */,
-				A4D5EFAD1AA2FF09008E064C /* RSA.h */,
-				A4D5EFAE1AA2FF27008E064C /* RSA.m */,
 			);
 			name = Crypto;
 			sourceTree = "<group>";
@@ -703,7 +723,6 @@
 				A44D1FCF1A9A2EF7007F3F1E /* Database.swift in Sources */,
 				A4D5EFA81AA0E302008E064C /* DateUtil.swift in Sources */,
 				A44D1FD71A9A2EF7007F3F1E /* Statement.swift in Sources */,
-				A4D5EFAF1AA2FF27008E064C /* RSA.m in Sources */,
 				A44D1FD81A9A2EF7007F3F1E /* Value.swift in Sources */,
 				A4B9B1361A87B71A004B7A20 /* DictionaryInfoController.swift in Sources */,
 				A44D1FDD1A9B1B72007F3F1E /* EventKey.swift in Sources */,
@@ -738,7 +757,7 @@
 				A482C83E1A98D226008D313A /* CacheKey.swift in Sources */,
 				A4D3E4A11AA86C46003883EF /* Settings.swift in Sources */,
 				A4A8B6321A7B663A00C59E63 /* Error.swift in Sources */,
-				A4541F941A851BE300EAA761 /* BuyHolyWaterController.swift in Sources */,
+				A4541F941A851BE300EAA761 /* BuyServiceController.swift in Sources */,
 				A4DFB8681A96214D0086105C /* ArticleForChineseDelegate.swift in Sources */,
 				A427037C1A7FA272005159AC /* ArticleForChineseController.swift in Sources */,
 				A4A8B6301A7AA1A100C59E63 /* APIDataDelegate.swift in Sources */,
@@ -870,27 +889,25 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_DEBUG_INFORMATION_LEVEL = default;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
-					"$(PROJECT_DIR)/ShareSDK/Connection",
-					"$(PROJECT_DIR)/ShareSDK/Core",
-					"$(PROJECT_DIR)/ShareSDK/Extend/QQConnectSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/RenRenSDK",
-					"$(PROJECT_DIR)/ShareSDK",
-					"$(PROJECT_DIR)/ShareSDK/UI",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/TencentOpenAPI",
+					"$(PROJECT_DIR)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = words/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/TencentWeiboSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
 					"$(PROJECT_DIR)/words",
 					"$(PROJECT_DIR)/UMSocial_Sdk_4.2.1",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/Sina",
@@ -899,6 +916,7 @@
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/UMSocial_Shake_Sdk",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/Wechat",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/YiXin",
+					"$(PROJECT_DIR)/words/alipay",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
@@ -912,27 +930,25 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_DEBUG_INFORMATION_LEVEL = default;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
-					"$(PROJECT_DIR)/ShareSDK/Connection",
-					"$(PROJECT_DIR)/ShareSDK/Core",
-					"$(PROJECT_DIR)/ShareSDK/Extend/QQConnectSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/RenRenSDK",
-					"$(PROJECT_DIR)/ShareSDK",
-					"$(PROJECT_DIR)/ShareSDK/UI",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/TencentOpenAPI",
+					"$(PROJECT_DIR)",
+					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/words-gixhurlbsjkliddfjnpcbvpwfzzi/Build/Products/Debug",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = words/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/TencentWeiboSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
-					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
 					"$(PROJECT_DIR)/words",
 					"$(PROJECT_DIR)/UMSocial_Sdk_4.2.1",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/Sina",
@@ -941,6 +957,7 @@
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/UMSocial_Shake_Sdk",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/Wechat",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/YiXin",
+					"$(PROJECT_DIR)/words/alipay",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";

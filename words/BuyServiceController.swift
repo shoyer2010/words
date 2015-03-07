@@ -31,7 +31,7 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         self.subView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: nil))
         self.view.addSubview(self.subView)
         
-        indicator = UIActivityIndicatorView(frame: CGRect(x: self.subView.frame.width / 2 - 15, y: self.subView.frame.height / 2 - 30, width: 30, height: 30))
+        indicator = UIActivityIndicatorView(frame: CGRect(x: self.subView.frame.width / 2 - 15, y: self.subView.frame.height / 2 - 45, width: 30, height: 30))
         indicator.color = Color.gray
         self.subView.addSubview(indicator)
         
@@ -125,19 +125,21 @@ class BuyServiceController: UIViewController, APIDataDelegate {
     }
     
     func getAlipayOrder() -> NSString {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
         var service: AnyObject = self.data[self.selectedIndex]
         
         var order: AlixPayOrder = AlixPayOrder()
-        order.partner = Settings.ALI_PARTNER_ID
-        order.seller = Settings.ALI_SELLER
+        order.partner = user!["latestOrderId"] as String
+        order.seller = user!["email"] as String
         order.tradeNO = self.orderId
-        
+        order.notifyURL = user!["url"] as String
+
         var price = service["price"] as Int
         var description = service["name"] as String
         order.productName = "\(price)元\(description)词圣服务"
         order.productDescription = "增加词圣服务时间，轻松背单词，快乐学英语"
         order.amount = "0.01" // TODO: set the real data
-        
+
         var orderInfo = ""
         orderInfo += "service=\"mobile.securitypay.pay\""
         orderInfo += "&partner=\"\(order.partner)\""
@@ -220,8 +222,8 @@ class BuyServiceController: UIViewController, APIDataDelegate {
     }
     
     func onPaySuccess(notification: NSNotification) {
+        NSNotificationCenter.defaultCenter().postNotificationName(EventKey.SHOULD_LOGIN, object: self, userInfo: nil)
         SuccessView(view: self.view, message: "恭喜，支付成功") { () -> Void in
-            // 请求服务器，刷新服务时间
         }
     }
 }

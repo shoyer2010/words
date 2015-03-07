@@ -12,10 +12,7 @@ struct Settings {
     static let UMENG_APP_KEY = "54f81ab1fd98c5bfc10003f5"
     
     
-    static let WEI_XIN_APP_ID = "dfasf"
-    static let WEI_XIN_APP_SECRET = "dfasf"
+    static let WEI_XIN_APP_ID = "wxe5e092047202d610"
+    static let WEI_XIN_APP_SECRET = "5ad0325347589c4cfe5349a69bed0fca"
     static let WEI_XIN_URL = "http://www.baidu.com"
-    
-    static let ALI_PARTNER_ID = "2088511041102809"
-    static let ALI_SELLER = "loveher360@163.com"
 }

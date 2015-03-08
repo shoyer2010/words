@@ -191,6 +191,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.userServiceList?(data!)
             case "/user/order":
                 self.delegate!.userOrder?(data!)
+            case "/user/reclaimShareService":
+                self.delegate!.userReclaimShareService?(data!)
             case "/dictionary/list":
                 self.delegate!.dictionaryList!(data!)
             case "/dictionary/syncDictionary":

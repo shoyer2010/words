@@ -16,6 +16,8 @@
     
     optional func userOrder(AnyObject)
     
+    optional func userReclaimShareService(AnyObject)
+    
     
     // 字典
     optional func dictionaryList(AnyObject)

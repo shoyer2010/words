@@ -9,9 +9,10 @@
 import Foundation
 import UIkit
 
-class StatisticsController: UIViewController, UITableViewDataSource, UITableViewDelegate, UMSocialUIDelegate {
+class StatisticsController: UIViewController, UITableViewDataSource, UITableViewDelegate, UMSocialUIDelegate, APIDataDelegate {
     var tableView: UITableView!
     var shareButton: UIButton!
+    var seconds: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -195,10 +196,21 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
     func didFinishGetUMSocialDataInViewController(response: UMSocialResponseEntity!) {
         
         if (response.responseCode.value == UMSResponseCodeSuccess.value) {
-            println("分享成功")
-        } else {
-            println(response)
+            self.seconds = nil
+            var params = NSMutableDictionary()
+            API.instance.post("/user/reclaimShareService", delegate: self, params: params)
         }
     }
     
+    func didCloseUIViewController(fromViewControllerType: UMSViewControllerType) {
+        if (seconds != nil) {
+            var dayString = NSString(format: "%.1f", Float(seconds!) / Float(86400))
+            SuccessView(view: self.view, message: "服务天数增加\(dayString)天")
+            self.seconds = nil
+        }
+    }
+    
+    func userReclaimShareService(data: AnyObject) {
+        self.seconds = data["seconds"] as? Int
+    }
 }

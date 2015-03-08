@@ -52,7 +52,7 @@
 		A4541F901A84B01E00EAA761 /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F8F1A84B01E00EAA761 /* Layer.swift */; };
 		A4541F921A850CF500EAA761 /* ChangePasswordController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F911A850CF500EAA761 /* ChangePasswordController.swift */; };
 		A4541F941A851BE300EAA761 /* BuyServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F931A851BE300EAA761 /* BuyServiceController.swift */; };
-		A4541F961A85D16A00EAA761 /* HolyWaterInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */; };
+		A4541F961A85D16A00EAA761 /* ServiceInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F951A85D16A00EAA761 /* ServiceInfoController.swift */; };
 		A4541F981A85D35500EAA761 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F971A85D35500EAA761 /* RegisterController.swift */; };
 		A4541F9A1A85DD0F00EAA761 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4541F991A85DD0F00EAA761 /* LoginController.swift */; };
 		A482C83E1A98D226008D313A /* CacheKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482C83D1A98D226008D313A /* CacheKey.swift */; };
@@ -194,7 +194,7 @@
 		A4541F8F1A84B01E00EAA761 /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
 		A4541F911A850CF500EAA761 /* ChangePasswordController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePasswordController.swift; sourceTree = "<group>"; };
 		A4541F931A851BE300EAA761 /* BuyServiceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyServiceController.swift; sourceTree = "<group>"; };
-		A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HolyWaterInfoController.swift; sourceTree = "<group>"; };
+		A4541F951A85D16A00EAA761 /* ServiceInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceInfoController.swift; sourceTree = "<group>"; };
 		A4541F971A85D35500EAA761 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		A4541F991A85DD0F00EAA761 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 		A46417711AA9BA98007AD254 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -492,7 +492,7 @@
 				A427038D1A809D46005159AC /* FavouriteArticleController.swift */,
 				A4541F911A850CF500EAA761 /* ChangePasswordController.swift */,
 				A4541F931A851BE300EAA761 /* BuyServiceController.swift */,
-				A4541F951A85D16A00EAA761 /* HolyWaterInfoController.swift */,
+				A4541F951A85D16A00EAA761 /* ServiceInfoController.swift */,
 				A4541F971A85D35500EAA761 /* RegisterController.swift */,
 				A4541F991A85DD0F00EAA761 /* LoginController.swift */,
 				A4B9B1351A87B71A004B7A20 /* DictionaryInfoController.swift */,
@@ -817,7 +817,7 @@
 				A4A8B6361A7BB56200C59E63 /* DictionaryController.swift in Sources */,
 				A4A8B62E1A7A633C00C59E63 /* API.swift in Sources */,
 				A4541F9A1A85DD0F00EAA761 /* LoginController.swift in Sources */,
-				A4541F961A85D16A00EAA761 /* HolyWaterInfoController.swift in Sources */,
+				A4541F961A85D16A00EAA761 /* ServiceInfoController.swift in Sources */,
 				A41FAF0C1AA9E9DC0052105C /* AlixPayResult.m in Sources */,
 				A4D0FF771A9BA8E600A28CBD /* DictionaryUtil.swift in Sources */,
 				A427037E1A7FA38D005159AC /* ArticleForEnglishController.swift in Sources */,

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
-		A41FAEE91AA9C4CA0052105C /* RSA.m in Sources */ = {isa = PBXBuildFile; fileRef = A41FAEE81AA9C4CA0052105C /* RSA.m */; };
 		A41FAF071AA9E9DC0052105C /* AlipayRsaLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAEEB1AA9E9DC0052105C /* AlipayRsaLib.a */; };
 		A41FAF081AA9E9DC0052105C /* Alixpay.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A41FAEED1AA9E9DC0052105C /* Alixpay.bundle */; };
 		A41FAF0A1AA9E9DC0052105C /* AlixPaylib_arc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAEEF1AA9E9DC0052105C /* AlixPaylib_arc.a */; };
@@ -135,8 +134,6 @@
 
 /* Begin PBXFileReference section */
 		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
-		A41FAEE71AA9C4640052105C /* RSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSA.h; sourceTree = "<group>"; };
-		A41FAEE81AA9C4CA0052105C /* RSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSA.m; sourceTree = "<group>"; };
 		A41FAEEB1AA9E9DC0052105C /* AlipayRsaLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AlipayRsaLib.a; sourceTree = "<group>"; };
 		A41FAEEC1AA9E9DC0052105C /* AlixLibService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlixLibService.h; sourceTree = "<group>"; };
 		A41FAEED1AA9E9DC0052105C /* Alixpay.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Alixpay.bundle; sourceTree = "<group>"; };
@@ -419,8 +416,6 @@
 		A46417731AA9BAC3007AD254 /* RSA */ = {
 			isa = PBXGroup;
 			children = (
-				A41FAEE71AA9C4640052105C /* RSA.h */,
-				A41FAEE81AA9C4CA0052105C /* RSA.m */,
 			);
 			name = RSA;
 			sourceTree = "<group>";
@@ -833,7 +828,6 @@
 				A4D5EFAC1AA2F505008E064C /* Crypto.m in Sources */,
 				A4230E491A99C71000B31ECA /* SuccessView.swift in Sources */,
 				A42703861A7FB729005159AC /* SettingsController.swift in Sources */,
-				A41FAEE91AA9C4CA0052105C /* RSA.m in Sources */,
 				A427037A1A7F7924005159AC /* ApplicationController.swift in Sources */,
 				A42703931A812AB0005159AC /* PageCode.swift in Sources */,
 				A4A8B62C1A7A59CB00C59E63 /* RankController.swift in Sources */,
@@ -979,6 +973,10 @@
 		A4A8B6241A7A563300C59E63 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv7s,
+					armv7,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1014,12 +1012,18 @@
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
+				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
 		};
 		A4A8B6251A7A563300C59E63 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv7s,
+					armv7,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1055,6 +1059,8 @@
 				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
+				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
 		};

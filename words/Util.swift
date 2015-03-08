@@ -52,10 +52,9 @@ class Util {
     }
     
     class func getStringFromSeconds(seconds: Int = 0) -> String {
-        var days = seconds / 86400
-        var hours = (seconds % 86400) / 3600
+        var hours = Int(seconds / 3600)
         var minutes = (seconds % 3600) / 60
-        return "\(days)天\(hours)小时\(minutes)分"
+        return "\(hours)小时\(minutes)分"
     }
     
     class func getFilePath(filename: String) -> String {

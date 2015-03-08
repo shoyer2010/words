@@ -139,7 +139,11 @@ class AccountController: UIViewController,APIDataDelegate {
         var seconds: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.ACTIVE_TIME) as? Int
         if (seconds != nil && seconds! > 0) {
             var params = NSMutableDictionary()
-            params.setValue(seconds, forKey: "seconds") // TODO: 需要rsa加密
+            params.setValue(seconds, forKey: "seconds")
+            var random = ("\(time(nil))" as NSString).md5()
+            var signString = NSString(string: "\(userId)\(seconds!)b79b517ce8cd6cf7c4ed8238ae4a3821\(random)")
+            params.setValue(signString.md5(), forKey: "sign")
+            params.setValue(random, forKey: "random")
             API.instance.post("/user/activeTime", delegate: self, params: params)
         }
     }

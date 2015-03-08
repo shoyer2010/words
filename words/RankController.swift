@@ -49,7 +49,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         rankLabelWrap.backgroundColor = Color.red
         
         var rankLabel = UILabel(frame: CGRect(x: 0, y: 0, width: rankLabelWrap.frame.width, height: rankLabelWrap.frame.height))
-        rankLabel.text = "活跃度排行榜"
+        rankLabel.text = "本月活跃榜"
         rankLabel.textColor = Color.white
         rankLabel.font = UIFont(name: Fonts.kaiti, size: CGFloat(16))
         rankLabel.textAlignment = NSTextAlignment.Center
@@ -69,6 +69,11 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         rankTableView.delegate = self
         rankTableView.layer.cornerRadius = Layer.cornerRadius
         rankTableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
+        rankTableView.separatorInset = UIEdgeInsetsZero
+        
+        if (rankTableView.respondsToSelector("setLayoutMargins:")) {
+            rankTableView.layoutMargins = UIEdgeInsetsZero
+        }
         rankTableViewWrap.addSubview(rankTableView)
         self.view.addSubview(rankTableViewWrap)
         
@@ -109,7 +114,13 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         if (cell == nil) {
             cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "rankCell")
             
-            var rankNumberLabel = UILabel(frame: CGRect(x: 15, y: 3, width: 24, height: 24))
+            cell!.separatorInset = UIEdgeInsetsZero
+            
+            if (cell!.respondsToSelector("setLayoutMargins:")) {
+                cell!.layoutMargins = UIEdgeInsetsZero
+            }
+            
+            var rankNumberLabel = UILabel(frame: CGRect(x: 10, y: 3, width: 24, height: 24))
             rankNumberLabel.tag = rankNumberLabelTag
             rankNumberLabel.backgroundColor = Color.listIconBackground
             rankNumberLabel.text = ""
@@ -120,7 +131,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             rankNumberLabel.font = UIFont(name: rankNumberLabel.font.fontName, size: CGFloat(12))
             cell!.contentView.addSubview(rankNumberLabel)
             
-            var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.25 , y: 4, width: tableView.frame.width * 0.4, height: 20))
+            var usernameLable = UILabel(frame: CGRect(x: tableView.frame.width * 0.20 , y: 4, width: tableView.frame.width * 0.5, height: 20))
             usernameLable.tag = usernameLableTag
             usernameLable.text = ""
             usernameLable.font = UIFont(name: usernameLable.font.fontName, size: CGFloat(17))
@@ -136,7 +147,7 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
             usernameLable.attributedText = NSAttributedString(string: usernameLable.text!, attributes: attributesForUsername)
             cell!.contentView.addSubview(usernameLable)
             
-            var timeLable = UILabel(frame: CGRect(x: tableView.frame.width - 100 , y: 5, width: 85, height: 20))
+            var timeLable = UILabel(frame: CGRect(x: tableView.frame.width - 70 , y: 5, width: 65, height: 20))
             timeLable.tag = timeLableTag
             timeLable.text = ""
             timeLable.font = UIFont(name: timeLable.font.fontName, size: CGFloat(13))

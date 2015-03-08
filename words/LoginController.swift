@@ -30,32 +30,34 @@ class LoginController: UIViewController, APIDataDelegate {
             }) { (isDone: Bool) -> Void in
         }
         
-        var usernameLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 20, width: 60, height: 20))
+        var usernameLabel = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 20, width: 60, height: 30))
         usernameLabel.text = "用户名"
         self.subView.addSubview(usernameLabel)
         
-        username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 120, height: 20))
+        username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 140, height: 26))
         username.backgroundColor = Color.white
+        username.alpha = 0.9
         self.subView.addSubview(username)
         
-        var passwordLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 55, width: 60, height: 20))
+        var passwordLabel = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 53, width: 60, height: 30))
         passwordLabel.text = "密   码"
         self.subView.addSubview(passwordLabel)
         
-        password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 120, height: 20))
+        password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 140, height: 26))
         password.backgroundColor = Color.white
+        password.alpha = 0.9
         password.secureTextEntry = true
         self.subView.addSubview(password)
         
-        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width * 0.23, y: 100, width: 70, height: 23))
-        submitButton.backgroundColor = Color.red
-        submitButton.setTitle("登录", forState: UIControlState.Normal)
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 100, width: 90, height: 30))
+        submitButton.backgroundColor = Color.gray
+        submitButton.setTitle("登 录", forState: UIControlState.Normal)
         submitButton.addTarget(self, action: "onSubmitButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 40, y: 100, width: 70, height: 23))
-        cancelButton.backgroundColor = Color.gray
-        cancelButton.setTitle("取消", forState: UIControlState.Normal)
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 90, height: 30))
+        cancelButton.backgroundColor = Color.red
+        cancelButton.setTitle("取 消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
 

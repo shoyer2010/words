@@ -28,33 +28,33 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
             }) { (isDone: Bool) -> Void in
         }
         
-        var oldPassword = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 20, width: 60, height: 20))
+        var oldPassword = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 20, width: 60, height: 30))
         oldPassword.text = "原密码"
         self.subView.addSubview(oldPassword)
         
-        oldPasswordInput = UITextField(frame: CGRect(x: oldPassword.frame.origin.x + oldPassword.frame.width, y: 20, width: 120, height: 20))
+        oldPasswordInput = UITextField(frame: CGRect(x: oldPassword.frame.origin.x + oldPassword.frame.width, y: 20, width: 140, height: 26))
         oldPasswordInput.backgroundColor = Color.white
         oldPasswordInput.secureTextEntry = true
         self.subView.addSubview(oldPasswordInput)
         
-        var newPassword = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 55, width: 60, height: 20))
+        var newPassword = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 53, width: 60, height: 30))
         newPassword.text = "新密码"
         self.subView.addSubview(newPassword)
         
-        newPasswordInput = UITextField(frame: CGRect(x: newPassword.frame.origin.x + newPassword.frame.width, y: 55, width: 120, height: 20))
+        newPasswordInput = UITextField(frame: CGRect(x: newPassword.frame.origin.x + newPassword.frame.width, y: 55, width: 140, height: 26))
         newPasswordInput.backgroundColor = Color.white
         newPasswordInput.secureTextEntry = true
         self.subView.addSubview(newPasswordInput)
         
-        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 100, width: 90, height: 30))
         submitButton.backgroundColor = Color.gray
-        submitButton.setTitle("修改", forState: UIControlState.Normal)
+        submitButton.setTitle("修 改", forState: UIControlState.Normal)
         submitButton.addTarget(self, action: "onSubmmitButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 90, height: 30))
         cancelButton.backgroundColor = Color.red
-        cancelButton.setTitle("取消", forState: UIControlState.Normal)
+        cancelButton.setTitle("取 消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
     }

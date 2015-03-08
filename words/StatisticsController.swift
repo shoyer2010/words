@@ -13,6 +13,7 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
     var tableView: UITableView!
     var shareButton: UIButton!
     var seconds: Int?
+    var shareText: NSString!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,13 +88,24 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         tableView.tableHeaderView = tableHeader
         tableViewWrap.addSubview(tableView)
         
-        shareButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
+        shareButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height - 80, width: 150, height: 32))
         shareButton.setTitle("分享晒晒", forState: UIControlState.Normal)
+        shareButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         shareButton.backgroundColor = Color.gray
         shareButton.addTarget(self, action: "onShareButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        shareButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        shareButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside)
         self.view.addSubview(shareButton)
         
         self.view.addSubview(tableViewWrap)
+    }
+    
+    func onTouchDown(sender: UIButton) {
+        sender.backgroundColor = Color.red
+    }
+    
+    func onTouchUp(sender: UIButton) {
+        sender.backgroundColor = Color.gray
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -190,7 +202,36 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func onShareButtonTapped(sender: UIButton) {
-        UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: "自从有了词圣，妈妈再也不用担心我背单词了，快来试试吧", shareImage: nil, shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToEmail, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
+        var randomTips = [
+            "自从有了《词圣》，妈妈再也不用担心我背单词了，快来试试吧",
+            "投资自己最好的方式就是学习",
+            "不积跬步，无以至千里",
+            "不积小流，无以成江海",
+            "日积月累，方可休成正果",
+            "少壮不努力，老大徙伤悲",
+            "你不努力，别人在努力",
+            "不要给自己的懒惰找任何理由",
+            "人生有两件事最值得投资，一件是健康，一件是学习",
+            "背单词这件事，没有捷径，继续吧",
+            "学英语并不难，难的是你能记住多少个单词",
+            "悄悄告诉你一个好用的app, 我不轻易告诉别人的",
+            "",
+        ]
+        
+        var appURL = NSUserDefaults.standardUserDefaults().valueForKey(CacheKey.APP_URL) as? NSString
+        
+        var shareText = randomTips[Util.getRandomInt(from: 0, to: randomTips.count - 1)]
+        
+        if (shareText as NSString).length < 1 {
+            shareText = "今日已学习\(DictionaryUtil.getWordCountHaveLearned(DateUtil.startOfThisDay()))个单词，不服来战！"
+        }
+        
+        if (appURL != nil) {
+            shareText += "  " + appURL!
+        }
+        
+        self.shareText = shareText
+        UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: shareText, shareImage: nil, shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToEmail, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
     }
     
     func didFinishGetUMSocialDataInViewController(response: UMSocialResponseEntity!) {
@@ -198,6 +239,7 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         if (response.responseCode.value == UMSResponseCodeSuccess.value) {
             self.seconds = nil
             var params = NSMutableDictionary()
+            params.setValue(self.shareText, forKey: "shareText")
             API.instance.post("/user/reclaimShareService", delegate: self, params: params)
         }
     }

@@ -35,8 +35,11 @@ class AccountController: UIViewController,APIDataDelegate {
         upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 23, width: 70, height: 26))
         upgradeButton.backgroundColor = Color.gray
         upgradeButton.layer.cornerRadius = 13
-        upgradeButton.setTitle("升级", forState: UIControlState.Normal)
+        upgradeButton.titleLabel?.font = UIFont.systemFontOfSize(16)
+        upgradeButton.setTitle("升 级", forState: UIControlState.Normal)
         upgradeButton.addTarget(self, action: "goToRegisterPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        upgradeButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
+        upgradeButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         self.view.addSubview(upgradeButton)
         
         serviceToLabel = UILabel(frame: CGRect(x: 15, y: 75, width: 200, height: 30))
@@ -55,8 +58,11 @@ class AccountController: UIViewController,APIDataDelegate {
         var getserviceToButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 75, width: 70, height: 26))
         getserviceToButton.backgroundColor = Color.gray
         getserviceToButton.layer.cornerRadius = 13
-        getserviceToButton.setTitle("获取", forState: UIControlState.Normal)
+        getserviceToButton.setTitle("获 取", forState: UIControlState.Normal)
+        getserviceToButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         getserviceToButton.addTarget(self, action: "goToBuyserviceToPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        getserviceToButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
+        getserviceToButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         self.view.addSubview(getserviceToButton)
         
         
@@ -66,15 +72,21 @@ class AccountController: UIViewController,APIDataDelegate {
         
         passwordButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 125, width: 70, height: 26))
         passwordButton.backgroundColor = Color.gray
-        passwordButton.setTitle("修改", forState: UIControlState.Normal)
+        passwordButton.setTitle("修 改", forState: UIControlState.Normal)
+        passwordButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         passwordButton.layer.cornerRadius = 13
         passwordButton.addTarget(self, action: "goToChangePasswordPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        passwordButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
+        passwordButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         self.view.addSubview(passwordButton)
         
-        logoutButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
+        logoutButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height - 80, width: 150, height: 32))
         logoutButton.backgroundColor = Color.red
+        logoutButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         logoutButton.setTitle("切换账户", forState: UIControlState.Normal)
         logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
+        logoutButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
+        logoutButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchDown)
         self.view.addSubview(logoutButton)
         
         
@@ -87,6 +99,14 @@ class AccountController: UIViewController,APIDataDelegate {
             self.setToView(user!)
             self.login(user!)
         }
+    }
+    
+    func onTouchDown(sender: UIButton) {
+        sender.backgroundColor = Color.red
+    }
+    
+    func onTouchUp(sender: UIButton) {
+        sender.backgroundColor = Color.gray
     }
     
     func userTrial(data:AnyObject) {

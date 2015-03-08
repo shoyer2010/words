@@ -29,34 +29,34 @@ class RegisterController: UIViewController, APIDataDelegate {
             }) { (isDone: Bool) -> Void in
         }
         
-        var usernameLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 20, width: 60, height: 20))
+        var usernameLabel = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 20, width: 60, height: 30))
         usernameLabel.text = "用户名"
         self.subView.addSubview(usernameLabel)
         
-        username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 120, height: 20))
+        username = UITextField(frame: CGRect(x: usernameLabel.frame.origin.x + usernameLabel.frame.width, y: 20, width: 140, height: 26))
         username.placeholder = "5-32个字符"
         username.backgroundColor = Color.white
         self.subView.addSubview(username)
         
-        var passwordLabel = UILabel(frame: CGRect(x: self.view.frame.width * 0.23, y: 55, width: 60, height: 20))
+        var passwordLabel = UILabel(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 53, width: 60, height: 30))
         passwordLabel.text = "密   码"
         self.subView.addSubview(passwordLabel)
         
-        password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 120, height: 20))
+        password = UITextField(frame: CGRect(x: passwordLabel.frame.origin.x + passwordLabel.frame.width, y: 55, width: 140, height: 26))
         password.placeholder = "6-32个字符"
         password.backgroundColor = Color.white
         password.secureTextEntry = true
         self.subView.addSubview(password)
         
-        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 70, y: 100, width: 60, height: 23))
+        var submitButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 100, y: 100, width: 90, height: 30))
         submitButton.backgroundColor = Color.gray
-        submitButton.setTitle("升级", forState: UIControlState.Normal)
+        submitButton.setTitle("升 级", forState: UIControlState.Normal)
         submitButton.addTarget(self, action: "onSubmitButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(submitButton)
         
-        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 60, height: 23))
+        var cancelButton = UIButton(frame: CGRect(x: submitButton.frame.origin.x + submitButton.frame.width + 20, y: 100, width: 90, height: 30))
         cancelButton.backgroundColor = Color.red
-        cancelButton.setTitle("取消", forState: UIControlState.Normal)
+        cancelButton.setTitle("取 消", forState: UIControlState.Normal)
         cancelButton.addTarget(self, action: "onCancelButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(cancelButton)
         

@@ -117,11 +117,14 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
         
         self.subView.addSubview(tableViewWrap)
         
-        learnButton = UIButton(frame: CGRect(x: self.subView.frame.width / 2 - 100, y: self.subView.frame.height - 40, width: 60, height: 30))
+        learnButton = UIButton(frame: CGRect(x: tableViewWrap.frame.origin.x, y: self.subView.frame.height - 40, width: (tableViewWrap.frame.width - 40) / 3, height: 32))
         learnButton.backgroundColor = Color.gray
         learnButton.userInteractionEnabled = false
         learnButton.alpha = 0.5
+        learnButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         learnButton.addTarget(self, action: "onLearnButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        learnButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        learnButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpOutside | UIControlEvents.TouchUpInside)
         self.subView.addSubview(learnButton)
         
         
@@ -131,7 +134,7 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             if ((NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY) as? String ) != nil) {
                 learnButton.setTitle("不学习", forState: UIControlState.Normal)
             } else {
-                learnButton.setTitle("学习", forState: UIControlState.Normal)
+                learnButton.setTitle("学 习", forState: UIControlState.Normal)
             }
         }
         
@@ -140,23 +143,27 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             if (dictionaryId != nil && dictionaryId! == self.dictionary!["id"] as String) {
                 learnButton.setTitle("不学习", forState: UIControlState.Normal)
             } else{
-                learnButton.setTitle("学习", forState: UIControlState.Normal)
+                learnButton.setTitle("学 习", forState: UIControlState.Normal)
             }
         }
         
-        editButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
-        editButton.setTitle("编辑", forState: UIControlState.Normal)
+        editButton = UIButton(frame: CGRect(x: learnButton.frame.origin.x + learnButton.frame.width + 20, y: self.subView.frame.height - 40, width: (tableViewWrap.frame.width - 40) / 3, height: 32))
+        editButton.setTitle("编 辑", forState: UIControlState.Normal)
         editButton.userInteractionEnabled = false
         editButton.alpha = 0.5
+        editButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         editButton.backgroundColor = Color.gray
         editButton.addTarget(self, action: "onEditButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        editButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
+        editButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpOutside | UIControlEvents.TouchUpInside)
         self.subView.addSubview(editButton)
         
-        deleteButton = UIButton(frame: CGRect(x: editButton.frame.origin.x + editButton.frame.width + 10, y: self.subView.frame.height - 40, width: 60, height: 30))
-        deleteButton.setTitle("删除", forState: UIControlState.Normal)
+        deleteButton = UIButton(frame: CGRect(x: editButton.frame.origin.x + editButton.frame.width + 20, y: self.subView.frame.height - 40, width: (tableViewWrap.frame.width - 40) / 3, height: 32))
+        deleteButton.setTitle("删 除", forState: UIControlState.Normal)
         deleteButton.backgroundColor = Color.red
         deleteButton.userInteractionEnabled = false
         deleteButton.alpha = 0.5
+        deleteButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         deleteButton.addTarget(self, action: "onDeleteButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.subView.addSubview(deleteButton)
         
@@ -171,6 +178,14 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
             }) { (isDone: Bool) -> Void in
                 self.prepareWords()
         }
+    }
+    
+    func onTouchDown(sender: UIButton) {
+        sender.backgroundColor = Color.red
+    }
+    
+    func onTouchUp(sender: UIButton) {
+        sender.backgroundColor = Color.gray
     }
     
     func onTapView(recognizer: UITapGestureRecognizer) {
@@ -192,10 +207,10 @@ class DictionaryInfoController: UIViewController, UITableViewDataSource, UITable
     func onEditButtonTapped(sender: UIButton) {
         if (self.tableView.editing) {
             self.tableView.setEditing(false, animated: true)
-            self.editButton.setTitle("编辑", forState: UIControlState.Normal)
+            self.editButton.setTitle("编 辑", forState: UIControlState.Normal)
         } else {
             self.tableView.setEditing(true, animated: true)
-            self.editButton.setTitle("完成", forState: UIControlState.Normal)
+            self.editButton.setTitle("完 成", forState: UIControlState.Normal)
         }
     }
     

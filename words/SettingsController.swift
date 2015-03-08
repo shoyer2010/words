@@ -80,10 +80,11 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
         cachedLabel.text = "缓存占用: " + self.getCacheFileSize()
         self.view.addSubview(cachedLabel)
         
-        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 193, width: 70, height: 30))
+        var clearButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 195, width: 70, height: 26))
         clearButton.backgroundColor = Color.gray
-        clearButton.setTitle("清理", forState: UIControlState.Normal)
-        clearButton.layer.cornerRadius = 15
+        clearButton.setTitle("清 理", forState: UIControlState.Normal)
+        clearButton.titleLabel?.font = UIFont.systemFontOfSize(16)
+        clearButton.layer.cornerRadius = 13
         clearButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
         clearButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
         clearButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
@@ -94,19 +95,21 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
         versionLabel.text = "当前版本:" + Util.getVersion()
         self.view.addSubview(versionLabel)
         
-        upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 248, width: 70, height: 30))
+        upgradeButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 250, width: 70, height: 26))
         upgradeButton.backgroundColor = Color.gray
         upgradeButton.hidden = true
-        upgradeButton.setTitle("升级", forState: UIControlState.Normal)
-        upgradeButton.layer.cornerRadius = 15
+        upgradeButton.setTitle("升 级", forState: UIControlState.Normal)
+        upgradeButton.layer.cornerRadius = 13
+        upgradeButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         upgradeButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)
         upgradeButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpInside)
         upgradeButton.addTarget(self, action: "onTapUp:", forControlEvents: UIControlEvents.TouchUpOutside)
         upgradeButton.addTarget(self, action: "upgradeApp:", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(upgradeButton)
         
-        encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height * 0.8, width: 150, height: 30))
+        encourageUsButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height - 80, width: 150, height: 32))
         encourageUsButton.setTitle("求个好评", forState: UIControlState.Normal)
+        encourageUsButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         encourageUsButton.backgroundColor = Color.gray
         self.refreshEncourageUsButton()
         encourageUsButton.addTarget(self, action: "onTapDown:", forControlEvents: UIControlEvents.TouchDown)

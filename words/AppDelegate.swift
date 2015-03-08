@@ -26,6 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = ApplicationController()
         self.window!.makeKeyAndVisible()
         
+        
 //        NSThread.sleepForTimeInterval(1)
         
         AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, error: nil)
@@ -92,15 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-
-        self.activeTime = time(nil) - self.activeTime
-        var totalTime: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.ACTIVE_TIME) as? Int
-        if (totalTime == nil) {
-            NSUserDefaults.standardUserDefaults().setObject(self.activeTime, forKey: CacheKey.ACTIVE_TIME)
-        } else {
-            NSUserDefaults.standardUserDefaults().setObject(self.activeTime + totalTime!, forKey: CacheKey.ACTIVE_TIME)
-        }
-        NSUserDefaults.standardUserDefaults().synchronize()
+        self.setActiveTime()
     }
 
     func applicationWillEnterForeground(application: UIApplication) {
@@ -168,6 +161,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func resultFromURL(url: NSURL) -> AlixPayResult {
         var qurey: NSString = url.query!.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
         return AlixPayResult(string: qurey)
+    }
+    
+    func setActiveTime() {
+        if (self.activeTime == nil) {
+            self.activeTime = time(nil)
+        }
+        
+        self.activeTime = time(nil) - self.activeTime
+        var totalTime: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.ACTIVE_TIME) as? Int
+        if (totalTime == nil) {
+            NSUserDefaults.standardUserDefaults().setObject(self.activeTime, forKey: CacheKey.ACTIVE_TIME)
+        } else {
+            NSUserDefaults.standardUserDefaults().setObject(self.activeTime + totalTime!, forKey: CacheKey.ACTIVE_TIME)
+        }
+        NSUserDefaults.standardUserDefaults().synchronize()
     }
 }
 

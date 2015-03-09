@@ -300,11 +300,6 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-    func error(error: Error, api: String) {
-        println(error.getMessage())
-        self.endLoading()
-    }
-    
     func startLoading() {
         self.view.bringSubviewToFront(self.indicator)
         self.indicator.startAnimating()
@@ -312,6 +307,15 @@ class RankController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func endLoading() {
         self.indicator.stopAnimating()
+    }
+    
+    func error(error: Error, api: String) {
+        self.endLoading()
+        var view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        ErrorView(view: view, message: error.getMessage(),completion: {() in
+            view.removeFromSuperview()
+        })
     }
 }
 

@@ -232,4 +232,12 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
     func setArticleId() -> String {
         return self.data[self.selectedRow!]["id"] as String
     }
+    
+    func error(error: Error, api: String) {
+        var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+        self.view.addSubview(view)
+        ErrorView(view: view, message: error.getMessage(),completion: {() in
+            view.removeFromSuperview()
+        })
+    }
 }

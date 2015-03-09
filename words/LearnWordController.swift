@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import AVFoundation
 
-class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate {
+class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate, SearchWordResultDelegate {
     var optionSelectedRow: Int?
     var learnWordScrollView: UIScrollView!
     var sentencesScrollView: UIScrollView!
@@ -49,6 +49,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var indicator: UIActivityIndicatorView!
     
     var viewLearnWordSentence: UIView!
+    
+    var matchWord: String?
     
     
     // 0 no word to show. 
@@ -526,11 +528,15 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func searchWord() -> String {
-        if (self.word != nil) {
-            return self.word!["word"] as String
+        if (self.learnWordScrollView.contentOffset.y < self.viewLearnWordSentenceHeight - 20) {
+            return self.matchWord!
+        } else {
+            if (self.word != nil) {
+                return self.word!["word"] as String
+            }
+            
+            return ""
         }
-        
-        return ""
     }
     
     func loadSentences() {
@@ -596,6 +602,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             sentenceEnglishView.attributedText =  NSAttributedString(string: sentenceEnglishView.text!, attributes: attributesForEnglish)
             sentenceEnglishView.sizeToFit()
             sentenceEnglishView.frame = CGRect(x: 15, y: 5, width: sentenceView.frame.width - 30, height: sentenceEnglishView.frame.height)
+            sentenceEnglishView.userInteractionEnabled = true
+            sentenceEnglishView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapEnglishSentence:"))
             sentenceView.addSubview(sentenceEnglishView)
             
             var sentenceChineseView = UILabel(frame: CGRect(x: 15, y: 10 + sentenceEnglishView.frame.origin.y + sentenceEnglishView.frame.height, width: sentenceView.frame.width - 30, height: 0))
@@ -647,6 +655,20 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
     }
     
+    func onTapEnglishSentence(recognizer: UITapGestureRecognizer) {
+        var tapPoint:CGPoint = recognizer.locationInView(recognizer.view!)
+        self.matchWord = Util.recognizeWord(recognizer.view! as UILabel, recognizer: recognizer)
+        
+        TapPointView(view: recognizer.view!, tapPoint: tapPoint, completion: { () -> Void in
+            if (self.matchWord != nil) {
+                var searchWordResultController = SearchWordResultController()
+                searchWordResultController.delegate = self
+                self.addChildViewController(searchWordResultController)
+                self.view.addSubview(searchWordResultController.view)
+            }
+        })
+    }
+    
     func wordPhoneticType() -> String {
         var type = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_PHONETIC_TYPE) as? String
         if (type == nil) {
@@ -663,9 +685,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
         
         if (self.player.playing) {
-            self.player.stop()
+            self.player.pause()
         } else {
-            self.playSentence()
+            self.player.play()
         }
     }
     
@@ -1109,6 +1131,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.learnWordScrollView.contentOffset = CGPoint(x: 0, y: viewLearnWordSentenceHeight)
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.LearnWord && PageCode(rawValue: notification.userInfo?["previousPage"] as Int) == PageCode.Home) {
             self.setNextWord()
+        } else {
+            if (self.player != nil) {
+                self.player.stop()
+            }
         }
     }
     

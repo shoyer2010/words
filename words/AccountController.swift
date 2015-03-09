@@ -58,7 +58,7 @@ class AccountController: UIViewController,APIDataDelegate {
         var getserviceToButton = UIButton(frame: CGRect(x: self.view.frame.width - 85, y: 75, width: 70, height: 26))
         getserviceToButton.backgroundColor = Color.gray
         getserviceToButton.layer.cornerRadius = 13
-        getserviceToButton.setTitle("获 取", forState: UIControlState.Normal)
+        getserviceToButton.setTitle("延 长", forState: UIControlState.Normal)
         getserviceToButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         getserviceToButton.addTarget(self, action: "goToBuyserviceToPage:", forControlEvents: UIControlEvents.TouchUpInside)
         getserviceToButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)

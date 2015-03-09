@@ -216,5 +216,21 @@ class Util {
         NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.SYNC_TIME)
         NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.WRONG_WORD_POST_TIME)
     }
+    
+    class func isServiceAvailable() -> Bool {
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        
+        if (user == nil) {
+            return true
+        }
+        
+        var serviceTo = user!["serviceTo"] as Int
+        var serverTime = user!["serverTime"] as Int
+        if (serviceTo <= serverTime) {
+            return false
+        } else {
+            return true
+        }
+    }
 }
 

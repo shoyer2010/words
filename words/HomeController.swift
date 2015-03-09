@@ -1,6 +1,6 @@
 import UIKit
 
-class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate, SearchWordResultDelegate, ArticleForEnglishDelegate {
+class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, UIScrollViewDelegate, APIDataDelegate, SearchWordResultDelegate, ArticleForEnglishDelegate, UIAlertViewDelegate {
     
     var searchBar: UISearchBar!
     var scrollViewForTabItems: UIScrollView!
@@ -18,6 +18,8 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     
     var todayRecommendByWord: UILabel!
     
+    var alertView: UIAlertView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
@@ -28,6 +30,42 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
 
         self.initView()
         self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    func enable() {
+        self.view.alpha = 1
+        self.view.userInteractionEnabled = true
+        self.view.superview?.userInteractionEnabled = true
+    }
+    
+    func disable() {
+        self.view.alpha = 0.4
+        self.view.userInteractionEnabled = false
+        self.view.superview?.userInteractionEnabled = false
+    }
+    
+    func checkService() {
+        if (!Util.isServiceAvailable()) {
+            alertView = UIAlertView(title: "服务到期", message: "这段时间以来，感谢您的陪伴，您的服务期限已到，如果你喜欢这个app, 希望您能支持我们，感谢你的支持，谢谢！要延长服务期限吗？", delegate: self, cancelButtonTitle: "放弃使用")
+            alertView.addButtonWithTitle("延长服务")
+            alertView.delegate = self
+            alertView.show()
+        } else {
+            self.enable()
+        }
+    }
+    
+    func alertView(alertView: UIAlertView, clickedButtonAtIndex buttonIndex: Int) {
+        if (buttonIndex == 0) {
+            self.disable()
+        }
+        
+        if (buttonIndex == 1) {
+            self.scrollToPageUpAndDown(page: 1)
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(500 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                self.scrollToPage(page: 4)
+            })
+        }
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -249,6 +287,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
     func onPageChange(notification: NSNotification) {
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.Home) {
             self.setTheNeedToReviewLablel()
+            self.checkService()
         }
     }
     

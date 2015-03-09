@@ -206,5 +206,15 @@ class Util {
             NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
         }
     }
+    
+    class func clearCache() {
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.USER)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_CUSTOM_DICTIONARY)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.LEARNING_DICTIONARY)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.DICTIONARY_LIST)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.ACTIVE_TIME)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.SYNC_TIME)
+        NSUserDefaults.standardUserDefaults().removeObjectForKey(CacheKey.WRONG_WORD_POST_TIME)
+    }
 }
 

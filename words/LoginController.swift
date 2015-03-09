@@ -104,6 +104,12 @@ class LoginController: UIViewController, APIDataDelegate {
     }
     
     func userLogin(data:AnyObject) {
+        var oldUser: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        
+        if (oldUser != nil && (oldUser!["id"] as String) != (data["id"] as String)) {
+            Util.clearCache()
+        }
+        
         var user = NSMutableDictionary()
         user.setDictionary(data as NSDictionary)
         user.setValue(self.loginPassword, forKey: "password")

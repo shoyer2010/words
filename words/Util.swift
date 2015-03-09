@@ -232,5 +232,9 @@ class Util {
             return true
         }
     }
+    
+    class func appURL() -> NSString? {
+        return NSUserDefaults.standardUserDefaults().valueForKey(CacheKey.APP_URL) as? NSString
+    }
 }
 

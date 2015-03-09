@@ -26,6 +26,8 @@
 
 #import "UMSocial.h"
 
+#import "UMSocialQQHandler.h"
+
 #import "UMSocialWechatHandler.h"
 
 #import "UMSocialSinaHandler.h"

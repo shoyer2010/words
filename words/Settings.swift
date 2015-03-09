@@ -11,6 +11,8 @@ import Foundation
 struct Settings {
     static let UMENG_APP_KEY = "54f81ab1fd98c5bfc10003f5"
     
+    static let QQ_APP_ID = "1104332982"
+    static let QQ_APP_KEY = "6SyYwyf8lXyhLCYJ"
     
     static let WEI_XIN_APP_ID = "wxe5e092047202d610"
     static let WEI_XIN_APP_SECRET = "5ad0325347589c4cfe5349a69bed0fca"

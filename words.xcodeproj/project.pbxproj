@@ -21,6 +21,11 @@
 		A41FAF121AA9E9DC0052105C /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = A41FAF011AA9E9DC0052105C /* SBJsonWriter.m */; };
 		A41FAF131AA9E9DC0052105C /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF021AA9E9DC0052105C /* libcrypto.a */; };
 		A41FAF141AA9E9DC0052105C /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF031AA9E9DC0052105C /* libssl.a */; };
+		A41FAF691AAD8AB70052105C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A46417711AA9BA98007AD254 /* Security.framework */; };
+		A41FAF6B1AAD8AC50052105C /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF6A1AAD8AC50052105C /* libiconv.dylib */; };
+		A41FAF6D1AAD8AD60052105C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF6C1AAD8AD60052105C /* CoreGraphics.framework */; };
+		A41FAF6F1AAD8AE50052105C /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF6E1AAD8AE50052105C /* CoreTelephony.framework */; };
+		A41FAF711AAD8AF30052105C /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAF701AAD8AF30052105C /* libstdc++.dylib */; };
 		A4230E491A99C71000B31ECA /* SuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4230E481A99C71000B31ECA /* SuccessView.swift */; };
 		A42703641A7E7A42005159AC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703631A7E7A42005159AC /* Color.swift */; };
 		A42703671A7F39DD005159AC /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42703661A7F39DD005159AC /* Util.swift */; };
@@ -159,6 +164,10 @@
 		A41FAF031AA9E9DC0052105C /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
 		A41FAF051AA9E9DC0052105C /* DataSigner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataSigner.h; sourceTree = "<group>"; };
 		A41FAF061AA9E9DC0052105C /* DataVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataVerifier.h; sourceTree = "<group>"; };
+		A41FAF6A1AAD8AC50052105C /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		A41FAF6C1AAD8AD60052105C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A41FAF6E1AAD8AE50052105C /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		A41FAF701AAD8AF30052105C /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		A4230E481A99C71000B31ECA /* SuccessView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuccessView.swift; sourceTree = "<group>"; };
 		A42703631A7E7A42005159AC /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		A42703661A7F39DD005159AC /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -287,6 +296,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4D3E4751AA76B48003883EF /* libz.dylib in Frameworks */,
+				A41FAF711AAD8AF30052105C /* libstdc++.dylib in Frameworks */,
+				A41FAF6F1AAD8AE50052105C /* CoreTelephony.framework in Frameworks */,
+				A41FAF6D1AAD8AD60052105C /* CoreGraphics.framework in Frameworks */,
+				A41FAF6B1AAD8AC50052105C /* libiconv.dylib in Frameworks */,
+				A41FAF691AAD8AB70052105C /* Security.framework in Frameworks */,
 				A4D3E4C11AA88DD5003883EF /* TencentOpenAPI.framework in Frameworks */,
 				A4D3E4C81AA88DD5003883EF /* libWeChatSDK.a in Frameworks */,
 				A4D3E4961AA86838003883EF /* libUMSocial_Sdk_4.2.1.a in Frameworks */,
@@ -435,6 +449,10 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A41FAF701AAD8AF30052105C /* libstdc++.dylib */,
+				A41FAF6E1AAD8AE50052105C /* CoreTelephony.framework */,
+				A41FAF6C1AAD8AD60052105C /* CoreGraphics.framework */,
+				A41FAF6A1AAD8AC50052105C /* libiconv.dylib */,
 				A46417711AA9BA98007AD254 /* Security.framework */,
 				A4D3E4741AA76B48003883EF /* libz.dylib */,
 				A4FE61321AA57FFB000198A6 /* SystemConfiguration.framework */,

@@ -69,19 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         MobClick.startWithAppkey(Settings.UMENG_APP_KEY, reportPolicy: SENDWIFIONLY, channelId: "AppStore")
         MobClick.setAppVersion(Util.getVersion())
         
-        UMSocialData.setAppKey(Settings.UMENG_APP_KEY)
-        
-        
-        UMSocialWechatHandler.setWXAppId(Settings.WEI_XIN_APP_ID, appSecret: Settings.WEI_XIN_APP_SECRET, url: Settings.WEI_XIN_URL)
-//        [UMSocialData defaultData].extConfig.wechatSessionData.url = @"http://baidu.com"; TODO: app 下载地址
-        // [UMSocialData defaultData].extConfig.wechatTimelineData.url = @"http://baidu.com";
-        // [UMSocialData defaultData].extConfig.wechatSessionData.title = @"微信好友title";
-        //[UMSocialData defaultData].extConfig.wechatTimelineData.title = @"微信朋友圈title";
-        // [UMSocialData defaultData].extConfig.wxMessageType = UMSocialWXMessageTypeApp;
-        
-        
-        UMSocialSinaHandler.openSSOWithRedirectURL(nil)
-        
         return true
     }
 

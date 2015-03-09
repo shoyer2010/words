@@ -202,6 +202,39 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func onShareButtonTapped(sender: UIButton) {
+        var randomTitles = [
+            "还在为背单词发愁？《词圣》comes to rescue",
+            "还在等什么，别人都又进步了",
+            "你不努力，有人替你努力",
+            "自从有了《词圣》,感觉自己把英语踩在了脚下",
+            "看气度不凡，老夫传授一秘籍给你",
+            "我看你是万中无一的奇才，拯救世界的重任就交给你了",
+            "来，来，来，看看别人是怎么记单词的"
+        ]
+        
+        var title = randomTitles[Util.getRandomInt(from: 0, to: randomTitles.count - 1)]
+        UMSocialData.setAppKey(Settings.UMENG_APP_KEY)
+        
+        // QQ and Qzone
+        UMSocialQQHandler.setQQWithAppId(Settings.QQ_APP_ID, appKey: Settings.QQ_APP_KEY, url: Util.appURL())
+        UMSocialData.defaultData().extConfig.qqData.url = Util.appURL()
+        UMSocialData.defaultData().extConfig.qzoneData.url = Util.appURL()
+        UMSocialData.defaultData().extConfig.qqData.title = title
+        UMSocialData.defaultData().extConfig.qzoneData.title = title
+        UMSocialData.defaultData().extConfig.qqData.qqMessageType = UMSocialQQMessageTypeDefault
+        
+        
+        // wechat
+        UMSocialWechatHandler.setWXAppId(Settings.WEI_XIN_APP_ID, appSecret: Settings.WEI_XIN_APP_SECRET, url: Settings.WEI_XIN_URL)
+        UMSocialData.defaultData().extConfig.wechatSessionData.url = Util.appURL()
+        UMSocialData.defaultData().extConfig.wechatTimelineData.url = Util.appURL()
+        UMSocialData.defaultData().extConfig.wechatSessionData.title = title
+        UMSocialData.defaultData().extConfig.wechatTimelineData.title = title
+        
+        // sina
+        UMSocialSinaHandler.openSSOWithRedirectURL(nil)
+        
+        
         var randomTips = [
             "自从有了《词圣》，妈妈再也不用担心我背单词了，快来试试吧",
             "投资自己最好的方式就是学习",
@@ -218,7 +251,7 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
             "",
         ]
         
-        var appURL = NSUserDefaults.standardUserDefaults().valueForKey(CacheKey.APP_URL) as? NSString
+        var appURL = Util.appURL()
         
         var shareText = randomTips[Util.getRandomInt(from: 0, to: randomTips.count - 1)]
         
@@ -231,7 +264,8 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         }
         
         self.shareText = shareText
-        UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: shareText, shareImage: nil, shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToEmail, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
+        
+        UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: shareText, shareImage: UIImage(named: "share"), shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
     }
     
     func didFinishGetUMSocialDataInViewController(response: UMSocialResponseEntity!) {
@@ -244,15 +278,12 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func didCloseUIViewController(fromViewControllerType: UMSViewControllerType) {
+    func userReclaimShareService(data: AnyObject) {
+        self.seconds = data["seconds"] as? Int
         if (seconds != nil) {
             var dayString = NSString(format: "%.1f", Float(seconds!) / Float(86400))
             SuccessView(view: self.view, message: "服务天数增加\(dayString)天")
             self.seconds = nil
         }
-    }
-    
-    func userReclaimShareService(data: AnyObject) {
-        self.seconds = data["seconds"] as? Int
     }
 }

@@ -188,7 +188,7 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
         params.setValue(Util.getVersion(), forKey: "version")
         API.instance.get("/version/check", delegate: self, params: params)
         
-        var url: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.APP_URL)
+        var url: AnyObject? = Util.appURL()
         if (url == nil) {
             API.instance.get("/version/url", delegate: self, params: params)
         }
@@ -241,7 +241,7 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     }
     
     func refreshEncourageUsButton() {
-        var url: String? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.APP_URL) as? String
+        var url: NSString? = Util.appURL()
         if (url == nil) {
             encourageUsButton.hidden = true
         } else {

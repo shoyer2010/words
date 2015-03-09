@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import AVFoundation
 
-class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate, SearchWordResultDelegate {
+class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate,  APIDataDelegate, WordDetailDelegate, SearchWordResultDelegate, AVAudioPlayerDelegate {
     var optionSelectedRow: Int?
     var learnWordScrollView: UIScrollView!
     var sentencesScrollView: UIScrollView!
@@ -1317,6 +1317,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 
                 if (data != nil) {
                     self.player = AVAudioPlayer(data: data, error: nil)
+                    self.player.delegate = self
                     data!.writeToFile(filename, atomically: true)
                 }
             }
@@ -1333,6 +1334,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 
                 if (data != nil) {
                     self.player = AVAudioPlayer(data: data, error: nil)
+                    self.player.delegate = self
                     data!.writeToFile(filename, atomically: true)
                 }
             }
@@ -1340,7 +1342,6 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             if (self.player != nil) {
                 self.player.play()
             }
-
         })
     }
     
@@ -1360,12 +1361,17 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                     
                     if (data != nil) {
                         self.player = AVAudioPlayer(data: data, error: nil)
+                        self.player.delegate = self
                         self.player.play()
                         data!.writeToFile(filename, atomically: true)
                     }
                 }
             }
         })
+    }
+    
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
+        self.player = nil
     }
     
     func error(error: Error, api: String) {

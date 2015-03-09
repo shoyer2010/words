@@ -72,7 +72,7 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
             sentenceShouldAutoVoiceValue = true
         }
         sentenceShouldAutoVoice.setOn(sentenceShouldAutoVoiceValue!, animated: true)
-        NSUserDefaults.standardUserDefaults().setObject(shouldAutoVoiceValue!, forKey: CacheKey.SENTENCE_AUTO_VOICE)
+        NSUserDefaults.standardUserDefaults().setObject(sentenceShouldAutoVoiceValue!, forKey: CacheKey.SENTENCE_AUTO_VOICE)
         NSUserDefaults.standardUserDefaults().synchronize()
         self.view.addSubview(sentenceShouldAutoVoice)
         

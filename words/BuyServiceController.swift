@@ -138,7 +138,7 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         var description = service["name"] as String
         order.productName = "\(price)元\(description)词圣服务"
         order.productDescription = "增加词圣服务时间，轻松背单词，快乐学英语"
-        order.amount = "0.01" // TODO: set the real data
+        order.amount = NSString(format: "%.2f", Float(price))
 
         var orderInfo = ""
         orderInfo += "service=\"mobile.securitypay.pay\""

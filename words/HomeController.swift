@@ -104,6 +104,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.searchBar.layer.borderColor = Color.gray.CGColor
         self.searchBar.barTintColor = UIColor.whiteColor()
         self.searchBar.placeholder = "单词列队完毕，请您检阅"
+        self.searchBar.keyboardType = UIKeyboardType.ASCIICapable
         homeTopBar.addSubview(self.searchBar)
         
         var rightHelpIcon = UIView(frame: CGRect(x: homeTopBar.frame.width - 15 - 24, y: 4, width: 24, height: 24))

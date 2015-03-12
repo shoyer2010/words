@@ -42,6 +42,8 @@
     
     optional func articleFavourite(AnyObject)
     
+    optional func articleCancelFavourite(AnyObject)
+    
     optional func articleFavouriteList(AnyObject)
     
     //排名

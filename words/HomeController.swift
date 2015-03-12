@@ -92,7 +92,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         homeTopBar.backgroundColor = Color.red
         
         var leftArticleIcon = UIView(frame: CGRect(x: 15, y: 4, width: 24, height: 24))
-        leftArticleIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorite.png")!)
+        leftArticleIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorited.png")!)
         leftArticleIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapArticleIcon:"))
         homeTopBar.addSubview(leftArticleIcon)
         
@@ -561,11 +561,11 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.scrollToPage(page: item.tag - 1)
     }
     
-    func setArticleId() -> String {
+    func setArticleId() -> String? {
         var user: NSDictionary? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER) as? NSDictionary
         
         if (user != nil) {
-            return user!.valueForKeyPath("recommendArticle.id") as String
+            return user!.valueForKeyPath("recommendArticle.id") as? String
         }
             
         return ""

@@ -18,11 +18,15 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     var delegate: ArticleForEnglishDelegate!
     var data: AnyObject!
     var indicator: UIActivityIndicatorView!
+    var favouriteIcon: UIView!
+    var isFavourite: Bool!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onFavouriteChange:", name: EventKey.ON_FAVOURITE_CHANGE, object: nil)
+        
         var applicationController = self.parentViewController as ApplicationController
         applicationController.articleForChineseController.delegate = self
         
@@ -35,7 +39,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         var topBar = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 35))
         topBar.backgroundColor = Color.red
         
-        var favouriteIcon = UIView(frame: CGRect(x: self.view.frame.width / 2 - 12, y: 4, width: 24, height: 24))
+        favouriteIcon = UIView(frame: CGRect(x: self.view.frame.width / 2 - 12, y: 4, width: 24, height: 24))
         favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorite.png")!)
         favouriteIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapFavouriteIcon:"))
         topBar.addSubview(favouriteIcon)
@@ -159,10 +163,12 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
     
     func loadData() {
-        if (self.articleId != self.delegate!.setArticleId()) {
+        var articleId = self.delegate!.setArticleId()
+        
+        if (articleId != nil && self.articleId != articleId!) {
             var params = NSMutableDictionary()
-            params.setValue(self.delegate!.setArticleId(), forKey: "id")
-            self.articleId = self.delegate!.setArticleId()
+            params.setValue(articleId!, forKey: "id")
+            self.articleId = articleId!
             API.instance.get("/article/detail", delegate: self, params: params)
             self.startLoading()
         }
@@ -188,6 +194,9 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
     }
     
     func setToView(data: AnyObject) {
+        self.isFavourite = data["isFavourite"] as Bool
+        self.setFavouriteIcon()
+        
         self.titleView.text = data["titleEnglish"] as? String
         var paragraphStyleForTitle = NSMutableParagraphStyle()
         paragraphStyleForTitle.lineBreakMode = NSLineBreakMode.ByWordWrapping
@@ -241,15 +250,52 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
             var data: AnyObject = self.data
             var params = NSMutableDictionary()
             params.setValue(data["id"] as? String, forKey: "id")
-            API.instance.post("/article/favourite", delegate: self, params: params)
+            
+            if (self.isFavourite!) {
+                self.isFavourite = false
+                API.instance.post("/article/cancelFavourite", delegate: self, params: params)
+            } else {
+                self.isFavourite = true
+                API.instance.post("/article/favourite", delegate: self, params: params)
+            }
+            
+            var userInfo = NSMutableDictionary()
+            userInfo.setValue(self.isFavourite, forKey: "isFavourite")
+            userInfo.setValue(data["id"], forKey: "id")
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_FAVOURITE_CHANGE, object: self, userInfo: userInfo)
         }
     }
+    
+    func articleCancelFavourite(data: AnyObject) {
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            SuccessView(view: view, message: "已取消收藏", completion: {() in
+                view.removeFromSuperview()
+            })
+        })
+    }
 
+    func onFavouriteChange(notification: NSNotification) {
+        self.isFavourite = notification.userInfo!["isFavourite"] as Bool
+        self.setFavouriteIcon()
+    }
+    
+    func setFavouriteIcon() {
+        if (self.isFavourite!) {
+            favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorited.png")!)
+        } else {
+            favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorite.png")!)
+        }
+    }
+    
     func articleFavourite(data: AnyObject) {
-        var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
-        self.view.addSubview(view)
-        SuccessView(view: view, message: "成功收藏", completion: {() in
-            view.removeFromSuperview()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            SuccessView(view: view, message: "成功收藏", completion: {() in
+                view.removeFromSuperview()
+            })
         })
     }
     

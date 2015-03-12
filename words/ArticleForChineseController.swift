@@ -18,11 +18,15 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     
     var indicator: UIActivityIndicatorView!
     
+    var favouriteIcon: UIView!
+    var isFavourite: Bool!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onArticleChange:", name: EventKey.ON_ARTICLE_CHANGE, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onFavouriteChange:", name: EventKey.ON_FAVOURITE_CHANGE, object: nil)
         
         self.view.backgroundColor = Color.red
         
@@ -33,7 +37,7 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         var topBar = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 35))
         topBar.backgroundColor = Color.red
         
-        var favouriteIcon = UIView(frame: CGRect(x: self.view.frame.width / 2 - 12, y: 4, width: 24, height: 24))
+        favouriteIcon = UIView(frame: CGRect(x: self.view.frame.width / 2 - 12, y: 4, width: 24, height: 24))
         favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorite.png")!)
         favouriteIcon.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onTapFavouriteIcon:"))
         topBar.addSubview(favouriteIcon)
@@ -97,7 +101,8 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
             self.articleId = id
         }
         
-        
+        self.isFavourite = data!["isFavourite"] as Bool
+        self.setFavouriteIcon()
         
         titleView.text = data!["titleChinese"] as? String
         var paragraphStyleForTitle = NSMutableParagraphStyle()
@@ -140,15 +145,53 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         if (data != nil) {
             var params = NSMutableDictionary()
             params.setValue(data!["id"] as? String, forKey: "id")
-            API.instance.post("/article/favourite", delegate: self, params: params)
+            
+            if (self.isFavourite!) {
+                self.isFavourite = false
+                API.instance.post("/article/cancelFavourite", delegate: self, params: params)
+                
+            } else {
+                self.isFavourite = true
+                API.instance.post("/article/favourite", delegate: self, params: params)
+            }
+            
+            var userInfo = NSMutableDictionary()
+            userInfo.setValue(self.isFavourite, forKey: "isFavourite")
+            userInfo.setValue(data!["id"], forKey: "id")
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_FAVOURITE_CHANGE, object: self, userInfo: userInfo)
+        }
+    }
+    
+    func articleCancelFavourite(data: AnyObject) {
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            SuccessView(view: view, message: "已取消收藏", completion: {() in
+                view.removeFromSuperview()
+            })
+        })
+    }
+    
+    func onFavouriteChange(notification: NSNotification) {
+        self.isFavourite = notification.userInfo!["isFavourite"] as Bool
+        self.setFavouriteIcon()
+    }
+    
+    func setFavouriteIcon() {
+        if (self.isFavourite!) {
+            favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorited.png")!)
+        } else {
+            favouriteIcon.backgroundColor = UIColor(patternImage: UIImage(named: "favorite.png")!)
         }
     }
     
     func articleFavourite(data: AnyObject) {
-        var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
-        self.view.addSubview(view)
-        SuccessView(view: view, message: "成功收藏", completion: {() in
-            view.removeFromSuperview()
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            SuccessView(view: view, message: "成功收藏", completion: {() in
+                view.removeFromSuperview()
+            })
         })
     }
     

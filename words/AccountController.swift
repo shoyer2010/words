@@ -81,12 +81,12 @@ class AccountController: UIViewController,APIDataDelegate {
         self.view.addSubview(passwordButton)
         
         logoutButton = UIButton(frame: CGRect(x: self.view.frame.width / 2 - 75, y: self.view.frame.height - 80, width: 150, height: 32))
-        logoutButton.backgroundColor = Color.red
+        logoutButton.backgroundColor = Color.gray
         logoutButton.titleLabel?.font = UIFont.systemFontOfSize(16)
         logoutButton.setTitle("切换账户", forState: UIControlState.Normal)
         logoutButton.addTarget(self, action: "goToLoginPage:", forControlEvents: UIControlEvents.TouchUpInside)
-        logoutButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
-        logoutButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchDown)
+        logoutButton.addTarget(self, action: "onTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchDragOutside)
+        logoutButton.addTarget(self, action: "onTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         self.view.addSubview(logoutButton)
         
         

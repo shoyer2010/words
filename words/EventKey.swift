@@ -18,4 +18,5 @@ struct EventKey {
     static let SHOULD_LOGIN = "shouldLogin"
     static let ON_PAY_SUCCESS = "on_pay_success"
     static let ON_PAY_FAILED = "on_pay_failed"
+    static let ON_FAVOURITE_CHANGE = "on_favourite_change"
 }

@@ -13,12 +13,16 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
     var contentView: UIView!
     var selectedRow: Int?
     var previousX = CGFloat(0)
-    var data: NSArray!
+    var data: NSMutableArray!
     var indicator: UIActivityIndicatorView!
+    var tableView: UITableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onFavouriteChange:", name: EventKey.ON_FAVOURITE_CHANGE, object: nil)
+        
         indicator = UIActivityIndicatorView(frame: CGRect(x: self.view.frame.width / 2 - 30, y: self.view.frame.height / 2 - 30, width: 60, height: 60))
         indicator.color = Color.red
         self.view.addSubview(indicator)
@@ -56,22 +60,38 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
     }
     
     func articleFavouriteList(data: AnyObject) {
-        self.data = data as NSArray
+        self.data = data as NSMutableArray
+
+        var tableViewWrap = UIView(frame: CGRect(x: 15, y: 15, width: self.contentView.frame.width - 30, height: self.contentView.frame.height - 30))
+        tableViewWrap.backgroundColor = Color.blockBackground
+        tableViewWrap.layer.shadowOpacity = Layer.shadowOpacity
+        tableViewWrap.layer.shadowOffset = Layer.shadowOffset
+        tableViewWrap.layer.shadowColor = Layer.shadowColor
+        tableViewWrap.layer.shadowRadius = Layer.shadowRadius
+        tableViewWrap.layer.cornerRadius = Layer.cornerRadius
         
-        var tableView = UITableView(frame: CGRect(x: 0, y: 0, width: self.contentView.frame.width, height: self.contentView.frame.height))
-        tableView.backgroundColor = UIColor.clearColor()
+        tableView = UITableView(frame: CGRect(x: 6, y: 6, width: tableViewWrap.frame.width - 12, height: tableViewWrap.frame.height - 12))
+        tableView.backgroundColor = Color.white
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 15)
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 0,  bottom: 0, right: 0)
         tableView.separatorInset = UIEdgeInsetsZero
-        
+
         if (tableView.respondsToSelector("setLayoutMargins:")) {
             tableView.layoutMargins = UIEdgeInsetsZero
         }
         
-        tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-        self.contentView.addSubview(tableView)
+        tableViewWrap.addSubview(tableView)
+        self.contentView.addSubview(tableViewWrap)
         self.endLoading()
+        
+        if (self.data.count == 0) {
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            ErrorView(view: view, message: "您还没有收藏过文章",completion: {() in
+                view.removeFromSuperview()
+            })
+        }
     }
     
     func onPanTableView(recognizer: UIPanGestureRecognizer) {
@@ -139,7 +159,7 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 66
+        return 50
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -159,14 +179,12 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
                 cell!.layoutMargins = UIEdgeInsetsZero
             }
             
-            cell!.backgroundColor = UIColor.clearColor()
             cell!.selectionStyle = UITableViewCellSelectionStyle.None
-            var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 66))
+            var selectedView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
             selectedView.tag = 999
             cell!.addSubview(selectedView)
             
-            var recommendView = UIView(frame: CGRect(x: 15, y: 8, width: tableView.frame.width - 30, height: 50))
-            recommendView.backgroundColor = Color.blockBackground
+            var recommendView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
 
             var englishLabel = UILabel(frame: CGRect(x: 10, y: 3, width: recommendView.frame.width - 20, height: recommendView.frame.height / 2))
             englishLabel.tag = englishLabelTag
@@ -184,6 +202,21 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
             cell!.addSubview(recommendView)
         }
         
+        
+        var englishColor = Color.red
+        var chineseColor = Color.lightGray
+        
+        var selectedView = cell!.viewWithTag(999)
+        if (self.selectedRow == indexPath.row) {
+            selectedView?.backgroundColor = Color.red
+            englishColor = Color.white
+            chineseColor = Color.white
+        } else {
+            selectedView?.backgroundColor = UIColor.clearColor()
+            englishColor = Color.red
+            chineseColor = Color.lightGray
+        }
+        
         var englishLabel = cell!.viewWithTag(englishLabelTag) as UILabel
         englishLabel.text = self.data[indexPath.row]["titleEnglish"] as? String
         var paragraphStyle = NSMutableParagraphStyle()
@@ -192,30 +225,23 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         var attributes = NSDictionary(dictionary: [
             NSParagraphStyleAttributeName: paragraphStyle,
             NSFontAttributeName: englishLabel.font,
-            NSForegroundColorAttributeName: Color.red,
+            NSForegroundColorAttributeName: englishColor,
             NSStrokeWidthAttributeName: NSNumber(float: -1.0)
             ])
         englishLabel.attributedText = NSAttributedString(string: englishLabel.text!, attributes: attributes)
-
+        
         var chineseLabel = cell!.viewWithTag(chineseLabelTag) as UILabel
         chineseLabel.text = self.data[indexPath.row]["titleChinese"] as? String
         var paragraphStyleForChinese = NSMutableParagraphStyle()
         paragraphStyleForChinese.lineBreakMode = NSLineBreakMode.ByTruncatingTail
         paragraphStyleForChinese.lineSpacing = 7
         var attributesForChinese = NSDictionary(dictionary: [
-                NSParagraphStyleAttributeName: paragraphStyleForChinese,
-                NSFontAttributeName: chineseLabel.font,
-                NSForegroundColorAttributeName: Color.lightGray,
-                NSStrokeWidthAttributeName: NSNumber(float: -1.0)
-        ])
+            NSParagraphStyleAttributeName: paragraphStyleForChinese,
+            NSFontAttributeName: chineseLabel.font,
+            NSForegroundColorAttributeName: chineseColor,
+            NSStrokeWidthAttributeName: NSNumber(float: -1.0)
+            ])
         chineseLabel.attributedText = NSAttributedString(string: chineseLabel.text!, attributes: attributesForChinese)
-        
-        var selectedView = cell!.viewWithTag(999)
-        if (self.selectedRow == indexPath.row) {
-            selectedView?.backgroundColor = Color.red
-        } else {
-            selectedView?.backgroundColor = UIColor.clearColor()
-        }
         
         return cell!
     }
@@ -229,8 +255,24 @@ class FavouriteArticleController: UIViewController, UITableViewDataSource, UITab
         applicationController.scrollToPage(page: 1)
     }
     
-    func setArticleId() -> String {
-        return self.data[self.selectedRow!]["id"] as String
+    func setArticleId() -> String? {
+        if (self.selectedRow != nil) {
+            return self.data[self.selectedRow!]["id"] as? String
+        } else {
+            return nil
+        }
+    }
+    
+    func onFavouriteChange(notification: NSNotification) {
+        self.selectedRow = nil
+        var articleId = notification.userInfo!["id"] as String
+        for item in self.data {
+            if (item["id"] as String) == articleId {
+                self.data.removeObject(item)
+                self.tableView.reloadData()
+                break
+            }
+        }
     }
     
     func error(error: Error, api: String) {

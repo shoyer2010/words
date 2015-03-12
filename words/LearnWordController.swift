@@ -632,7 +632,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             var sentenceFromView = UILabel(frame: CGRect(x: 15, y: 5 + sentenceChineseView.frame.origin.y + sentenceChineseView.frame.height, width: sentenceView.frame.width - 30, height: 0))
             sentenceFromView.numberOfLines = 0
             sentenceFromView.text = ""
-            if (sentence["from"] as? String != nil) {
+            if (sentence["from"] as? String != nil && (sentence["from"] as NSString).length > 1) {
                 sentenceFromView.text = "来自: " + (sentence["from"] as String)
             }
             

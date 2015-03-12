@@ -209,6 +209,8 @@ class API: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
                 self.delegate!.articleDetail!(data!)
             case "/article/favourite":
                 self.delegate!.articleFavourite!(data!)
+            case "/article/cancelFavourite":
+                self.delegate!.articleCancelFavourite!(data!)
             case "/article/favouriteList":
                 self.delegate!.articleFavouriteList!(data!)
             case "/rank/active":

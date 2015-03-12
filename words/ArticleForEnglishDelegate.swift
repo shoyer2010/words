@@ -2,5 +2,5 @@
 import Foundation
 
 protocol ArticleForEnglishDelegate {
-    func setArticleId() -> String
+    func setArticleId() -> String?
 }

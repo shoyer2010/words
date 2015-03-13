@@ -30,6 +30,9 @@ class Word {
         
         statement.run(id, wordString, phoneticSymbolUS, usPronunciation, phoneticSymbolUK, ukPronunciation, chinese)
         
-        DictionaryUtil.importDataToLearingProcess(DictionaryUtil.customDictionaryId()) // TODO: 这里应该优化，身学习记录库单条写入
+        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
+        var userId = user!["id"] as String
+        var dbTo = Database(Util.getFilePath(userId + ".db"))
+        dbTo.prepare("INSERT INTO learningProgress(dictionaryId, wordId, wordStatus, lastAppearTime, appearTimes, rightTimes, rightSeconds) VALUES(?, ?, ?, ?, ?, ?, ?)", DictionaryUtil.customDictionaryId(), id, 0, 0, 0, 0, "0").run()
     }
 }

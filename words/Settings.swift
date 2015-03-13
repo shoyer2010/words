@@ -9,7 +9,7 @@
 import Foundation
 
 struct Settings {
-    static let UMENG_APP_KEY = "54f81ab1fd98c5bfc10003f5"
+    static let UMENG_APP_KEY = "5502ad8efd98c5d23300028c"
     
     static let QQ_APP_ID = "1104332982"
     static let QQ_APP_KEY = "6SyYwyf8lXyhLCYJ"

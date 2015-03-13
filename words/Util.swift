@@ -37,6 +37,10 @@ class Util {
         return UIDevice.currentDevice().identifierForVendor.UUIDString
     }
     
+    class func isSimulator() -> Bool {
+        return RegularExpression("Simulator").test(UIDevice.currentDevice().model)
+    }
+    
     class func getVersion() -> String {
         var info = NSBundle.mainBundle().infoDictionary! as NSDictionary
         return info.objectForKey("CFBundleShortVersionString") as String

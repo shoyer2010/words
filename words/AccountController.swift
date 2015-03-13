@@ -94,6 +94,13 @@ class AccountController: UIViewController,APIDataDelegate {
         if (user == nil) {
             var params = NSMutableDictionary()
             params.setValue(Util.getUDID(), forKey: "udid")
+            
+            if (Util.isSimulator()) {
+                params.setValue(1, forKey: "from")
+            } else {
+                params.setValue(2, forKey: "from")
+            }
+            
             API.instance.post("/user/trial", delegate: self, params: params)
         } else {
             self.setToView(user!)

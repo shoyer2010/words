@@ -67,8 +67,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
 //        MobClick.setLogEnabled(true)
-        MobClick.startWithAppkey(Settings.UMENG_APP_KEY, reportPolicy: SENDWIFIONLY, channelId: "AppStore")
-        MobClick.setAppVersion(Util.getVersion())
+        
+        if (!Util.isSimulator()) {
+            MobClick.startWithAppkey(Settings.UMENG_APP_KEY, reportPolicy: SENDWIFIONLY, channelId: "AppStore")
+            MobClick.setAppVersion(Util.getVersion())
+        }
         
         return true
     }

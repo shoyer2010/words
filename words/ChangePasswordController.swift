@@ -95,6 +95,8 @@ class ChangePasswordController: UIViewController, APIDataDelegate {
         params.setValue(oldPassword, forKey: "password")
         params.setValue(newPassword, forKey: "newPassword")
         API.instance.post("/user/changePassword", delegate: self,  params: params)
+        
+        MobClick.event("chnagePassword")
     }
     
     func changePassword(data :AnyObject) {

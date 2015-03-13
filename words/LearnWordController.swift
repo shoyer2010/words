@@ -421,6 +421,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func onStatusButtonTouchDown(sender: UIButton) {
         self.infoView.hidden = false
         self.viewLearnWordPage.bringSubviewToFront(self.infoView)
+        
+        MobClick.event("onStatusButtonTouchDown")
     }
     
     func onStatusButtonTouchUp(sender: UIButton) {
@@ -430,6 +432,8 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func onRemoveButtonTapped(recognizer: UIGestureRecognizer) {
         DictionaryUtil.deleteWordFromDictionary(self.selectedDictionaryId!, wordId: self.word!["id"] as String, delegate: self)
         self.setNextWord()
+        
+        MobClick.event("onRemoveButtonTapped")
     }
     
     func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {
@@ -665,6 +669,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
                 searchWordResultController.delegate = self
                 self.addChildViewController(searchWordResultController)
                 self.view.addSubview(searchWordResultController.view)
+                MobClick.event("tapEnglishWord", attributes: ["page": "onTapEnglishSentence"])
             }
         })
     }

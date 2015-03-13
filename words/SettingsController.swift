@@ -130,19 +130,19 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     func onShouldAutoVoice(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.WORD_AUTO_VOICE)
         NSUserDefaults.standardUserDefaults().synchronize()
-        MobClick.event("onShouldAutoVoice", attributes: ["on": sender.on])
+        MobClick.event("onShouldAutoVoice", attributes: ["on": "\(sender.on)"])
     }
     
     func onSentenceShouldAutoVoice(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SENTENCE_AUTO_VOICE)
         NSUserDefaults.standardUserDefaults().synchronize()
-        MobClick.event("onSentenceShouldAutoVoice", attributes: ["on": sender.on])
+        MobClick.event("onSentenceShouldAutoVoice", attributes: ["on": "\(sender.on)"])
     }
     
     func onShouldNotify(sender: UISwitch) {
         NSUserDefaults.standardUserDefaults().setObject(sender.on, forKey: CacheKey.SHOULD_NOTIFY)
         NSUserDefaults.standardUserDefaults().synchronize()
-        MobClick.event("onShouldNotify", attributes: ["on": sender.on])
+        MobClick.event("onShouldNotify", attributes: ["on": "\(sender.on)"])
     }
     
     func onPageChange(notification: NSNotification) {

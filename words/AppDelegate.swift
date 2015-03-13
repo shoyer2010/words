@@ -26,7 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         println(Util.getFilePath("dfa"))
         self.window!.rootViewController = ApplicationController()
-        
 
 //        NSThread.sleepForTimeInterval(1)
         

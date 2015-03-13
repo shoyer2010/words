@@ -219,11 +219,19 @@ class BuyServiceController: UIViewController, APIDataDelegate {
     
     func onPayFailed(notification: NSNotification) {
         ErrorView(view: self.view, message: "抱歉，支付失败")
+        
+        MobClick.event("onPayFailed")
     }
     
     func onPaySuccess(notification: NSNotification) {
+        var service: AnyObject = self.data[self.selectedIndex]
+        var name = service["name"] as String
+        var price = service["price"] as Int
+        MobClick.event("payOrder", attributes: ["name" : name], counter: Int32(price))
+        
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.SHOULD_LOGIN, object: self, userInfo: nil)
         SuccessView(view: self.view, message: "恭喜，支付成功") { () -> Void in
         }
+        MobClick.event("onPaySuccess")
     }
 }

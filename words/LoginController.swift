@@ -101,6 +101,8 @@ class LoginController: UIViewController, APIDataDelegate {
         params.setValue(username, forKey: "username")
         params.setValue(password, forKey: "password")
         API.instance.get("/user/login", delegate: self,  params: params)
+        
+        MobClick.event("login")
     }
     
     func userLogin(data:AnyObject) {

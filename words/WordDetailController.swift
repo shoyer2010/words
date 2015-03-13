@@ -435,6 +435,8 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         params.setValue(1, forKey: "type")
         API.instance.post("/dictionary/customWord", delegate: self, params: params)
         NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_DICTIONARY_CHANGED, object: self, userInfo: nil)
+        
+        MobClick.event("onaddToCustomDictionaryButtonTapped")
     }
     
     func dictionaryCustomWord(data: AnyObject, params: NSMutableDictionary) {

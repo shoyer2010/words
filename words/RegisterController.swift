@@ -115,6 +115,8 @@ class RegisterController: UIViewController, APIDataDelegate {
         params.setValue(username, forKey: "username")
         params.setValue(password, forKey: "password")
         API.instance.post("/user/register", delegate: self, params: params)
+        
+        MobClick.event("registerUser")
     }
     
     func userRegister(data:AnyObject) {

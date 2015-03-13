@@ -266,6 +266,8 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         self.shareText = shareText
         
         UMSocialSnsService.presentSnsIconSheetView(self, appKey: Settings.UMENG_APP_KEY, shareText: shareText, shareImage: UIImage(named: "share"), shareToSnsNames: NSArray(array: [UMShareToSms, UMShareToQQ, UMShareToQzone, UMShareToWechatTimeline, UMShareToWechatSession, UMShareToSina, UMShareToRenren, UMShareToDouban]), delegate: self)
+        
+        MobClick.event("onShareButtonTapped")
     }
     
     func didFinishGetUMSocialDataInViewController(response: UMSocialResponseEntity!) {
@@ -283,6 +285,7 @@ class StatisticsController: UIViewController, UITableViewDataSource, UITableView
         if (seconds != nil) {
             var dayString = NSString(format: "%.1f", Float(seconds!) / Float(86400))
             SuccessView(view: self.view, message: "服务天数增加\(dayString)天")
+            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.SHOULD_LOGIN, object: self, userInfo: nil)
             self.seconds = nil
         }
     }

@@ -138,6 +138,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
                 searchWordResultController.delegate = self
                 self.addChildViewController(searchWordResultController)
                 self.view.addSubview(searchWordResultController.view)
+                MobClick.event("tapEnglishWord", attributes: ["page": "onTappedTitleView"])
             }
         })
     }
@@ -152,6 +153,7 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
                 searchWordResultController.delegate = self
                 self.addChildViewController(searchWordResultController)
                 self.view.addSubview(searchWordResultController.view)
+                MobClick.event("tapEnglishWord", attributes: ["page": "onTappedContentView"])
             }
         })
     }

@@ -17,16 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        println(Util.getFilePath("dfa"))
+        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        self.window!.backgroundColor = UIColor.whiteColor()
+        self.window!.makeKeyAndVisible()
+        
         application.applicationIconBadgeNumber = 0
         UIApplication.sharedApplication().cancelAllLocalNotifications()
         
-        self.window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        self.window!.backgroundColor = UIColor.whiteColor()
+        println(Util.getFilePath("dfa"))
         self.window!.rootViewController = ApplicationController()
-        self.window!.makeKeyAndVisible()
         
-        
+
 //        NSThread.sleepForTimeInterval(1)
         
         AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, error: nil)

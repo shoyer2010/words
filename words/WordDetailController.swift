@@ -122,7 +122,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         self.wordScrollView.addSubview(sentencesLabel)
         
         if (self.delegate!.shoudRegisterNotification == nil) {
-            loadData()
+            self.loadData()
         }
     }
     
@@ -414,7 +414,9 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
     
     func onPageChange(notification: NSNotification) {
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.WordDetail) {
-            loadData()
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(300 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                self.loadData()
+            })
         }
     }
     

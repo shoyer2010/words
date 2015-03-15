@@ -184,16 +184,6 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         startLearn.layer.cornerRadius = 50
         startLearn.layer.masksToBounds = true
         startLearn.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "onStartLearnTapped:"))
-        
-        var startLearnLabel = UILabel(frame: CGRect(x: 20, y: 2, width: 100, height: 80))
-        startLearnLabel.text = "开始受虐"
-        startLearnLabel.font = UIFont(name: startLearnLabel.font.fontName, size: CGFloat(15))
-        startLearnLabel.textColor = Color.red
-        startLearnLabel.layer.shadowColor = UIColor.redColor().CGColor
-        startLearnLabel.layer.shadowOpacity = 0.3
-        startLearnLabel.layer.shadowRadius = 2
-        startLearnLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
-        startLearn.addSubview(startLearnLabel)
         homeBody.addSubview(startLearn)
         
         viewHomePage.addSubview(homeBody)

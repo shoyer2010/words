@@ -247,36 +247,17 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         
         knowButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width / 2 - 50, y: tableViewWrap.frame.origin.y + tableViewWrap.frame.height + 20, width: 100, height: 100))
-        knowButton.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
+        knowButton.backgroundColor = UIColor(patternImage: UIImage(named: "known.png")!)
         knowButton.layer.cornerRadius = 50
         knowButton.layer.masksToBounds = true
-        
-        var knowButtonLabel = UILabel(frame: CGRect(x: 35, y: 2, width: 100, height: 80))
-        knowButtonLabel.text = "认识"
-        knowButtonLabel.font = UIFont(name: knowButtonLabel.font.fontName, size: CGFloat(15))
-        knowButtonLabel.textColor = Color.red
-        knowButtonLabel.layer.shadowColor = UIColor.redColor().CGColor
-        knowButtonLabel.layer.shadowOpacity = 0.3
-        knowButtonLabel.layer.shadowRadius = 2
-        knowButtonLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
-        knowButton.addSubview(knowButtonLabel)
         knowButton.addTarget(self, action: "onKnowButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         knowButton.hidden = true
         viewLearnWordPage.addSubview(knowButton)
         
         nextButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width / 2 - 50, y: tableViewWrap.frame.origin.y + tableViewWrap.frame.height + 20, width: 100, height: 100))
-        nextButton.backgroundColor = UIColor(patternImage: UIImage(named: "startLearn.png")!)
+        nextButton.backgroundColor = UIColor(patternImage: UIImage(named: "next.png")!)
         nextButton.layer.cornerRadius = 50
         nextButton.layer.masksToBounds = true
-        var nextButtonLabel = UILabel(frame: CGRect(x: 29, y: 2, width: 100, height: 80))
-        nextButtonLabel.text = "下一个"
-        nextButtonLabel.font = UIFont(name: nextButtonLabel.font.fontName, size: CGFloat(15))
-        nextButtonLabel.textColor = Color.red
-        nextButtonLabel.layer.shadowColor = UIColor.redColor().CGColor
-        nextButtonLabel.layer.shadowOpacity = 0.3
-        nextButtonLabel.layer.shadowRadius = 2
-        nextButtonLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
-        nextButton.addSubview(nextButtonLabel)
         nextButton.addTarget(self, action: "onNextButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         nextButton.hidden = true
         viewLearnWordPage.addSubview(nextButton)
@@ -1143,7 +1124,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func onPageChange(notification: NSNotification) {
         self.learnWordScrollView.contentOffset = CGPoint(x: 0, y: viewLearnWordSentenceHeight)
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.LearnWord && PageCode(rawValue: notification.userInfo?["previousPage"] as Int) == PageCode.Home) {
-            self.setNextWord()
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(300 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                self.setNextWord()
+            })
         } else {
             if (self.player != nil) {
                 self.player.stop()

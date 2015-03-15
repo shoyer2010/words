@@ -28,6 +28,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     var wordLabel: UILabel!
     var wordPhoneticButton: UIButton!
     var wordPhoneticSymbolLabel: UILabel!
+    var voiceIcon: UIButton!
     var knowButton: UIButton!
     var nextButton: UIButton!
     var removeButton: UIButton!
@@ -112,20 +113,16 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         
         
         removeButton = UIButton(frame: CGRect(x: 15, y: 32, width: 30, height: 30))
-        removeButton.backgroundColor = UIColor.purpleColor()
+        removeButton.backgroundColor = UIColor(patternImage: UIImage(named: "remove.png")!)
         removeButton.layer.cornerRadius = 15
         removeButton.layer.masksToBounds = true
-        removeButton.tintColor = UIColor.whiteColor()
-        removeButton.setTitle("删", forState: UIControlState.Normal)
         removeButton.addTarget(self, action: "onRemoveButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         viewLearnWordPage.addSubview(removeButton)
         
         statusButton = UIButton(frame: CGRect(x: viewLearnWordPage.frame.width - 45, y: 32, width: 30, height: 30))
-        statusButton.backgroundColor = UIColor.purpleColor()
+        statusButton.backgroundColor = UIColor(patternImage: UIImage(named: "info.png")!)
         statusButton.layer.cornerRadius = 15
         statusButton.layer.masksToBounds = true
-        statusButton.tintColor = UIColor.whiteColor()
-        statusButton.setTitle("i", forState: UIControlState.Normal)
         statusButton.addTarget(self, action: "onStatusButtonTouchDown:", forControlEvents: UIControlEvents.TouchDown)
         statusButton.addTarget(self, action: "onStatusButtonTouchUp:", forControlEvents: UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside)
         viewLearnWordPage.addSubview(statusButton)
@@ -170,7 +167,14 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         wordPhoneticSymbolLabel.sizeToFit()
         wordView.addSubview(wordPhoneticButton)
         wordView.addSubview(wordPhoneticSymbolLabel)
+        
+        voiceIcon = UIButton()
+        voiceIcon.hidden = true
+        voiceIcon.addTarget(self, action: "onVoiceIconTapped:", forControlEvents: UIControlEvents.TouchUpInside)
+        wordView.addSubview(voiceIcon)
         viewLearnWordPage.addSubview(wordView)
+        
+        
         
         blurViewForWord = FXBlurView(frame: CGRect(x: 0, y: 0, width: wordView.frame.width, height: wordView.frame.height))
         blurViewForWord.dynamic = false
@@ -838,6 +842,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.playVoice()
     }
     
+    func onVoiceIconTapped(sender: UIButton) {
+        self.playVoice()
+    }
+    
     func shoudRegisterNotification() -> Bool {
         return true
     }
@@ -1292,8 +1300,12 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         }
         
         wordPhoneticSymbolLabel.sizeToFit()
-        wordPhoneticButton.frame = CGRect(x: viewLearnWordPage.frame.width / 2 - (wordPhoneticButton.frame.width + wordPhoneticSymbolLabel.frame.width) / 2, y: wordPhoneticButton.frame.origin.y, width: wordPhoneticButton.frame.width, height: wordPhoneticButton.frame.height)
+        wordPhoneticButton.frame = CGRect(x: viewLearnWordPage.frame.width / 2 - (wordPhoneticButton.frame.width + wordPhoneticSymbolLabel.frame.width + 24) / 2, y: wordPhoneticButton.frame.origin.y, width: wordPhoneticButton.frame.width, height: wordPhoneticButton.frame.height)
         wordPhoneticSymbolLabel.frame = CGRect(x: wordPhoneticButton.frame.origin.x + wordPhoneticButton.frame.width, y: wordPhoneticSymbolLabel.frame.origin.y, width: wordPhoneticSymbolLabel.frame.width, height: wordPhoneticSymbolLabel.frame.height)
+        
+        voiceIcon.frame = CGRect(x: wordPhoneticSymbolLabel.frame.origin.x + wordPhoneticSymbolLabel.frame.width, y: wordPhoneticButton.frame.origin.y, width: 24, height: 24)
+        voiceIcon.hidden = wordPhoneticSymbolLabel.hidden
+        voiceIcon.backgroundColor = UIColor(patternImage: UIImage(named: "voice.png")!)
         
         var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.WORD_AUTO_VOICE) as? Bool
         if (shouldAutoVoice != nil && shouldAutoVoice! && self.pageMode != 4) {

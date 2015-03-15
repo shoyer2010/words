@@ -60,7 +60,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         self.wordScrollView.addSubview(headView)
         
         addToCustomDictionaryButton = UIButton(frame: CGRect(x: self.wordScrollView.frame.width - 45, y: 15, width: 30, height: 30))
-        addToCustomDictionaryButton.backgroundColor = Color.red
+        addToCustomDictionaryButton.backgroundColor = UIColor(patternImage: UIImage(named: "addToDictionary.png")!)
         addToCustomDictionaryButton.hidden = true
         addToCustomDictionaryButton.addTarget(self, action: "onaddToCustomDictionaryButtonTapped:", forControlEvents: UIControlEvents.TouchUpInside)
         self.wordScrollView.addSubview(addToCustomDictionaryButton)
@@ -75,7 +75,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         
         voiceIconUS = UIButton()
         voiceIconUS.hidden = true
-        voiceIconUS.backgroundColor = Color.red
+        voiceIconUS.backgroundColor = UIColor(patternImage: UIImage(named: "voice.png")!)
         voiceIconUS.addTarget(self, action: "usVoice:", forControlEvents: UIControlEvents.TouchUpInside)
         self.wordScrollView.addSubview(voiceIconUS)
         
@@ -85,7 +85,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         
         voiceIconUK = UIButton()
         voiceIconUK.hidden = true
-        voiceIconUK.backgroundColor = Color.red
+        voiceIconUK.backgroundColor = UIColor(patternImage: UIImage(named: "voice.png")!)
         voiceIconUK.addTarget(self, action: "ukVoice:", forControlEvents: UIControlEvents.TouchUpInside)
         self.wordScrollView.addSubview(voiceIconUK)
         

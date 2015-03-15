@@ -34,7 +34,7 @@ class DictionaryController: UIViewController, UITableViewDataSource, UITableView
         var segment = UISegmentedControl(frame: CGRect(x: self.view.frame.width / 2 - 65, y: 15, width: 130, height: 26))
         segment.backgroundColor = UIColor.whiteColor()
         segment.tintColor = Color.red
-        segment.insertSegmentWithTitle("常用", atIndex: 0, animated: false)
+        segment.insertSegmentWithTitle("普通", atIndex: 0, animated: false)
         segment.insertSegmentWithTitle("专业", atIndex: 1, animated: false)
         segment.insertSegmentWithTitle("特种", atIndex: 2, animated: false)
         segment.addTarget(self, action: "onSegmentTapped:", forControlEvents: UIControlEvents.ValueChanged)

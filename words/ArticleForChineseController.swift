@@ -73,10 +73,10 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     
     func onPageChange(notification: NSNotification) {
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.ArticleForChinese) {
+            self.startLoading()
             dispatch_async(dispatch_get_main_queue(), { () -> Void in
                 NSUserDefaults.standardUserDefaults().setObject(true, forKey: CacheKey.GUIDE_HAVE_TO_PAGE_CHINESE)
                 NSUserDefaults.standardUserDefaults().synchronize()
-                self.startLoading()
                 self.setToView(self.delegate!.setData())
                 self.endLoading()
             })

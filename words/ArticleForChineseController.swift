@@ -24,7 +24,6 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "onArticleChange:", name: EventKey.ON_ARTICLE_CHANGE, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onPageChange:", name: EventKey.ON_PAGE_CHAGNE, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "onFavouriteChange:", name: EventKey.ON_FAVOURITE_CHANGE, object: nil)
         
@@ -74,19 +73,21 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
     
     func onPageChange(notification: NSNotification) {
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.ArticleForChinese) {
-            self.setToView(self.delegate!.setData())
-            self.endLoading()
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                NSUserDefaults.standardUserDefaults().setObject(true, forKey: CacheKey.GUIDE_HAVE_TO_PAGE_CHINESE)
+                NSUserDefaults.standardUserDefaults().synchronize()
+                self.startLoading()
+                self.setToView(self.delegate!.setData())
+                self.endLoading()
+            })
+        } else {
+            self.clearData()
         }
     }
-    
-    func onArticleChange(notification: NSNotification) {
-        self.clearData()
-    }
-    
+
     func clearData() {
         titleView.text = ""
         contentView.text = ""
-        self.startLoading()
     }
     
     func setToView(data: AnyObject?) {
@@ -95,11 +96,8 @@ class ArticleForChineseController: UIViewController, APIDataDelegate {
         }
         
         var id = data!["id"] as String
-        if (self.articleId == id) {
-            return
-        } else {
-            self.articleId = id
-        }
+        
+        self.articleId = id
         
         self.isFavourite = data!["isFavourite"] as Bool
         self.setFavouriteIcon()

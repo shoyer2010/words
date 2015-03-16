@@ -103,6 +103,7 @@ class HomeController: UIViewController, UISearchBarDelegate, UITabBarDelegate, U
         self.searchBar.layer.masksToBounds = true
         self.searchBar.layer.borderColor = Color.gray.CGColor
         self.searchBar.barTintColor = UIColor.whiteColor()
+        self.searchBar.backgroundColor = UIColor.whiteColor()
         self.searchBar.placeholder = "单词列队完毕，请您检阅"
         self.searchBar.keyboardType = UIKeyboardType.ASCIICapable
         homeTopBar.addSubview(self.searchBar)

@@ -149,6 +149,8 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
         
         TapPointView(view: contentView, tapPoint: tapPoint, completion: { () -> Void in
             if (self.matchWord != nil) {
+                NSUserDefaults.standardUserDefaults().setObject(true, forKey: CacheKey.GUIDE_HAVE_CLICKED_WORD)
+                NSUserDefaults.standardUserDefaults().synchronize()
                 var searchWordResultController = SearchWordResultController()
                 searchWordResultController.delegate = self
                 self.addChildViewController(searchWordResultController)
@@ -175,6 +177,30 @@ class ArticleForEnglishController: UIViewController, APIDataDelegate, SearchWord
             self.articleId = articleId!
             API.instance.get("/article/detail", delegate: self, params: params)
             self.startLoading()
+            
+            var haveToPageChinese = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.GUIDE_HAVE_TO_PAGE_CHINESE) as? Bool
+            
+            if (haveToPageChinese == nil) {
+                var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+                self.view.addSubview(view)
+                SuccessView(view: view, message: "右滑显示译文", completion: {() in
+                    view.removeFromSuperview()
+                    self.guideClickWord()
+                })
+            } else {
+                self.guideClickWord()
+            }
+        }
+    }
+    
+    func guideClickWord() {
+        var haveClickedWord = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.GUIDE_HAVE_CLICKED_WORD) as? Bool
+        if (haveClickedWord == nil) {
+            var view = UIView(frame: CGRect(x: 0, y: 55, width: self.view.frame.width, height: 25))
+            self.view.addSubview(view)
+            SuccessView(view: view, message: "点击不认识的单词，其意立现", completion: {() in
+                view.removeFromSuperview()
+            })
         }
     }
     

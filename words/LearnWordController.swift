@@ -279,6 +279,10 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         if (scrollView == self.sentencesScrollView) {
             self.currentSentenceIndex = Int(scrollView.contentOffset.x / scrollView.frame.width)
+            
+            NSUserDefaults.standardUserDefaults().setObject(true, forKey: CacheKey.GUIDE_HAVE_SWIPE_ON_SENTENCE)
+            NSUserDefaults.standardUserDefaults().synchronize()
+            
             if (self.player != nil) {
                 self.player.stop()
             }
@@ -300,6 +304,15 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if (scrollView == self.learnWordScrollView && scrollView.contentOffset.y < 100) {
             self.loadSentences()
+            
+            var haveSwipeSentence = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.GUIDE_HAVE_SWIPE_ON_SENTENCE) as? Bool
+            if (haveSwipeSentence == nil) {
+                var view = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 25))
+                self.view.addSubview(view)
+                SuccessView(view: view, message: "左右滑动切换例句", completion: {() in
+                    view.removeFromSuperview()
+                })
+            }
         } else {
             if (self.player != nil) {
                 self.player.stop()
@@ -541,6 +554,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.endLoading()
         self.sentences.setArray(data as NSArray)
         self.setToSentencesView()
+        
+        NSUserDefaults.standardUserDefaults().setObject(true, forKey: CacheKey.GUIDE_HAVE_SLIDE_DOWN_TO_SEE_SENTENCE)
+        NSUserDefaults.standardUserDefaults().synchronize()
         
         var shouldAutoVoice = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.SENTENCE_AUTO_VOICE) as? Bool
         if (shouldAutoVoice != nil && shouldAutoVoice!) {
@@ -1125,6 +1141,17 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         self.learnWordScrollView.contentOffset = CGPoint(x: 0, y: viewLearnWordSentenceHeight)
         if (PageCode(rawValue: notification.userInfo?["currentPage"] as Int) == PageCode.LearnWord && PageCode(rawValue: notification.userInfo?["previousPage"] as Int) == PageCode.Home) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(300 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                
+                var haveSawSentence = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.GUIDE_HAVE_SLIDE_DOWN_TO_SEE_SENTENCE) as? Bool
+                
+                if (haveSawSentence == nil) {
+                    var view = UIView(frame: CGRect(x: 0, y: 20, width: self.view.frame.width, height: 25))
+                    self.view.addSubview(view)
+                    SuccessView(view: view, message: "下滑显示例句", completion: {() in
+                        view.removeFromSuperview()
+                    })
+                }
+                
                 self.setNextWord()
             })
         } else {
@@ -1139,6 +1166,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         wordLabel.hidden = true
         statusButton.hidden = true
         removeButton.hidden = true
+        voiceIcon.hidden = true
         tableViewWrap.hidden = true
         wordPhoneticButton.hidden = true
         wordPhoneticSymbolLabel.hidden = true

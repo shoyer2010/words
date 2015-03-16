@@ -64,7 +64,6 @@
 		A482C8411A98E1F4008D313A /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482C8401A98E1F4008D313A /* ErrorView.swift */; };
 		A4A8B60A1A7A563300C59E63 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6091A7A563300C59E63 /* AppDelegate.swift */; };
 		A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6101A7A563300C59E63 /* Images.xcassets */; };
-		A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */; };
 		A4A8B6201A7A563300C59E63 /* wordsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B61F1A7A563300C59E63 /* wordsTests.swift */; };
 		A4A8B62A1A7A58E300C59E63 /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B6291A7A58E300C59E63 /* HomeController.swift */; };
 		A4A8B62C1A7A59CB00C59E63 /* RankController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A8B62B1A7A59CB00C59E63 /* RankController.swift */; };
@@ -214,7 +213,6 @@
 		A4A8B6081A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B6091A7A563300C59E63 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A4A8B6101A7A563300C59E63 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		A4A8B6131A7A563300C59E63 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		A4A8B6191A7A563300C59E63 /* wordsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wordsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4A8B61E1A7A563300C59E63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4A8B61F1A7A563300C59E63 /* wordsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wordsTests.swift; sourceTree = "<group>"; };
@@ -514,7 +512,6 @@
 				A4541F971A85D35500EAA761 /* RegisterController.swift */,
 				A4541F991A85DD0F00EAA761 /* LoginController.swift */,
 				A4B9B1351A87B71A004B7A20 /* DictionaryInfoController.swift */,
-				A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */,
 				A4DFB85F1A9487F50086105C /* SearchWordResultDelegate.swift */,
 				A4DFB8611A95BC400086105C /* LearnWordDelegate.swift */,
 				A4DFB8651A9610C10086105C /* ArticleForEnglishDelegate.swift */,
@@ -768,7 +765,6 @@
 			files = (
 				A4D3E4C21AA88DD5003883EF /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				A44D1FD21A9A2EF7007F3F1E /* Info.plist in Resources */,
-				A4A8B6141A7A563300C59E63 /* LaunchScreen.xib in Resources */,
 				A4D3E4981AA86838003883EF /* UMSCommentInputController.xib in Resources */,
 				A4D3E49E1AA86838003883EF /* UMSShareListController.xib in Resources */,
 				A4D3E49B1AA86838003883EF /* UMShareEditViewControlleriPad.xib in Resources */,
@@ -891,14 +887,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		A4A8B6121A7A563300C59E63 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A4A8B6131A7A563300C59E63 /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
 		A4D3E47B1AA86838003883EF /* UMSocialLocalizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

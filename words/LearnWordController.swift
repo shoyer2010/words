@@ -461,7 +461,6 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
     }
     
     func updateWordStatus(type: Int) { // 1, right, 2, wrong
-        
         var wordStatus = (self.word!["wordStatus"] as Int)
         var db = Database(Util.getFilePath(self.getUserId() + ".db"))
         var currentTimestamp = Int(time(nil))

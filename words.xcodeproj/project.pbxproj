@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A402249F1A83D39B006AF7E4 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402249E1A83D39B006AF7E4 /* Fonts.swift */; };
+		A40648EB1AB9E72D00360CE1 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A40648EA1AB9E72D00360CE1 /* Default-568h@2x.png */; };
+		A40648ED1AB9E75C00360CE1 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A40648EC1AB9E75C00360CE1 /* Default@2x.png */; };
 		A41FAF071AA9E9DC0052105C /* AlipayRsaLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAEEB1AA9E9DC0052105C /* AlipayRsaLib.a */; };
 		A41FAF081AA9E9DC0052105C /* Alixpay.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A41FAEED1AA9E9DC0052105C /* Alixpay.bundle */; };
 		A41FAF0A1AA9E9DC0052105C /* AlixPaylib_arc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FAEEF1AA9E9DC0052105C /* AlixPaylib_arc.a */; };
@@ -138,6 +140,8 @@
 
 /* Begin PBXFileReference section */
 		A402249E1A83D39B006AF7E4 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
+		A40648EA1AB9E72D00360CE1 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "words/Images.xcassets/LaunchImage.launchimage/Default-568h@2x.png"; sourceTree = "<group>"; };
+		A40648EC1AB9E75C00360CE1 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "words/Images.xcassets/LaunchImage.launchimage/Default@2x.png"; sourceTree = "<group>"; };
 		A41FAEEB1AA9E9DC0052105C /* AlipayRsaLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = AlipayRsaLib.a; sourceTree = "<group>"; };
 		A41FAEEC1AA9E9DC0052105C /* AlixLibService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlixLibService.h; sourceTree = "<group>"; };
 		A41FAEED1AA9E9DC0052105C /* Alixpay.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Alixpay.bundle; sourceTree = "<group>"; };
@@ -447,6 +451,8 @@
 		A4A8B5FB1A7A563300C59E63 = {
 			isa = PBXGroup;
 			children = (
+				A40648EC1AB9E75C00360CE1 /* Default@2x.png */,
+				A40648EA1AB9E72D00360CE1 /* Default-568h@2x.png */,
 				A41FAF701AAD8AF30052105C /* libstdc++.dylib */,
 				A41FAF6E1AAD8AE50052105C /* CoreTelephony.framework */,
 				A41FAF6C1AAD8AD60052105C /* CoreGraphics.framework */,
@@ -778,8 +784,10 @@
 				A44D1FD61A9A2EF7007F3F1E /* SQLite.xcconfig in Resources */,
 				A4D3E49C1AA86838003883EF /* UMSLoginViewController.xib in Resources */,
 				A4D3E4991AA86838003883EF /* UMSCommentInputControlleriPad.xib in Resources */,
+				A40648ED1AB9E75C00360CE1 /* Default@2x.png in Resources */,
 				A4A8B6111A7A563300C59E63 /* Images.xcassets in Resources */,
 				A4541F891A849A3400EAA761 /* 方正楷体简体.ttf in Resources */,
+				A40648EB1AB9E72D00360CE1 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -989,7 +997,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_DEBUG_INFORMATION_LEVEL = default;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1036,7 +1044,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_DEBUG_INFORMATION_LEVEL = default;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

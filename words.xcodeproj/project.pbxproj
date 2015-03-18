@@ -731,6 +731,7 @@
 				TargetAttributes = {
 					A4A8B6031A7A563300C59E63 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 8F2U9AGVBK;
 					};
 					A4A8B6181A7A563300C59E63 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -988,7 +989,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_DEBUG_INFORMATION_LEVEL = default;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/TencentOpenAPI",
@@ -1015,7 +1017,7 @@
 					"$(PROJECT_DIR)/words/alipay",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -1034,7 +1036,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_DEBUG_INFORMATION_LEVEL = default;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Lingzhao Mao (SNS9L7K9T7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/words/UMSocial_Sdk_Extra_Frameworks/TencentOpenAPI",
@@ -1061,7 +1064,7 @@
 					"$(PROJECT_DIR)/words/alipay",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0bf28be9-8119-4689-8c14-ad589623f991";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 				USER_HEADER_SEARCH_PATHS = "";

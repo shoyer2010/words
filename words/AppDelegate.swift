@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.applicationIconBadgeNumber = 0
         UIApplication.sharedApplication().cancelAllLocalNotifications()
         
-        println(Util.getFilePath("dfa"))
+//        println(Util.getFilePath("dfa"))
         self.window!.rootViewController = ApplicationController()
 
 //        NSThread.sleepForTimeInterval(1)
@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func parse(url: NSURL, application: UIApplication) {
         var result:AlixPayResult? = self.handleOpenURL(url)
         if (result != nil) {
-            println(result)
+//            println(result)
             if (result!.statusCode == 9000) {
                 Util.handlePayResult(result!, url: url)
             } else {
@@ -159,6 +159,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         self.activeTime = time(nil) - self.activeTime
+        
+        if (self.activeTime > 86400) {
+            // This is a tick to fix a large number bug in iPad mini2 for IOS 7.0
+            return
+        }
+        
         var totalTime: Int? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.ACTIVE_TIME) as? Int
         if (totalTime == nil) {
             NSUserDefaults.standardUserDefaults().setObject(self.activeTime, forKey: CacheKey.ACTIVE_TIME)

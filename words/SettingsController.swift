@@ -195,7 +195,7 @@ class SettingsController: UIViewController, APIDataDelegate, UIAlertViewDelegate
     }
     
     func versionCheck(data: AnyObject) {
-        if (data["version"] != nil) {
+        if ((data["version"] as? String) != nil) {
             self.upgradeButton.hidden = false
             self.upgradeUrl = NSURL(string: data["url"] as String)
             if (data["force"] as Bool) {

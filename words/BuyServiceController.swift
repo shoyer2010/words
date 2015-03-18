@@ -134,11 +134,11 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         order.tradeNO = self.orderId
         order.notifyURL = user!["url"] as String
 
-        var price = service["price"] as Int
+        var price = service["price"] as Float
         var description = service["name"] as String
         order.productName = "\(price)元\(description)词圣服务"
         order.productDescription = "增加词圣服务时间，轻松背单词，快乐学英语"
-        order.amount = NSString(format: "%.2f", Float(price))
+        order.amount = NSString(format: "%.2f", price)
 
         var orderInfo = ""
         orderInfo += "service=\"mobile.securitypay.pay\""
@@ -189,15 +189,15 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         self.endLoading()
         self.data = data as NSArray
         
-        var item01Price = self.data[0]["price"] as Int
+        var item01Price = NSString(format: "%.0f", self.data[0]["price"] as Float)
         var item01Name = self.data[0]["name"] as String
         item01.setTitle("\(item01Price)元\(item01Name)", forState: UIControlState.Normal)
         
-        var item02Price = self.data[1]["price"] as Int
+        var item02Price = NSString(format: "%.0f", self.data[1]["price"] as Float)
         var item02Name = self.data[1]["name"] as String
         item02.setTitle("\(item02Price)元\(item02Name)", forState: UIControlState.Normal)
         
-        var item03Price = self.data[2]["price"] as Int
+        var item03Price = NSString(format: "%.0f", self.data[2]["price"] as Float)
         var item03Name = self.data[2]["name"] as String
         item03.setTitle("\(item03Price)元\(item03Name)", forState: UIControlState.Normal)
         

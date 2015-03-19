@@ -126,31 +126,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func parse(url: NSURL, application: UIApplication) {
-        var result:AlixPayResult? = self.handleOpenURL(url)
-        if (result != nil) {
-//            println(result)
-            if (result!.statusCode == 9000) {
-                Util.handlePayResult(result!, url: url)
+        AlipaySDK.defaultService().processOrderWithPaymentResult(url, standbyCallback: { (result: [NSObject : AnyObject]!) -> Void in
+            if (result != nil) {
+                var status = result["resultStatus"] as NSObject
+                if ("\(status)" == "9000") {
+                    NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_SUCCESS, object: self, userInfo: nil)
+                } else {
+                    NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+                }
             } else {
                 NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
             }
-        } else {
-            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
-        }
-    }
-    
-    func handleOpenURL(url: NSURL) -> AlixPayResult? {
-        var result: AlixPayResult?
-        if (RegularExpression("safepay").test(url.host!)) {
-            result = self.resultFromURL(url)
-        }
-        
-        return result
-    }
-    
-    func resultFromURL(url: NSURL) -> AlixPayResult {
-        var qurey: NSString = url.query!.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-        return AlixPayResult(string: qurey)
+        })
     }
     
     func setActiveTime() {

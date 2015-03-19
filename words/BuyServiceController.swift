@@ -90,8 +90,6 @@ class BuyServiceController: UIViewController, APIDataDelegate {
             return
         }
         
-        
-        
         self.getOrder()
     }
     
@@ -102,58 +100,23 @@ class BuyServiceController: UIViewController, APIDataDelegate {
         API.instance.post("/user/order", delegate: self, params: params)
     }
     
-    func getSign(orderInfo: NSString) -> NSString {
-        var singer: DataSigner = CreateRSADataSigner(Key.PRIVATE)
-        return singer.signString(orderInfo)
-    }
-    
-    func onPayResult(result: AlixPayResult) {
-        if (result.statusCode == 9000) {
-            Util.handlePayResult(result)
-        } else {
-            NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
-        }
-    }
-    
     func userOrder(data: AnyObject) {
         self.orderId = data["id"] as? String
+        var orderInfo = data["stringToSign"] as String
+        var sign = data["sign"] as String
         
-        var orderInfo = self.getAlipayOrder()
-        var sign = self.getSign(orderInfo)
-        
-        AlixLibService.payOrder("\(orderInfo)&sign=\"\(sign)\"&sign_type=\"RSA\"", andScheme: Constant.ALIPAY_APP_SCHEME, seletor: "onPayResult:", target: self)
-    }
-    
-    func getAlipayOrder() -> NSString {
-        var user: AnyObject? = NSUserDefaults.standardUserDefaults().objectForKey(CacheKey.USER)
-        var service: AnyObject = self.data[self.selectedIndex]
-        
-        var order: AlixPayOrder = AlixPayOrder()
-        order.partner = user!["latestOrderId"] as String
-        order.seller = user!["email"] as String
-        order.tradeNO = self.orderId
-        order.notifyURL = user!["url"] as String
-
-        var price = service["price"] as Float
-        var description = service["name"] as String
-        order.productName = "\(price)元\(description)词圣服务"
-        order.productDescription = "增加词圣服务时间，轻松背单词，快乐学英语"
-        order.amount = NSString(format: "%.2f", price)
-
-        var orderInfo = ""
-        orderInfo += "service=\"mobile.securitypay.pay\""
-        orderInfo += "&partner=\"\(order.partner)\""
-        orderInfo += "&_input_charset=\"utf-8\""
-        orderInfo += "&notify_url=\"\(order.notifyURL)\""
-        orderInfo += "&app_id=\"words_holy\""
-        orderInfo += "&out_trade_no=\"\(order.tradeNO)\""
-        orderInfo += "&subject=\"\(order.productName)\""
-        orderInfo += "&payment_type=\"1\""
-        orderInfo += "&seller_id=\"\(order.seller)\""
-        orderInfo += "&total_fee=\"\(order.amount)\""
-        orderInfo += "&body=\"\(order.productDescription)\""
-        
-        return orderInfo as NSString
+        AlipaySDK.defaultService().payOrder("\(orderInfo)&sign=\"\(sign)\"&sign_type=\"RSA\"", fromScheme: Constant.ALIPAY_APP_SCHEME) { (result: [NSObject: AnyObject]!) -> Void in
+            if (result != nil) {
+                var status = result["resultStatus"] as NSObject
+                if ("\(status)" == "9000") {
+                    NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_SUCCESS, object: self, userInfo: nil)
+                } else {
+                    NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+                }
+            } else {
+                NSNotificationCenter.defaultCenter().postNotificationName(EventKey.ON_PAY_FAILED, object: self, userInfo: nil)
+            }
+        }
     }
     
     func onCancelTapped(sender: UIButton) {

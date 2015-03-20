@@ -51,6 +51,23 @@ class SearchWordResultController: UIViewController, APIDataDelegate, WordDetailD
         return ""
     }
     
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        var offset = scrollView.contentOffset.y
+        if (offset < Interaction.offsetForChangePage) {
+            scrollView.userInteractionEnabled = false
+            UIView.animateWithDuration(0.7, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: { () -> Void in
+                self.contentView.transform = CGAffineTransformMakeTranslation(0, self.view.frame.height - 55)
+                self.view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0)
+                }) { (isDone: Bool) -> Void in
+            }
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (Int64)(700 * NSEC_PER_MSEC)), dispatch_get_main_queue(), { () -> Void in
+                self.view.removeFromSuperview()
+                self.removeFromParentViewController()
+            })
+        }
+    }
+    
     func onTapView(recognizer: UITapGestureRecognizer) {
         self.closeView()
     }

@@ -52,6 +52,7 @@ class WordDetailController: UIViewController, APIDataDelegate, AVAudioPlayerDele
         
         self.view.backgroundColor = Color.appBackground
         wordScrollView = UIScrollView(frame: self.view.frame)
+        wordScrollView.delegate = self.delegate!
         self.view.addSubview(wordScrollView)
         
         headView = UILabel(frame: CGRect(x: 15, y: 10, width: self.wordScrollView.frame.width - 30, height: 40))

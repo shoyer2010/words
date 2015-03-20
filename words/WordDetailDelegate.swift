@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-@objc protocol WordDetailDelegate {
+@objc protocol WordDetailDelegate: UIScrollViewDelegate {
     func frameOfView() -> CGRect
     
     func searchWord() -> String

@@ -1181,7 +1181,9 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
         tableViewWrap.hidden = (self.pageMode == 0)
         
         if (self.pageMode == 0) {
-            wordLabel.text = "请选择您想学习的词库"
+            wordLabel.backgroundColor = Color.lightGray
+            wordLabel.text = "点此选择学习词库"
+            wordLabel.textColor = Color.white
             wordLabel.font = UIFont.systemFontOfSize(20)
             wordLabel.hidden = false
             return
@@ -1196,6 +1198,7 @@ class LearnWordController: UIViewController, UIScrollViewDelegate, UITableViewDa
             nextButton.hidden = false
             return
         } else {
+            wordLabel.backgroundColor = UIColor.clearColor()
             wordLabel.text = self.word!["word"] as? String
             wordLabel.textColor = Color.gray
             wordLabel.font = UIFont.systemFontOfSize(40)

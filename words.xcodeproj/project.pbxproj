@@ -932,7 +932,7 @@
 					"$(PROJECT_DIR)/words/alipay",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ac6a5110-3a81-4a1d-877f-9807b29241fe";
+				PROVISIONING_PROFILE = "627612f2-f5e5-4160-b684-92904f0eb0c8";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -983,7 +983,7 @@
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "ac6a5110-3a81-4a1d-877f-9807b29241fe";
+				PROVISIONING_PROFILE = "627612f2-f5e5-4160-b684-92904f0eb0c8";
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "./words/Word-Bridging-Header.h";
 				USER_HEADER_SEARCH_PATHS = "";
